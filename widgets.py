@@ -6,28 +6,34 @@ from time import strptime
 from datetime import datetime
 from os import path, system
 
+#Esto hace el chequeo inicial.
 def check_inicio():
-	if not path.exists('registro.log'):
-		system('touch registro.log')
+	if not path.exists('outfancy/registro.log'):
+		system('touch outfancy/registro.log')
 
+#Esta funcion une una lista por espacios
 def list_join(lista_comando):
 	return ' '.join(lista_comando)
 
+#Esta funcion escribe un archivo.
 def escribirarchivo(namearchivo, cadena):
 	archivo = open(namearchivo, 'w')
 	archivo.write(cadena)
 	archivo.close()
 
+#Esta funcion lee un archivo.
 def leerarchivo(namearchivo):
 	archivo = open(namearchivo, 'r')
 	contenido = archivo.read()
 	archivo.close()
 	return contenido
 
+#Esta funcion escribe el log.
 def write_log(text):
-	log = leerarchivo('registro.log')
-	escribirarchivo('registro.log', log + '\n' + text)
+	log = leerarchivo('outfancy/registro.log')
+	escribirarchivo('outfancy/registro.log', log + '\n' + text)
 
+#Esto chequea si el ingreso es numerico.
 def check_isnumerico(text):
 	try:
 		text = str(int(text))
@@ -43,6 +49,7 @@ def text_desrelajar(text):
 	text = text.replace('@','-')
 	return text
 
+#Esto chequea si lo ingresado es una fecha.
 def isfecha(text):
 	text = text_desrelajar(text)
 	for format in ['%d-%m-%Y', '%d-%m-%y', '%d-%m-%Y %H-%M-%S', '%d-%m-%y %H-%M-%S']:
@@ -53,6 +60,7 @@ def isfecha(text):
 			pass
 	return False
 
+#Esto chequea si lo ingresado es una hora o no.
 def ishora_complete(text):
 	for format in ['%H:%M:%S', '%H:%M']:
 		try:
