@@ -1,24 +1,64 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-#################################################################################
-#																				#
-#	MODULO SCREEN 																#
-#																				#
-#	Este modulo se encarga de mostrar informacion con un buen formato			#
-#	La forma en la cual esta informacion se muestra depende del tamaño			#
-#	de la pantalla. 															#
-#																				#
-#	Puede recibir comandos para imprimir en formato ficha o sin formato. 		#
-#	La funcion para recibir comandos es interna, y debe ser llamada				#
-#	desde el programa en si 													#
-#																				#
-#	INDICE DE FUNCIONES DEL MODULO 												#
-#-------------------------------------------------------------------------------#
-#									 											#
-#################################################################################
+#####################################################################################################################
+#																													#
+#	MODULO RENDER 																									#
+#																													#
+#	Este modulo se encarga de mostrar informacion con un buen formato												#
+#	La forma en la cual esta informacion se muestra depende del tamaño												#
+#	de la pantalla. 																								#
+#																													#
+#	Puede recibir comandos para imprimir en formato ficha o sin formato. 											#
+#	La funcion para recibir comandos es interna, y debe ser llamada													#
+#	desde el programa en si 																						#
+#																													#
+#	INDICE DE FUNCIONES DEL MODULO 																					#
+#-------------------------------------------------------------------------------------------------------------------#
+#																													#
+#	ayuda()																											#
+#		- Muestra la ayuda para las funciones de Outfancy.															#
+#	render_recordset(data, lista_etiquetas, orden, lista_tipo_datos, cadena_prioridades)							#
+#		- Funcion principal, se encarga de recibir los parametros y llamar a las demas funciones. 					#
+#			- Parametros que recibe:																				#
+#				- TODOS LOS PARAMETROS SON OPCIONALES																#
+#				- data: es el recordset. 																			#
+#				- lista_etiquetas: permite ingresar la lista de etiquetas que se mostrara sobre los datos. 			#
+#				- orden: el orden en el que se desea reordenar las columnas del recordset. 							#
+#				- lista_tipo_datos: permite ingresar el tipo de datos de las columnas. 								#
+#				- cadena_prioridades: permite especificar la prioridad para mostrar cada columna. 					#
+#	render_print(pantalla, lista_etiquetas, len_separador)															#
+#		- Se encarga de imprimir la pantalla en base a los datos provistos y chequeados por el modulo. 				#
+#	check_lista_etiquetas(lista_etiquetas, lista_tipo_datos, ancho, separador)										#
+#		- Chequea que la lista de etiquetas sea valida, de ser necesario, la reconstruye. 							#
+#	generar_pantalla(linea_cuadros, separador)																		#
+#		- Genera la pantalla en base a los cuadros generados previamente. 											#
+#	generar_cuadros_pantalla(ordered_data, ancho, maximo, screen_y)													#
+#		- Genera los cuadros que se pretenden mostrar en pantalla. 													#
+#	asign_ancho_columnas(maximos, screen_x, ordered_lista_tipo_datos, cadena_prioridades, len_separador, orden)		#
+#		- Asigna anchos para mostrar cada columna. 																	#
+#	check_cadena_prioridades(ordered_lista_tipo_datos, cadena_prioridades, internal)								#
+#		- Chequea que la cadena de prioridades sea valida, si no es asi, la reconstruye. 							#
+#	reordenar_lista_tipo_datos(lista_tipo_datos, orden)																#
+#		- Reordena la lista de tipos de datos con el orden provisto. 												#
+#	check_data_integrity(data)																						#
+#		- Chequea la integridad del recordset provisto. 															#
+#	check_lista_tipo_datos_integrity(data, lista_tipo_datos)														#
+#		- Chequea que la lista de tipos de datos provista sea valida, si es necesario, la reconstruye. 				#
+#	reordenar_datos(data, orden)																					#
+#		- Reordena los datos segun el orden especificado como parametro. 											#
+#	parse_lista_etiquetas(lista_etiquetas, orden)																	#
+#		- Chequea que la lista de etiquetas provista sea valida, si no es asi, la reconstruye. 						#
+#	check_maximos(ordered_data)																						#
+#		- De todos los campos en las columnas, selecciona el que tiene mayor longitud. 								#
+#	command_process(text)																							#
+#		- Procesa comandos que lleguen a outfancy																	#
+#	medir_dimensiones()																								#
+#		- Mide las dimensiones de la pantalla. 																		#
+#																													#
+#####################################################################################################################
 
-import os, fcntl, termios, struct, subprocess, string
+import os, fcntl, termios, struct, string
 from . import widgets, config
 
 C_ficha = ['-fic', '--ficha']
@@ -50,14 +90,7 @@ widgets.check_inicio()
 #																					#
 #####################################################################################
 
-def render_recordset(data = None, orden = None, lista_tipo_datos = None, lista_etiquetas = None, cadena_prioridades = None):
-	#Cada vez que se llama a esta funcion, esta mide las dimensiones
-	#Data = Datos que se envian a imprimir
-	#Lista_tipo_datos guarda el tipo de dato al cual pertenece la tupla correspondiente.
-	#Orden = El orden en el cual se deben imprimir las tuplas
-	#Prioridad = La prioridad que se da a la impresion de los datos
-	#Debe haber una funcion detectar fechas, se detectan con el objetivo de acortarlas.
-	#Lista etiquetas guarda lo que se debe mostra en las etiquetas.
+def render_recordset(data = None, lista_etiquetas = None, orden = None, lista_tipo_datos = None, cadena_prioridades = None):
 	#Lista para registrar errores durante la ejecucion.
 	global errores
 	errores = []
@@ -66,7 +99,7 @@ def render_recordset(data = None, orden = None, lista_tipo_datos = None, lista_e
 	###############################################
 	# --- Se chequea la existencia de los datos --- #
 	if data == None:
-		return '--- Screen: No se han recibido datos para imprimir ---'
+		return '--- Render: No se han recibido datos para imprimir ---'
 	# --- Se chequea la integridad de los datos --- #
 	elif check_data_integrity(data):
 		##############################
@@ -87,7 +120,7 @@ def render_recordset(data = None, orden = None, lista_tipo_datos = None, lista_e
 		# --- Chequea la longitud maxima para mostrar cada campo de ordered_data --- #
 		maximo = check_maximos(ordered_data)
 		ordered_lista_tipo_datos, cadena_prioridades, ancho = asign_ancho_columnas(maximo, screen_x, ordered_lista_tipo_datos, cadena_prioridades, len(separador), orden)
-		linea_cuadros = generar_lineas_pantalla(ordered_data, ancho, maximo, screen_y)
+		linea_cuadros = generar_cuadros_pantalla(ordered_data, ancho, maximo, screen_y)
 		pantalla = generar_pantalla(linea_cuadros, separador)
 		lista_etiquetas = check_lista_etiquetas(lista_etiquetas, lista_tipo_datos, ancho, separador)
 		##########################
@@ -100,35 +133,35 @@ def render_recordset(data = None, orden = None, lista_tipo_datos = None, lista_e
 def render_print(pantalla = None, lista_etiquetas = None, len_separador = None):
 	#Si no se provee pantalla.
 	if pantalla == None:
-		errores.append('Screen > render_print: No se proveyo pantalla, esto pasa si los datos no son validos.')
-		print('Screen > render_print: Datos invalidos')
+		errores.append('Render > render_print: No se proveyo pantalla, esto pasa si los datos no son validos.')
+		print('Render > render_print: Datos invalidos')
 
 	#Si separador no es provisto, genera uno y emite un error.
 	if len_separador == None:
-		errores.append('Screen > render_print: No se proveyo separador.')
+		errores.append('Render > render_print: No se proveyo separador.')
 		len_separador = 1
 
 	#Si lista_etiquetas no es provista, se asigna una cadena vacia.
 	if lista_etiquetas == None:
-		errores.append('Screen > render_print: No se proveyo lista_etiquetas.')
-		lista_etiquetas = ' --- ETIQUETAS ---'
+		errores.append('Render > render_print: No se proveyo lista_etiquetas.')
+		lista_etiquetas = ''
 
 	#Esta funcion se encarga de imprimir la pantalla junto con las etiquetas.
-	print('\x1b[1;33m', lista_etiquetas, '\x1b[0;99m', pantalla)
+	print('\x1b[1;33m', lista_etiquetas, '\x1b[0;99m', pantalla, '\x1b[0;99m')
 	#Si en la configuracion se especifica que se deben mostrar los errores.
 	if config.show_errors:
-		print('\n', ' ' * (len_separador - 1), '\x1b[1;36mScreen > Errores >', widgets.fecha_actual(), widgets.hora_actual(), '\x1b[0;91m')
+		print('\n', ' ' * (len_separador - 1), '\x1b[1;36mRender > Errores >', widgets.fecha_actual(), widgets.hora_actual(), '\x1b[0;91m')
 		for x in range(len(errores)): print(' ' * len_separador, errores[x])
-		print('\x1b[0;98m')
+		print('\x1b[0;99m')
 
 	#Si en la configuracion se especifica que se deben registrar los errores.
 	if config.log_errors:
-		widgets.write_log('Screen > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + ' -\n' + '\n'.join(errores))
+		widgets.write_log('Render > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + ' -\n' + '\n'.join(errores))
 
 def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho = None, separador = None):
 	#Si lista etiquetas es invalida, se reconstruye.
 	if type(lista_etiquetas) != list:
-		errores.append('Screen > check_lista_etiquetas: lista_etiquetas no fue provista o es invalida.')
+		errores.append('Render > check_lista_etiquetas: lista_etiquetas no fue provista o es invalida.')
 		lista_etiquetas = []
 		# --- Lista de elementos que deben intentar ser detectados --- #
 		to_rebuild = []
@@ -137,16 +170,16 @@ def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho
 			to_rebuild.append(x)
 
 	if separador == None:
-		errores.append('Screen > check_lista_etiquetas: No se proveyo separador.')
+		errores.append('Render > check_lista_etiquetas: No se proveyo separador.')
 		separador = ' '
 
 	#Si la lista de etiquetas tiene mas elementos que elementos lista_tipo_datos, lista_etiquetas se recorta.
 	if len(lista_etiquetas) > len(lista_tipo_datos):
 		lista_etiquetas = lista_etiquetas[0:len(lista_tipo_datos)]
-		errores.append('Screen > check_lista_etiquetas_integrity: Fue necesario acortar lista_etiquetas.')
+		errores.append('Render > check_lista_etiquetas_integrity: Fue necesario acortar lista_etiquetas.')
 	#Si es menor, se agrega None a lista_etiquetas.
 	elif len(lista_etiquetas) < len(lista_tipo_datos):
-		errores.append('Screen > check_lista_etiquetas_integrity: lista_etiquetas es muy corta.')
+		errores.append('Render > check_lista_etiquetas_integrity: lista_etiquetas es muy corta.')
 		for x in range(len(lista_etiquetas),len(lista_tipo_datos)):
 			lista_etiquetas.append(None)
 			to_rebuild.append(x)
@@ -173,11 +206,11 @@ def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho
 		lista_etiquetas[x] = etiqueta
 
 	if len(to_rebuild) > 0:
-		errores.append('Screen > check_lista_etiquetas: Fue necesario reconstruir lista_etiquetas.')
+		errores.append('Render > check_lista_etiquetas: Fue necesario reconstruir lista_etiquetas.')
 
 	#Si no se proveen anchos, se emite un error y se retorna lista_etiquetas.
 	if ancho == None:
-		errores.append('Screen > check_lista_etiquetas: No se proveyo lista ancho (lista de anchos).')
+		errores.append('Render > check_lista_etiquetas: No se proveyo lista ancho (lista de anchos).')
 		return separador + separador.join(lista_etiquetas)
 
 	'''
@@ -211,10 +244,10 @@ def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho
 
 def generar_pantalla(linea_cuadros = None, separador = None):
 	if linea_cuadros == None:
-		return 'Screen > generar_pantalla: No se proveyo linea_cuadros.'
+		return 'Render > generar_pantalla: No se proveyo linea_cuadros.'
 
 	if separador == None:
-		errores.append('Screen > generar_pantalla: No se proveyo separador.')
+		errores.append('Render > generar_pantalla: No se proveyo separador.')
 		separador = ' '
 
 	pre_pantalla = ''
@@ -229,20 +262,20 @@ def generar_pantalla(linea_cuadros = None, separador = None):
 
 	return pre_pantalla
 
-def generar_lineas_pantalla(ordered_data = None, ancho = None, maximo = None, screen_y = None):
+def generar_cuadros_pantalla(ordered_data = None, ancho = None, maximo = None, screen_y = None):
 	# --- Si no se proveen datos, retorna una lista vacia --- #
 	if ordered_data == None:
-		errores.append('Screen > generar_cuadros: No se proveyo ordered_data.')
+		errores.append('Render > generar_cuadros: No se proveyo ordered_data.')
 		return []
 
 	# --- Si no se provee ancho de columnas, se retorna una lista vacia --- #
 	if ancho == None:
-		errores.append('Screen > generar_cuadros: No se proveyo ancho_columnas.')
+		errores.append('Render > generar_cuadros: No se proveyo ancho_columnas.')
 		return []
 
 	# --- Si no se provee ancho de columnas, se retorna una lista vacia --- #
 	if maximo == None:
-		errores.append('Screen > generar_cuadros: No se proveyo maximo[].')
+		errores.append('Render > generar_cuadros: No se proveyo maximo[].')
 		return []
 
 	#Lineas pantalla guarda las lineas que seran generadas.
@@ -304,7 +337,7 @@ def asign_ancho_columnas(maximos = None, screen_x = None, ordered_lista_tipo_dat
 	#Sin tipo, los anchos se asignan por igual basandose en la longitud de la pantalla.
 	if ordered_lista_tipo_datos == None:
 		#Se emite un error alertando de la falta de este dato, y se frena la ejecucion de asign_ancho_columnas.
-		errores.append('Screen> asign_ancho_columnas: ordered_lista_tipo_datos es None.')
+		errores.append('Render > asign_ancho_columnas: ordered_lista_tipo_datos es None.')
 		return anchos
 
 	#Chequea si cadena_prioridades es None, si es asi, intenta detectarla.
@@ -314,12 +347,12 @@ def asign_ancho_columnas(maximos = None, screen_x = None, ordered_lista_tipo_dat
 	#Si screen_x es None, asigna 80, una medida muy comun, y emite un error.
 	if screen_x == None or type(screen_x) != int:
 		screen_x = 80
-		errores.append('Screen> asign_ancho_columnas: No se proveyo screen_x')
+		errores.append('Render > asign_ancho_columnas: No se proveyo screen_x')
 
 	# --- Estando ordered_lista_tipo_datos presente: --- #
 	#Se chequea si se proveyeron datos sobre los maximos, estos deberian ser generados en check_maximos.
 	if maximos == None:
-		errores.append('Screen> asign_ancho_columnas: No se proveyo maximos.')
+		errores.append('Render > asign_ancho_columnas: No se proveyo maximos.')
 		#Si no se provee este dato, se asignara el mismo ancho para todas las columnas.
 		ancho = (screen_x - len_separador * (len(ordered_lista_tipo_datos) + 1)) / len(ordered_lista_tipo_datos)
 		for columna in range(len(ordered_lista_tipo_datos)):
@@ -399,7 +432,7 @@ def check_cadena_prioridades(ordered_lista_tipo_datos = None, cadena_prioridades
 	#Esta funcion se encarga de chequear la integridad de las prioridades ingresadas.
 	#En caso de ser deficientes (o ausentes), intenta reconstruirlas.
 	if ordered_lista_tipo_datos == None:
-		return 'Screen: check_cadena_prioridades: No se proveyo ordered_lista_tipo_datos.'
+		return 'Render: check_cadena_prioridades: No se proveyo ordered_lista_tipo_datos.'
 
 	##############################
 	#   CHEQUEOS DE INTEGRIDAD   #
@@ -412,7 +445,7 @@ def check_cadena_prioridades(ordered_lista_tipo_datos = None, cadena_prioridades
 		reconstruir = True
 		#internal es usada por las demas funciones para generar prioridades en modo silencioso.
 		if internal == False:
-			errores.append('Screen > check_cadena_prioridades: cadena_prioridades no fue especificada.')
+			errores.append('Render > check_cadena_prioridades: cadena_prioridades no fue especificada.')
 	else:
 		#Longitud de cadena_prioridades.
 		len_cadena_prioridades = len(cadena_prioridades)
@@ -424,18 +457,18 @@ def check_cadena_prioridades(ordered_lista_tipo_datos = None, cadena_prioridades
 	if widgets.check_isnumerico(cadena_prioridades):
 		#En caso de que la lista de prioridades sea mayor a ordered_lista_tipo_datos, se envia a reconstrir la lista.
 		if len_cadena_prioridades > len_ordered_lista_tipo_datos:
-			errores.append('Screen > check_cadena_prioridades: cadena_prioridades es muy larga.')
+			errores.append('Render > check_cadena_prioridades: cadena_prioridades es muy larga.')
 			reconstruir = True
 
 		#En caso de ser menor, se reconstruye el faltante.
 		if len_cadena_prioridades < len_ordered_lista_tipo_datos:
-			errores.append('Screen > check_cadena_prioridades: cadena_prioridades es muy corta.')
+			errores.append('Render > check_cadena_prioridades: cadena_prioridades es muy corta.')
 			for x in range(len_cadsena_prioridades, len_ordered_lista_tipo_datos):
 				reconstruir = True
 
 		#Se chequea la integridad de los elementos.
 		for x in range(len_cadena_prioridades):
-			errores.append('Screen > check_cadena_prioridades: cadena_prioridades no es integra.')
+			errores.append('Render > check_cadena_prioridades: cadena_prioridades no es integra.')
 			if int(cadena_prioridades[x]) > len_ordered_lista_tipo_datos or int(cadena_prioridades[x]) < 0:
 				reconstruir = True
 
@@ -471,7 +504,7 @@ def check_cadena_prioridades(ordered_lista_tipo_datos = None, cadena_prioridades
 
 		#Si hay elementos sin identificar en ordered_lista_tipo_datos, se rellena el faltante con prioridades minimas.
 		if len(cadena_prioridades) < len_ordered_lista_tipo_datos:
-			errores.append('Screen > check_cadena_prioridades: ordered_lista_tipo_datos contiene elementos no identificables')
+			errores.append('Render > check_cadena_prioridades: ordered_lista_tipo_datos contiene elementos no identificables')
 			for elemento in range(len_cadena_prioridades, len_ordered_lista_tipo_datos):
 				cadena_prioridades += str(elemento)
 
@@ -482,7 +515,7 @@ def check_cadena_prioridades(ordered_lista_tipo_datos = None, cadena_prioridades
 def reordenar_lista_tipo_datos(lista_tipo_datos = None, orden = None):
 	#Se chequea si se proveyeron datos.
 	if lista_tipo_datos == None:
-		return 'Screen> reordenar_lista_tipo_datos: No se proveyeron datos.'
+		return 'Render > reordenar_lista_tipo_datos: No se proveyeron datos.'
 
 	#Si no se provee orden, o este no es str, se retorna lista_tipo_datos sin mas.
 	if orden == None or type(orden) != str:
@@ -494,7 +527,7 @@ def reordenar_lista_tipo_datos(lista_tipo_datos = None, orden = None):
 			try:
 				ordered_lista_tipo_datos.append(lista_tipo_datos[int(elemento)])
 			except:
-				errores.append('Screen> reordenar_lista_tipo_datos: Error al intentar reordenar lista_tipo_datos.')
+				errores.append('Render > reordenar_lista_tipo_datos: Error al intentar reordenar lista_tipo_datos.')
 				return lista_tipo_datos
 
 		#Si se pudo reordenar sin errores, retorna lista_tipo_datos ordenada.
@@ -506,33 +539,36 @@ def check_data_integrity(data = None):
 	if config.check_data == True:
 		#Se chequea si se proveyeron datos.
 		if data == None:
-			return 'Screen> check_data_integrity: No se proveyeron datos.'
+			return 'Render > check_data_integrity: No se proveyeron datos.'
 
 		error = False
 		#Se chequea que el dato enviado sea una lista.
 		if type(data) != list:
 			error = True
 		else:
-			#Se chequea que, dentro de la lista, los elementos sean listas.
-			for tupla in data:
-				if type(tupla) != tuple:
-					error = True
-				#Se chequea que los elementos de las tuplas no sean listas o bool.
-				for elemento in tupla:
-					if type(elemento) == list or type(elemento) == bool:
-						error = True
-
 			if len(data) > 0:
-				try:
-					longitud_primera_tupla = len(data[0])
-					for tupla in data:
-						if len(tupla) != longitud_primera_tupla:
+				#Se chequea que, dentro de la lista, los elementos sean listas.
+				for tupla in data:
+					if type(tupla) != tuple:
+						error = True
+					#Se chequea que los elementos de las tuplas no sean listas o bool.
+					for elemento in tupla:
+						if type(elemento) == list or type(elemento) == bool:
 							error = True
-				except:
-					error = True
+
+				if len(data) > 0:
+					try:
+						longitud_primera_tupla = len(data[0])
+						for tupla in data:
+							if len(tupla) != longitud_primera_tupla:
+								error = True
+					except:
+						error = True
+			else:
+				error = True
 
 		if error == True:
-			errores.append('--- Screen > check_data_integrity: Dato invalido o no integro ---')
+			errores.append('--- Render > check_data_integrity: Dato invalido o no integro ---')
 		return not error
 	else:
 		return True
@@ -541,11 +577,11 @@ def check_data_integrity(data = None):
 def check_lista_tipo_datos_integrity(data = None, lista_tipo_datos = None):
 	#Se chequea si se proveyeron datos.
 	if data == None:
-		return 'Screen> check_lista_tipo_datos_integrity: No se proveyeron datos.'
+		return 'Render > check_lista_tipo_datos_integrity: No se proveyeron datos.'
 
 	#Se emite un error si no se provee la lista de tipos de datos.
 	if lista_tipo_datos == None:
-		errores.append('Screen > check_lista_tipo_datos_integrity: No se proveyo lista_tipo_datos.')
+		errores.append('Render > check_lista_tipo_datos_integrity: No se proveyo lista_tipo_datos.')
 
 	# --- Lista de elementos que deben intentar ser detectados --- #
 	to_rebuild = []
@@ -562,10 +598,10 @@ def check_lista_tipo_datos_integrity(data = None, lista_tipo_datos = None):
 		#Si la lista de tipo de datos tiene mas elementos que columnas los datos, la lista se recorta.
 		if len(lista_tipo_datos) > len(data[0]):
 			lista_tipo_datos = lista_tipo_datos[0:len(data[0])]
-			errores.append('Screen > check_lista_tipo_datos_integrity: Fue necesario acortar lista_tipo_datos.')
+			errores.append('Render > check_lista_tipo_datos_integrity: Fue necesario acortar lista_tipo_datos.')
 		#Si es menor, se agrega None a lista_tipo_datos.
 		elif len(lista_tipo_datos) < len(data[0]):
-			errores.append('Screen > check_lista_tipo_datos_integrity: lista_tipo_datos es muy corta.')
+			errores.append('Render > check_lista_tipo_datos_integrity: lista_tipo_datos es muy corta.')
 			for x in range(len(lista_tipo_datos),len(data[0])):
 				lista_tipo_datos.append(None)
 
@@ -689,7 +725,7 @@ def check_lista_tipo_datos_integrity(data = None, lista_tipo_datos = None):
 				lista_tipo_datos[x] = tipo
 
 		if len(to_rebuild) > 0:
-			errores.append('Screen > check_lista_tipo_datos_integrity: Fue necesario reconstruir lista_tipo_datos.')
+			errores.append('Render > check_lista_tipo_datos_integrity: Fue necesario reconstruir lista_tipo_datos.')
 
 		#Se retorna la lista de tipos de datos.
 		return lista_tipo_datos
@@ -699,7 +735,7 @@ def check_lista_tipo_datos_integrity(data = None, lista_tipo_datos = None):
 def reordenar_datos(data = None, orden = None):
 	#Se chequea si se proveyeron datos.
 	if data == None:
-		return 'Screen> reordenar_datos: No se proveyeron datos.'
+		return 'Render > reordenar_datos: No se proveyeron datos.'
 	else:
 		#Chequea si la entrada a reordenar_datos es la correcta
 		if orden == None or type(orden) != str:
@@ -713,7 +749,7 @@ def reordenar_datos(data = None, orden = None):
 					try:
 						new_tupla.append(tupla[int(elemento)])
 					except:
-						errores.append('Screen: Error al intentar reordenar los datos.')
+						errores.append('Render: Error al intentar reordenar los datos.')
 						return data
 				#Se añade la tupla generada al nuevo recordset.
 				ordered_data.append(new_tupla)
@@ -724,7 +760,7 @@ def reordenar_datos(data = None, orden = None):
 def parse_lista_etiquetas(lista_etiquetas = None, orden = None):
 	error = False
 	if orden == None:
-		errores.append('Screen > parse_lista_etiquetas: Error, no se proveyo orden.')
+		errores.append('Render > parse_lista_etiquetas: Error, no se proveyo orden.')
 		if lista_etiquetas == None:
 			separador = ' '
 			ordered_lista_etiquetas = []
@@ -743,7 +779,7 @@ def parse_lista_etiquetas(lista_etiquetas = None, orden = None):
 			if etiqueta == 'ERR':
 				error = True
 		if error == True:
-			errores.append('Screen: Error al intentar reordenar las etiquetas.')
+			errores.append('Render: Error al intentar reordenar las etiquetas.')
 	return separador, ordered_lista_etiquetas
 
 
@@ -751,7 +787,7 @@ def parse_lista_etiquetas(lista_etiquetas = None, orden = None):
 def check_maximos(ordered_data = None):
 	#Se chequea si se proveyeron datos.
 	if ordered_data == None:
-		return 'Screen> check_maximos: No se proveyeron datos ordenados.'
+		return 'Render > check_maximos: No se proveyeron datos ordenados.'
 
 	if len(ordered_data) > 0:
 		maximo = []
@@ -765,21 +801,13 @@ def check_maximos(ordered_data = None):
 					maximo[elemento] = len(str(ordered_data[tupla][elemento]))
 		return maximo
 	else:
-		errores.append('Screen > check_maximos: Error al intentar chequear el maximo.')
+		errores.append('Render > check_maximos: Error al intentar chequear el maximo.')
 
-#Genera la string de STATUS_BAR, recibe como parametro el ancho de pantalla
-def status_bar(screen_x):
-	simbolo = '-'
-	desplazamiento = 5
-	hora = subprocess.getoutput('date')
-	print(simbolo * (screen_x - len(hora) - desplazamiento), hora, simbolo * desplazamiento)
-
-#Procesador de comandos del modulo screen.
+#Procesador de comandos del modulo outfancy, permite que reciba comandos desde afuera.
+'''EN DESARROLLO'''
 def command_process(text):
 	if text[0] in C_ficha:
 		print('--- BIEN ---')
-	#El comando juntado en command parser queda en la variable.
-	#command_parser.screen_commands
 
 #Mide las dimensiones de la pantalla, retornando una lista de dos valores, X y Y.
 def medir_dimensiones():
