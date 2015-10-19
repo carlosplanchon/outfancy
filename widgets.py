@@ -1,6 +1,35 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+#####################################################################################################
+#																									#
+#	MODULO WIDGETS																					#
+#																									#
+#	Este modulo se encarga de mostrar informacion con un buen formato								#
+#	La forma en la cual esta informacion se muestra depende del tamaño								#
+#	de la pantalla. 																				#
+#																									#
+#	Puede recibir comandos para imprimir en formato ficha o sin formato. 							#
+#	La funcion para recibir comandos es interna, y debe ser llamada									#
+#	desde el programa en si 																		#
+#																									#
+#	INDICE DE FUNCIONES DEL MODULO 																	#
+#---------------------------------------------------------------------------------------------------#
+#																									#
+#	check_inicio()							- Hace el chequeo inicial. 								#
+#	list_join(lista_comando)				- Une una lista por espacios. 							#
+#	escribirarchivo(namearchivo, cadena)	- Esta funcion escribe un archivo. 						#
+#	leerarchivo(namearchivo)				- Esta funcion lee un archivo. 							#
+#	write_log(text)							- Esta funcion escribe el log. 							#
+#	check_isnumerico(text)					- Esto chequea si el ingreso es numerico. 				#
+#	text_desrelajar(text)					- Esta funcion quita el formato relajado de las fechas. #
+#	isfecha(text)							- Esto chequea si lo ingresado es una fecha. 			#
+#	ishora_complete(text)					- Esto chequea si lo ingresado es una hora o no. 		#
+#	fecha_actual()							- Devuelve la fecha actual. 							#
+#	hora_actual()							- Devuelve la hora actual. 								#
+#																									#
+#####################################################################################################
+
 import string
 from time import strptime
 from datetime import datetime
@@ -41,7 +70,7 @@ def check_isnumerico(text):
 	except:
 		return False
 
-#Esta funcion quita el formato relajado de las fechas
+#Esta funcion quita el formato relajado de las fechas.
 def text_desrelajar(text):
 	text = text.replace('/','-')
 	text = text.replace(':','-')
