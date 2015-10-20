@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import os
+import os, widgets
 
-#Procede a actualizar Outconty en caso de necesidad.
 def update():
 	if check_update:
 		try:
 			os.system('wget https://github.com/carlosplanchon/outfancy/archive/master.zip')
 		except:
 			return 'Error al chequear actualizacion, compruebe su conexion a internet. '
+		registro = widgets.leerarchivo('outfancy/registro.log')
 		os.system('unzip master.zip && rm -rf outfancy && mv outfancy-master outfancy && rm master.zip && cd outfancy && touch registro.log')
+		widgets.escribirarchivo('registro.log', registro)
 	return '--- Actualizado ---'
 
 #Chequea la version, en caso de necesitar actualizacion devuelve True.
