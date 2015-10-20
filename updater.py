@@ -10,7 +10,7 @@ def update():
 			os.system('wget https://github.com/carlosplanchon/outfancy/archive/master.zip')
 		except:
 			return 'Error al chequear actualizacion, compruebe su conexion a internet. '
-		os.system('unzip master.zip && rm -rf outfancy && mv outfancy-master outfancy && rm master.zip')
+		os.system('unzip master.zip && rm -rf outfancy && mv outfancy-master outfancy && rm master.zip && cd outfancy && touch registro.log')
 	return '--- Actualizado ---'
 
 #Chequea la version, en caso de necesitar actualizacion devuelve True.
