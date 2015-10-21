@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import os, widgets
+import os
+from . import widgets
 
 def update():
 	if check_update:
