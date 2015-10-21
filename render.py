@@ -47,8 +47,8 @@
 #		- Chequea que la lista de tipos de datos provista sea valida, si es necesario, la reconstruye. 				#
 #	reordenar_datos(data, orden)																					#
 #		- Reordena los datos segun el orden especificado como parametro. 											#
-#	parse_lista_etiquetas(lista_etiquetas, orden)																	#
-#		- Chequea que la lista de etiquetas provista sea valida, si no es asi, la reconstruye. 						#
+#	separador(separador, screen_x)																					#
+#		- Chequea que el separador sea valido, si no es asi, asigna uno por defecto. 								#
 #	check_maximos(ordered_data)																						#
 #		- De todos los campos en las columnas, selecciona el que tiene mayor longitud. 								#
 #	command_process(text)																							#
@@ -90,7 +90,7 @@ widgets.check_inicio()
 #																					#
 #####################################################################################
 
-def render_recordset(data = None, lista_etiquetas = None, orden = None, lista_tipo_datos = None, cadena_prioridades = None):
+def render_recordset(data = None, separador = None, lista_etiquetas = None, orden = None, lista_tipo_datos = None, cadena_prioridades = None):
 	#Lista para registrar errores durante la ejecucion.
 	global errores
 	errores = []
@@ -107,16 +107,18 @@ def render_recordset(data = None, lista_etiquetas = None, orden = None, lista_ti
 		##############################
 		# --- Se chequea la integridad de la lista de tipos de datos --- #
 		lista_tipo_datos = check_lista_tipo_datos_integrity(data, lista_tipo_datos)
+		# --- Se chequea la validez del orden provisto --- #
+		orden = check_orden(data, orden)
 		# --- Se reordenan los datos y las etiquetas --- #
 		ordered_data = reordenar_datos(data, orden)
-		separador, ordered_lista_etiquetas = parse_lista_etiquetas(lista_etiquetas, orden)
 		# --- Se reordena lista_tipo_datos --- #
 		ordered_lista_tipo_datos = reordenar_lista_tipo_datos(lista_tipo_datos, orden)
-
 		# --- Se analizan las dimensiones de la pantalla --- #
 		screen_x, screen_y = medir_dimensiones()
 		# --- Se aplica valor de correccion a screen_x --- #
 		screen_x += config.corrector
+		# --- Se cheqea el separador --- #
+		separador = check_separador(separador, screen_x)
 		# --- Chequea la longitud maxima para mostrar cada campo de ordered_data --- #
 		maximo = check_maximos(ordered_data)
 		ordered_lista_tipo_datos, cadena_prioridades, ancho = asign_ancho_columnas(maximo, screen_x, ordered_lista_tipo_datos, cadena_prioridades, len(separador), orden)
@@ -159,15 +161,19 @@ def render_print(pantalla = None, lista_etiquetas = None, len_separador = None):
 		widgets.write_log('Render > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + ' -\n' + '\n'.join(errores))
 
 def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho = None, separador = None):
+	#Lista de elementos que deben intentar ser reconstruidos #
+	to_rebuild = []
 	#Si lista etiquetas es invalida, se reconstruye.
 	if type(lista_etiquetas) != list:
 		errores.append('Render > check_lista_etiquetas: lista_etiquetas no fue provista o es invalida.')
 		lista_etiquetas = []
-		# --- Lista de elementos que deben intentar ser detectados --- #
-		to_rebuild = []
 		for x in range(len(lista_tipo_datos)):
 			lista_etiquetas.append(None)
+
+	for x in range(len(lista_etiquetas)):
+		if type(lista_etiquetas[x]) != str or lista_etiquetas[x] == None:
 			to_rebuild.append(x)
+			lista_etiquetas[x] = None
 
 	if separador == None:
 		errores.append('Render > check_lista_etiquetas: No se proveyo separador.')
@@ -254,11 +260,14 @@ def generar_pantalla(linea_cuadros = None, separador = None):
 
 	# --- Para cada tupla de linea_cuadros. --- #
 	for tupla in linea_cuadros:
-		for linea in range(len(tupla[0])):
-			pre_pantalla += '\n' + separador
-			# --- Para cada cuadro se retirara una linea --- #
-			for cuadro in tupla:
-				pre_pantalla += separador + cuadro[linea]
+		if len(tupla) > 0:
+			for linea in range(len(tupla[0])):
+				pre_pantalla += '\n' + separador
+				# --- Para cada cuadro se retirara una linea --- #
+				for cuadro in tupla:
+					pre_pantalla += separador + cuadro[linea]
+			else:
+				pass
 
 	return pre_pantalla
 
@@ -749,39 +758,51 @@ def reordenar_datos(data = None, orden = None):
 					try:
 						new_tupla.append(tupla[int(elemento)])
 					except:
-						errores.append('Render: Error al intentar reordenar los datos.')
+						errores.append('Render > reordenar_datos: Error al intentar reordenar los datos.')
 						return data
 				#Se añade la tupla generada al nuevo recordset.
 				ordered_data.append(new_tupla)
 		return ordered_data
 
 
-#Esta funcion reordena la lista de etiquetas y extrae el separador.
-def parse_lista_etiquetas(lista_etiquetas = None, orden = None):
-	error = False
-	if orden == None:
-		errores.append('Render > parse_lista_etiquetas: Error, no se proveyo orden.')
-		if lista_etiquetas == None:
-			separador = ' '
-			ordered_lista_etiquetas = []
-		else:
-			separador = lista_etiquetas[0]
-			ordered_lista_etiquetas = []
+def check_separador(separador = None, screen_x = 80):
+	if separador == None or type(separador) != str:
+		return ' '
+	elif len(separador) > screen_x:
+		errores.append('Render > check_separador: El separador provisto es invalido')
+		return ' '
 	else:
-		separador = lista_etiquetas[0]
-		ordered_lista_etiquetas = []
-		for elemento in orden:
-			try:
-				ordered_lista_etiquetas.append(lista_etiquetas[int(elemento) + 1])
-			except:
-				ordered_lista_etiquetas.append('ERR')
-		for etiqueta in ordered_lista_etiquetas:
-			if etiqueta == 'ERR':
-				error = True
-		if error == True:
-			errores.append('Render: Error al intentar reordenar las etiquetas.')
-	return separador, ordered_lista_etiquetas
+		return separador
 
+
+def check_orden(data = None, orden = None):
+	if data == None:
+		errores.append('Render > check_orden: No se proveyo data.')
+		return ''
+
+	# --- Se chequea la validez del orden provisto en base a sus propiedades --- #
+	if orden == None or type(orden) != str:
+		errores.append('Render > check_orden: El orden es invalido o no fue provisto.')
+		if len(data) > 0:
+			orden = ''
+			for x in range(len(data[0])):
+				orden += str(x)
+			return orden
+		else:
+			return ''
+
+	# --- Se analiza si los elementos del orden son validos en referencia a los datos --- #
+	if len(data) > 0:
+		for x in orden:
+			if widgets.check_isnumerico(x): 
+				if int(x) > len(data[0]):
+					orden = orden.replace(x, '')
+			else:
+				orden = orden.replace(x, '')
+	else:
+		return ''
+
+	return orden
 
 #Chequea la longitud maxima para mostrar cada campo, asigna la longitud a maximo[x]
 def check_maximos(ordered_data = None):
