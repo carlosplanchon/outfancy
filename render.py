@@ -124,7 +124,7 @@ def render_recordset(data = None, separador = None, lista_etiquetas = None, orde
 		ordered_lista_tipo_datos, cadena_prioridades, ancho = asign_ancho_columnas(maximo, screen_x, ordered_lista_tipo_datos, cadena_prioridades, len(separador), orden)
 		linea_cuadros = generar_cuadros_pantalla(ordered_data, ancho, maximo, screen_y)
 		pantalla = generar_pantalla(linea_cuadros, separador)
-		lista_etiquetas = check_lista_etiquetas(lista_etiquetas, lista_tipo_datos, ancho, separador)
+		lista_etiquetas = check_lista_etiquetas(lista_etiquetas, lista_tipo_datos, ancho, orden, separador)
 		##########################
 		# --- AREA DE RENDER --- #
 		##########################
@@ -160,7 +160,7 @@ def render_print(pantalla = None, lista_etiquetas = None, len_separador = None):
 	if config.log_errors:
 		widgets.write_log('Render > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + ' -\n' + '\n'.join(errores))
 
-def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho = None, separador = None):
+def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho = None, orden = None, separador = None):
 	#Lista de elementos que deben intentar ser reconstruidos #
 	to_rebuild = []
 	#Si lista etiquetas es invalida, se reconstruye.
@@ -214,10 +214,21 @@ def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho
 	if len(to_rebuild) > 0:
 		errores.append('Render > check_lista_etiquetas: Fue necesario reconstruir lista_etiquetas.')
 
+	if orden == None or type(orden) != str:
+		errores.append('Render > check_lista_etiquetas: No se proveyo orden o este es invalido.')
+		ordered_lista_etiquetas = lista_etiquetas
+	else:
+		ordered_lista_etiquetas = []
+		for elemento in orden:
+			try:
+				ordered_lista_etiquetas.append(lista_etiquetas[int(elemento)])
+			except:
+				errores.append('Render > check_lista_etiquetas: Error al intentar reordenar las etiquetas.')
+
 	#Si no se proveen anchos, se emite un error y se retorna lista_etiquetas.
 	if ancho == None:
 		errores.append('Render > check_lista_etiquetas: No se proveyo lista ancho (lista de anchos).')
-		return separador + separador.join(lista_etiquetas)
+		return separador + separador.join(ordered_lista_etiquetas)
 
 	'''
 	Idea: Que las etiquetas puedan usar varias columnas.
@@ -239,14 +250,14 @@ def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho
 	#Para cada elemento en la longitud de lista anchos.
 	for x in range(len(ancho)):
 		#Si la etiqueta es mayor al ancho de la columna.
-		if len(lista_etiquetas[x]) > ancho[x]:
-			lista_etiquetas[x] = lista_etiquetas[x][0:ancho[x]]
+		if len(ordered_lista_etiquetas[x]) > ancho[x]:
+			ordered_lista_etiquetas[x] = ordered_lista_etiquetas[x][0:ancho[x]]
 		#Si la etiqueta es menor.
-		elif len(lista_etiquetas[x]) < ancho[x]:
-			lista_etiquetas[x] = lista_etiquetas[x] + ' ' * (ancho[x] - len(lista_etiquetas[x]))
+		elif len(ordered_lista_etiquetas[x]) < ancho[x]:
+			ordered_lista_etiquetas[x] = ordered_lista_etiquetas[x] + ' ' * (ancho[x] - len(ordered_lista_etiquetas[x]))
 
-	#Se retorna lista_etiquetas.
-	return separador + separador.join(lista_etiquetas)
+	#Se retorna ordered_lista_etiquetas.
+	return separador + separador.join(ordered_lista_etiquetas)
 
 def generar_pantalla(linea_cuadros = None, separador = None):
 	if linea_cuadros == None:
