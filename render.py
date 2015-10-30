@@ -152,9 +152,10 @@ def render_print(pantalla = None, lista_etiquetas = None, len_separador = None):
 	print('\x1b[1;33m', lista_etiquetas, '\x1b[0;99m', pantalla, '\x1b[0;99m')
 	#Si en la configuracion se especifica que se deben mostrar los errores.
 	if config.show_errors:
-		print('\n', ' ' * (len_separador - 1), '\x1b[1;36mRender > Errores >', widgets.fecha_actual(), widgets.hora_actual(), '\x1b[0;91m')
-		for x in range(len(errores)): print(' ' * len_separador, errores[x])
-		print('\x1b[0;99m')
+		if len(errores) > 0:
+			print('\n', ' ' * (len_separador - 1), '\x1b[1;36mRender > Errores >', widgets.fecha_actual(), widgets.hora_actual(), '\x1b[0;91m')
+			for x in range(len(errores)): print(' ' * len_separador, errores[x])
+			print('\x1b[0;99m')
 
 	#Si en la configuracion se especifica que se deben registrar los errores.
 	if config.log_errors:
