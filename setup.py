@@ -5,7 +5,7 @@ from distutils.core import setup
 setup(
     name = 'outfancy',
     packages = ['outfancy'],
-    version = '0.1.4',
+    version = '0.1.9',
     description = 'Sistema de renderizado para salidas en pantalla (tty). / Rendering system for screen outputs.',
     author = 'Carlos A. Planchon',
     author_email = 'urucrafters@gmail.com',
