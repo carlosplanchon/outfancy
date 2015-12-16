@@ -61,6 +61,9 @@
 import os, fcntl, termios, struct, string
 from . import widgets, config
 
+# Hace el chequeo inicial.
+widgets.check_inicio()
+
 C_ficha = ['-fic', '--ficha']
 C_shortdate = ['-shd', '--shortdate']
 C_longdate = ['-lnd', '--longdate']
@@ -77,7 +80,41 @@ def ayuda():
     print(widgets.list_join(C_noformat), ': Muestra la info. sin darle formato alguno.')
     print(widgets.list_join(C_recordset), ': Muestra la info. resultado directo de la consulta SQL.')
 
-widgets.check_inicio()
+def set_check_data(x = True):
+	config.check_data = x
+
+def set_corrector(x = -2):
+	config.corrector = x
+
+def set_max_y_cuadro_threshold(x = 20):
+	config.max_y_cuadro_threshold = x
+
+def set_analyze_threshold(x = 10):
+	config.analyze_threshold = x
+
+def set_show_errors(x = True):
+	config.show_errores = x
+
+def set_log_errors(x = True):
+	config.log_errors = x
+
+def show_check_data(x = True):
+	print(config.check_data)
+
+def show_corrector(x = -2):
+	print(config.corrector)
+
+def show_max_y_cuadro_threshold(x = 20):
+	print(config.max_y_cuadro_threshold)
+
+def show_analyze_threshold(x = 10):
+	print(config.analyze_threshold)
+
+def show_show_errors(x = True):
+	print(config.show_errores)
+
+def show_log_errors(x = True):
+	print(config.log_errors)
 
 #####################################################################################
 #                                                                                   #
@@ -104,6 +141,23 @@ def print_tupla():
     pass
 
 def render_recordset(data = None, separador = None, lista_etiquetas = None, orden = None, lista_tipo_datos = None, cadena_prioridades = None):
+    """
+    Render_recordset recibe seis (6) parametros, y se encarga de renderizar
+    recordsets (respuestas a consultas SQL en bases de datos), de manera organizada.
+
+    Parametros:
+    data: Se debe especificar un recordset Ej: [('a','b','c'),('d','e','f')].
+    separador: Permite modificar la cadena que separa las columnas, por defecto es un espacio en blanco " ".
+    lista_etiquetas: Permite modificar la lista de etiquetas que aparece sobre la tabla renderizada.
+        Si lista_etiquetas es None el programa generara etiquetas en base a lista_tipo_datos.
+    orden: Permite modificar el orden en el cual se muestran las columnas, suprimiendo estas inclusive.
+    lista_tipo_datos: Permite modificar el tipo de datos que el sistema de render asigna a una columna.
+        Si no se especifica, el programa intentara averiguar que tipo de datos tiene cada columna.
+    cadena_prioridades: Permite modificar la prioridad que se le asigna a cada columna, si no se especifica
+    el programa asignara prioridades en base a lista_tipo_datos.
+    Si el espacio para mostrar las columnas no es suficiente, el programa podra suprimir columnas
+    (iniciando por las de baja prioridad).
+    """
     #Lista para registrar errores durante la ejecucion.
     global errores
     errores = []
@@ -638,12 +692,10 @@ def check_lista_tipo_datos_integrity(data = None, lista_tipo_datos = None):
         contador = 0
         # --- Se chequea que los elementos de lista_tipo_datos pertenezcan a los tipos admitidos --- #
         for elemento in lista_tipo_datos:
-            if elemento in ['id', 'name', 'date', 'time', 'value', 'desc']:
-                contador += 1
-            else:
+            if not elemento in ['id', 'name', 'date', 'time', 'value', 'desc']:
                 #Si no pertenecen, se envia a reconstruir lo necesario.
                 to_rebuild.append(contador)
-                contador += 1
+            contador += 1
 
         # --- Se chequean y establecen la cantidad de tuplas a analizar --- #
         if len(data) > config.analyze_threshold:
@@ -873,3 +925,12 @@ def medir_dimensiones():
     if not cr:
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
     return int(cr[1]), int(cr[0])
+
+def test():
+    recordset = [(1, 'Feisbuk', '18-10-2015', '21:57:17', '18-10-2015', '21:57:17', 1234, 'Red social bla bla bla utilizada gente bla bla'), (2, 'Gugle', '18-10-2015', '21:57:44', '18-10-2015', '21:57:44', 12323, 'Motor de busqueda que categoriza resultados por links bla bla'), (3, 'Opera', '18-10-2015', '21:58:39', '18-10-2015', '21:58:39', 4324, 'Navegador de internerd, también es una disciplina musical, que, valga la redundancia, requiere de una brutal disciplina por parte de los interpretes.'), (4, 'Audi', '18-10-2015', '21:59:51', '18-10-2015', '21:59:51', 0, 'OOOO <-- Fabricante alemán de vehiculos de alta gama'), (5, 'The Simpsons', '18-10-2015', '22:0:44', '18-10-2015', '22:0:44', 0, 'Una sitcom que lleva veintipico de temporadas, si no la viste, se puede presumir que vivís bajo una piedra.'), (6, 'BMW', '18-10-2015', '22:1:18', '18-10-2015', '22:1:18', 98765, 'Fabricante alemán de autos de lujo'), (7, 'Yahoo', '18-10-2015', '22:1:56', '18-10-2015', '22:1:56', 53430, 'Expresión de alegría, o compañía gringolandesa.'), (8, 'Coca Cola', '18-10-2015', '22:3:19', '18-10-2015', '22:3:19', 200, 'Compañía que fabrica bebidas, y que no nos paga por ponerla en py-test :c'), (9, 'Pepsi', '18-10-2015', '22:3:40', '18-10-2015', '22:3:40', 340, 'Competidora de la anterior compañía mencionada, y que tampoco nos paga :c'), (10, 'GitHub', '18-10-2015', '22:4:42', '18-10-2015', '22:4:42', 563423, 'Plataforma de gestión de co0o0o0ó0digo'), (11, 'Johnny Walker', '18-10-2015', '22:5:34', '18-10-2015', '22:5:34', 4252, 'Whisky escocés'), (12, 'Mercury', '18-10-2015', '22:5:51', '18-10-2015', '22:5:51', 23423, 'Fabricante de motores para lanchas'), (13, 'Rolls Royce', '18-10-2015', '22:6:7', '18-10-2015', '22:6:7', 75832, 'Fabricante de motores para aviones, y autos de alta gama')]
+
+    input('--- Presione ENTER para ver el recordset tal cual es ---')
+    print(recordset)
+    input('--- Ahora presione ENTER para ver el recordset renderizado por Outfancy ---')
+
+    render_recordset(recordset)
