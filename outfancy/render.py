@@ -7,8 +7,8 @@ from . import widgets
 widgets.check_inicio()
 
 class Recordset:
-    '''Recordset permite renderizar en buen formato las salidas de un recordset, 
-    para esto es recomendable usar objeto.render(DATOS)'''
+    """Recordset permite renderizar en buen formato las salidas de un recordset, 
+    para esto es recomendable usar objeto.render(DATOS)"""
     def __init__(self):
         # Check_data especifica si debe chequearse o no la informacion del recordset. 
         self.check_data = True
@@ -23,7 +23,7 @@ class Recordset:
         # Se especifica si se registran o no errores en el log del programa.
         self.log_errores = True
         # El ancho minimo que puede tener una columna antes de que se deje de mostrar.
-        self.show_ancho_thresholding = 5
+        self.show_ancho_threshold = 5
 
     def set_check_data(self, x = True):
         self.check_data = x
@@ -43,8 +43,8 @@ class Recordset:
     def set_log_errores(self, x = True):
         self.log_errores = x
 
-    def set_show_ancho_thresholding(self, x = True):
-        self.show_ancho_thresholding = x
+    def set_show_ancho_threshold(self, x = True):
+        self.show_ancho_threshold = x
 
     def show_check_data(self):
         print(self.check_data)
@@ -64,10 +64,10 @@ class Recordset:
     def show_log_errores(self):
         print(self.log_errores)
 
-    def show_show_ancho_thresholding(self):
-        print(self.show_ancho_thresholding)
+    def show_show_ancho_threshold(self):
+        print(self.show_ancho_threshold)
 
-    def render(self, data = None, separador = None, lista_etiquetas = None, orden = None, lista_tipo_datos = None, cadena_prioridades = None):
+    def render(self, data = None, separador = None, lista_etiquetas = None, orden = None, lista_tipo_datos = None, lista_prioridades = None):
         """
         Render recibe seis (6) parametros, y se encarga de renderizar
         un recordset (respuestas a consultas SQL en bases de datos), de manera organizada.
@@ -80,7 +80,7 @@ class Recordset:
         orden: Permite modificar el orden en el cual se muestran las columnas, suprimiendo estas inclusive.
         lista_tipo_datos: Permite modificar el tipo de datos que el sistema de render asigna a una columna.
             Si no se especifica, el programa intentara averiguar que tipo de datos tiene cada columna.
-        cadena_prioridades: Permite modificar la prioridad que se le asigna a cada columna, si no se especifica
+        lista_prioridades: Permite modificar la prioridad que se le asigna a cada columna, si no se especifica
         el programa asignara prioridades en base a lista_tipo_datos.
         Si el espacio para mostrar las columnas no es suficiente, el programa podra suprimir columnas
         (iniciando por las de baja prioridad).
@@ -119,23 +119,34 @@ class Recordset:
         lista_tipo_datos = check_lista_tipo_datos_integrity(self.analyze_threshold, data, lista_tipo_datos)
         # --- Se reordena lista_tipo_datos --- #
         ordered_lista_tipo_datos = reordenar_lista_tipo_datos(lista_tipo_datos, orden)
+        # --- Se chequea la integridad de lista_prioridades, si no existe o es defectuosa, se intenta reconstruir --- #
+        lista_prioridades = check_lista_prioridades(ordered_lista_tipo_datos, lista_prioridades)
         ##########################
         # --- AREA DE RENDER --- #
         ##########################
         # --- Asigna el ancho para mostrar las columnas, si este no es provisto, intenta deducirlo --- #
-        ordered_lista_tipo_datos, cadena_prioridades, ancho = asign_ancho_columnas(self.show_ancho_thresholding, maximo, screen_x, ordered_lista_tipo_datos, cadena_prioridades, len(separador), orden)
+        anchos, orden = asign_ancho_columnas(lista_prioridades, self.show_ancho_threshold, maximo, screen_x, len(separador))
+        # --- Por 2da vez: Se reordena lista_tipo_datos --- #
+        ordered_lista_tipo_datos = reordenar_lista_tipo_datos(lista_tipo_datos, orden)
         # --- Genera las casillas que contienen los datos --- #
-        linea_cuadros = generar_cuadros_pantalla(self.max_y_cuadro_threshold, ordered_data, ancho, maximo, screen_y)
+        linea_cuadros = generar_cuadros_pantalla(self.max_y_cuadro_threshold, ordered_data, anchos, maximo, screen_y)
         # --- Genera el area de la pantalla que contiene el pre_render del recordset --- #
         pantalla = generar_pantalla(linea_cuadros, separador)
         # --- Chequea que la lista de etiquetas este en orden, si no es asi intenta deducirlas --- #
-        lista_etiquetas = check_lista_etiquetas(lista_etiquetas, lista_tipo_datos, ancho, orden, separador)
+        lista_etiquetas = check_lista_etiquetas(lista_etiquetas, lista_tipo_datos, anchos, orden, separador)
         ###############################
         # --- AREA DE POST-RENDER --- #
         ###############################
         # --- Lleva a cabo el post_render, uniendo el pre_render del recordset con los demas datos --- #
         return post_render(self.show_errores, self.log_errores, pantalla, lista_etiquetas, len(separador))
 
+    def render_vertical():
+        """Funcion en desarrollo."""
+        pass
+
+    def render_ficha():
+        """Funcion en desarrollo."""
+        pass
 
     def test(self):
         recordset = [(1, 'Feisbuk', '18-10-2015', '21:57:17', '18-10-2015', '21:57:17', 1234, 'Red social bla bla bla utilizada gente bla bla'), (2, 'Gugle', '18-10-2015', '21:57:44', '18-10-2015', '21:57:44', 12323, 'Motor de busqueda que categoriza resultados por links bla bla'), (3, 'Opera', '18-10-2015', '21:58:39', '18-10-2015', '21:58:39', 4324, 'Navegador de internerd, también es una disciplina musical, que, valga la redundancia, requiere de una brutal disciplina por parte de los interpretes.'), (4, 'Audi', '18-10-2015', '21:59:51', '18-10-2015', '21:59:51', 0, 'OOOO <-- Fabricante alemán de vehiculos de alta gama'), (5, 'The Simpsons', '18-10-2015', '22:0:44', '18-10-2015', '22:0:44', 0, 'Una sitcom que lleva veintipico de temporadas, si no la viste, se puede presumir que vivís bajo una piedra.'), (6, 'BMW', '18-10-2015', '22:1:18', '18-10-2015', '22:1:18', 98765, 'Fabricante alemán de autos de lujo'), (7, 'Yahoo', '18-10-2015', '22:1:56', '18-10-2015', '22:1:56', 53430, 'Expresión de alegría, o compañía gringolandesa.'), (8, 'Coca Cola', '18-10-2015', '22:3:19', '18-10-2015', '22:3:19', 200, 'Compañía que fabrica bebidas, y que no nos paga por ponerla en py-test :c'), (9, 'Pepsi', '18-10-2015', '22:3:40', '18-10-2015', '22:3:40', 340, 'Competidora de la anterior compañía mencionada, y que tampoco nos paga :c'), (10, 'GitHub', '18-10-2015', '22:4:42', '18-10-2015', '22:4:42', 563423, 'Plataforma de gestión de co0o0o0ó0digo'), (11, 'Johnny Walker', '18-10-2015', '22:5:34', '18-10-2015', '22:5:34', 4252, 'Whisky escocés'), (12, 'Mercury', '18-10-2015', '22:5:51', '18-10-2015', '22:5:51', 23423, 'Fabricante de motores para lanchas'), (13, 'Rolls Royce', '18-10-2015', '22:6:7', '18-10-2015', '22:6:7', 75832, 'Fabricante de motores para aviones, y autos de alta gama')]
@@ -143,6 +154,8 @@ class Recordset:
         print(recordset)
         input('--- Ahora presione ENTER para ver el recordset renderizado por Outfancy ---')
         print(self.render(recordset))
+
+
 
 #####################
 #                   #
@@ -166,16 +179,20 @@ def post_render(show_errores = True, log_errores = True, pantalla = None, lista_
     # Si lista_etiquetas no es provista, se asigna una cadena vacia.
     if lista_etiquetas == None:
         errores.append('Render > post_render: No se proveyo lista_etiquetas.')
-        lista_etiquetas = ''
+        lista_etiquetas = False
 
     # Variable que almacena la tabla renderizada.
     post_renderizado = ''
 
-    # Esta funcion se encarga de imprimir la pantalla junto con las etiquetas.
-    post_renderizado += '\x1b[1;33m' + lista_etiquetas + '\x1b[0;99m'+ pantalla + '\x1b[0;99m\n'
+    # Si lista_etiquetas no es False, se añade a post_renderizado.
+    if lista_etiquetas != False:
+        post_renderizado += '\x1b[1;33m' + lista_etiquetas + '\x1b[0;99m' + '\n'
+
+    # Se añade el render de la pantalla a post_renderizado.
+    post_renderizado += pantalla + '\x1b[0;99m'
     # Si en la configuracion se especifica que se debe mostrar errores.
     if show_errores and len(errores) > 0:
-        post_renderizado += '\n ' + ' ' * (len_separador - 1) + '\x1b[1;36mRender > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + '\x1b[0;91m\n'
+        post_renderizado += '\n' * 2 + ' ' + ' ' * (len_separador - 1) + '\x1b[1;36mRender > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + '\x1b[0;91m\n'
         for x in range(len(errores)): 
             post_renderizado += ' ' * len_separador + errores[x] + '\n'
         post_renderizado += '\x1b[0;99m'
@@ -186,8 +203,45 @@ def post_render(show_errores = True, log_errores = True, pantalla = None, lista_
 
     return post_renderizado
 
+
+# Esta funcion une las casillas intercalandoles el separador.
+def generar_pantalla(linea_cuadros = None, separador = None):
+    if linea_cuadros == None:
+        return 'Render > generar_pantalla: No se proveyo linea_cuadros.'
+
+    if separador == None:
+        errores.append('Render > generar_pantalla: No se proveyo separador.')
+        separador = ' '
+
+    pre_pantalla = ''
+    filas_de_la_tabla = len(linea_cuadros)
+    # --- Para cada tupla de linea_cuadros. --- #
+    for tupla in range(filas_de_la_tabla):
+        la_tupla = linea_cuadros[tupla]
+        if len(la_tupla) > 0:
+            ultima_linea_del_cuadro = False
+            alto_fila_in_tabla = len(la_tupla[0])
+            for linea in range(alto_fila_in_tabla):
+                # --- Para cada cuadro se retirara una linea --- #
+                for cuadro in la_tupla:
+                    pre_pantalla += separador + cuadro[linea]
+                    if cuadro == len(la_tupla):
+                        ultima_linea_del_cuadro = True
+
+                pre_pantalla += '\n'
+                # Se pone enter, exceptuando en la ultima linea que se confecciona. (CARACTERISTICA EN DESARROLLO).
+                #if tupla != filas_de_la_tabla - 1 and linea != alto_fila_in_tabla - 1 and ultima_linea_del_cuadro == False:
+                #    pre_pantalla += '\n'
+
+    return pre_pantalla
+
+
 # Esta funcion chequea que la lista de etiquetas este en orden, si no es asi intenta reconstruirla.
 def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho = None, orden = None, separador = None):
+    # Si lista_etiquetas es False, se retorna, ya que este valor tiene validez en otras partes del programa.
+    if lista_etiquetas == False:
+        return lista_etiquetas
+
     # Lista de elementos que deben intentar ser reconstruidos #
     to_rebuild = []
     # Si lista etiquetas es invalida, se reconstruye.
@@ -241,14 +295,14 @@ def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho
     if len(to_rebuild) > 0:
         errores.append('Render > check_lista_etiquetas: Fue necesario reconstruir lista_etiquetas.')
 
-    if orden == None or type(orden) != list:
+    if type(orden) != list:
         errores.append('Render > check_lista_etiquetas: No se proveyo orden o este es invalido.')
         ordered_lista_etiquetas = lista_etiquetas
     else:
         ordered_lista_etiquetas = []
         for elemento in orden:
             try:
-                ordered_lista_etiquetas.append(lista_etiquetas[int(elemento)])
+                ordered_lista_etiquetas.append(lista_etiquetas[elemento])
             except:
                 errores.append('Render > check_lista_etiquetas: Error al intentar reordenar las etiquetas.')
 
@@ -268,28 +322,6 @@ def check_lista_etiquetas(lista_etiquetas = None, lista_tipo_datos = None, ancho
 
     # Se retorna ordered_lista_etiquetas.
     return separador + separador.join(ordered_lista_etiquetas)
-
-
-# Esta funcion une las casillas intercalandoles el separador.
-def generar_pantalla(linea_cuadros = None, separador = None):
-    if linea_cuadros == None:
-        return 'Render > generar_pantalla: No se proveyo linea_cuadros.'
-
-    if separador == None:
-        errores.append('Render > generar_pantalla: No se proveyo separador.')
-        separador = ' '
-
-    pre_pantalla = ''
-    # --- Para cada tupla de linea_cuadros. --- #
-    for tupla in linea_cuadros:
-        if len(tupla) > 0:
-            for linea in range(len(tupla[0])):
-                pre_pantalla += '\n'
-                # --- Para cada cuadro se retirara una linea --- #
-                for cuadro in tupla:
-                    pre_pantalla += separador + cuadro[linea]
-
-    return pre_pantalla
 
 
 def generar_cuadros_pantalla(max_y_cuadro_threshold = 20, ordered_data = None, ancho = None, maximo = None, screen_y = None):
@@ -322,9 +354,11 @@ def generar_cuadros_pantalla(max_y_cuadro_threshold = 20, ordered_data = None, a
             if len(cuadro_a_recortar) == ancho[columna]:
                 cuadro.append(cuadro_a_recortar)
             # --- Mientras la longitud del cuadro sea mayor al ancho de la columna, este se recorta --- #
-            while len(cuadro_a_recortar) > ancho[columna]:
-                cuadro.append(cuadro_a_recortar[0:after])
-                cuadro_a_recortar = cuadro_a_recortar[after:]
+            if ancho[columna] > 0:
+                # Si ancho[columna] es igual o menor a 0, se recortara infinitamente.
+                while len(cuadro_a_recortar) > ancho[columna]:
+                    cuadro.append(cuadro_a_recortar[0:after])
+                    cuadro_a_recortar = cuadro_a_recortar[after:]
             # --- Si el contenido de cuadro a recortar es menor al ancho de la columna
             #     se rellena el faltante de espacios en blanco --- #
             if len(cuadro_a_recortar) < ancho[columna]:
@@ -354,110 +388,117 @@ def generar_cuadros_pantalla(max_y_cuadro_threshold = 20, ordered_data = None, a
     return linea_cuadros
 
 
-def asign_ancho_columnas(show_ancho_thresholding = 5, maximos = None, screen_x = None, ordered_lista_tipo_datos = None, cadena_prioridades = None, len_separador = 1, orden = None):
-    # Variable en la cual se guardara el ancho para cada columna.
-    anchos = []
+def asign_ancho_columnas(ordered_lista_prioridades = None, show_ancho_threshold = None, maximos = None, screen_x = None, len_separador = None):
 
-    # Chequea si se proveen datos sobre el tipo de datos sobre la salida de la base de datos.
-    # Estos deberian ser generados en check_lista_tipo_datos_integrity
-    # Sin tipo, los anchos se asignan por igual basandose en la longitud de la pantalla.
-    if ordered_lista_tipo_datos == None:
-        # Se emite un error alertando de la falta de este dato, y se frena la ejecucion de asign_ancho_columnas.
-        errores.append('Render > asign_ancho_columnas: ordered_lista_tipo_datos es None.')
-        return anchos
+    # Si ordered_lista_prioridades no fue provista, se emite una excepcion.
+    if ordered_lista_prioridades == None:
+        raise Exception('Render > asign_ancho_columnas: ordered_lista_prioridades es None.')
 
-    # Chequea si cadena_prioridades es None, si es asi, intenta detectarla.
-    if cadena_prioridades == None:
-        cadena_prioridades = check_cadena_prioridades(ordered_lista_tipo_datos)
-
-    # Si screen_x es None, asigna 80, una medida muy comun, y emite un error.
-    if screen_x == None or type(screen_x) != int:
+    # Si screen_x es None o es menor a 1, asigna 80, una medida muy comun, y emite un error.
+    if type(screen_x) != int or screen_x < 1:
         screen_x = 80
-        errores.append('Render > asign_ancho_columnas: No se proveyo screen_x')
+        errores.append('Render > asign_ancho_columnas: No se proveyo screen_x o este es invalido.')
 
-    # --- Estando ordered_lista_tipo_datos presente: --- #
-    # Se chequea si se proveyeron datos sobre los maximos, estos deberian ser generados en check_maximos.
-    if maximos == None:
-        errores.append('Render > asign_ancho_columnas: No se proveyo maximos.')
-        # Si no se provee este dato, se asignara el mismo ancho para todas las columnas.
-        ancho = (screen_x - len_separador * (len(ordered_lista_tipo_datos) + 1)) / len(ordered_lista_tipo_datos)
-        for columna in range(len(ordered_lista_tipo_datos)):
-            anchos.append(ancho)
-        return anchos
+    # Si show_ancho_threshold no es provisto o es menor a 1, lo asigna a 5 y emite un error.
+    if type(show_ancho_threshold) != int or show_ancho_threshold < 1:
+        show_ancho_threshold = 5
+        errores.append('Render > asign_ancho_columnas: No se proveyo show_ancho_threshold o este es invalido.')
+
+    # Si len_separador no es provista o es menor a 0 se restaura a 1 y se emite un error.
+    if type(len_separador) != int or len_separador < 0:
+        len_separador = 1
+        errores.append('Render > asign_ancho_columnas: No se proveyo len_separador o este es invalido.')
+
+    cantidad_columnas = len(ordered_lista_prioridades)
+
+    # Si maximos no fue provisto o es invalido se emite un error y se reonstruye.
+    if type(maximos) != list:
+        errores.append('Render > asign_ancho_columnas: No se proveyo maximos o este es invalido.')
+        maximos = []
+        ancho_medio = x_espacio_pantalla / cantidad_columnas
+        # Los maximos para cada columna son iguales al ancho_medio del x_espacio_pantalla.
+        for x in range(cantidad_columnas):
+            maximos.append(ancho_medio)
+
+    # Se crea el orden que toma como base asign_ancho_columnas a la hora de comunicar los cambios hechos en las variables generales.
+    orden = []
+    for x in range(cantidad_columnas):
+        orden.append(x)
 
     # Obtiene el ancho medio de cada columna en base a espacio_restante.
     def get_ancho_medio():
-        return int(espacio_restante / cantidad_columnas)
+        if cantidad_columnas == 0:
+            return 0
+        else:
+            return int(espacio_restante / cantidad_columnas)
 
-    need_rebuild = True
-    while need_rebuild:
-        # --- Estando ordered_lista_tipo_datos y maximos presente: --- #
+    no_finalizado = True
+    while no_finalizado:
         # Se desprovee a screen_x de los separadores, para obtener un dato claro sobre el espacio necesario.
-        ancho_pantalla = screen_x - len_separador * (len(ordered_lista_tipo_datos) + 1)
-        # Espacio que queda vacio en pantalla, inicialmente es toda la pantalla, osea, ancho_pantalla.
-        espacio_restante = ancho_pantalla
-        cantidad_columnas = len(ordered_lista_tipo_datos)
-
+        x_espacio_pantalla = screen_x - len_separador * cantidad_columnas
+        # Lista vacia que contendra los anchos.
         anchos = []
-        # Se genera una cadena de anchos rellena de ceros.
-        for columna in range(cantidad_columnas):
-            anchos.append('0')
+        # Lista para registrar maximos menores a show_ancho_thresholding. 
+        maximos_menor_a_show_ancho_thresholding = []
 
-        # Para cada columna de la tabla se define el ancho de la columna.
-        for columna in cadena_prioridades:
-            # Se convierte columna a int, ya que en cadena_prioridades es string.
-            columna = int(columna)
-            # Se obtiene el ancho medio del espacio de las columnas disponibles
+        # espacio_restante se inicializa igual al espacio disponible en pantalla, a medida que se vaya usando se acortara.
+        espacio_restante = x_espacio_pantalla
+
+        for x in range(cantidad_columnas):
+            anchos.append(0)
+
+        # Para cada elemento de lista prioridades.
+        # Notar que se asigna espacio iniciando por la mayor prioridad.
+        for columna in ordered_lista_prioridades:
+            # Se obtiene el ancho medio del espacio de las columnas disponibles.
             ancho_medio = get_ancho_medio()
 
-            # Si el contenido de la columna es menor al ancho medio se asigna ese valor.
+            # Si maximo[columna] es menor al ancho medio se asigna ese valor.
             if maximos[columna] < ancho_medio:
                 anchos[columna] = maximos[columna]
-            # Si es mayor el ancho pasa a ser el ancho medio
+                if maximos[columna] < show_ancho_threshold:
+                    maximos_menor_a_show_ancho_thresholding.append(columna)
+            # Si es mayor el ancho pasa a ser igual a ancho_medio.
             else:
                 anchos[columna] = ancho_medio
 
             # Se recalcula espacio_restante.
-            espacio_restante -= int(anchos[columna])
+            espacio_restante -= anchos[columna]
+            # Se resta una columna.
             cantidad_columnas -= 1
 
-        need_rebuild = False
-        # Se revisan los anchos, en busqueda de elementos menores a show_ancho_thresholding.
-        para_suprimir = ''
-        for columna in range(len(anchos)):
-            if anchos[columna] < show_ancho_thresholding:
-                # or anchos[columna] < 0, se usa para evitar errores en pantallas en extremo finas.
-                if ordered_lista_tipo_datos[columna] not in ['id', 'value', 'name'] or anchos[columna] < 0:
-                    para_suprimir += str(columna)
-                    need_rebuild = True
+        # Se da por finalizado el proceso de reparto, aun asi, el chequeo puede volver a poner no_finalizado en True.
+        no_finalizado = False
 
-        # Si se detecto la necesidad de reconstruccion.
-        if need_rebuild:
-            # --- Se regenera la variable orden --- #
-            # Si el orden es None, se genera un orden basado en ordered_lista_tipo_datos, del tipo 012..N
-            if orden == None:
-                orden = ''
-                for elemento in range(len(ordered_lista_tipo_datos)):
-                    orden += str(elemento)
+        len_anchos = len(anchos)
+        if len_anchos > 1:
+            # Se chequea si hay elementos bajo show_ancho_threshold, si es asi, no_finalizado = True.
+            for columna in range(len_anchos):
+                if anchos[columna] < show_ancho_threshold:
+                    if columna not in maximos_menor_a_show_ancho_thresholding:
+                        no_finalizado = True
 
-            # Se suprimen los elementos a suprimir en el nuevo orden.
-            new_orden = ''
-            for x in range(len(orden)):
-                if orden[x] not in para_suprimir:
-                    new_orden += orden[x]
+        if no_finalizado:
+            # Se determina el indice a eliminar (indicado por el ultimo elemento de ordered_lista_prioridades).
+            indice_a_eliminar = ordered_lista_prioridades[cantidad_columnas - 1]
+            # Al orden se le remueve el indice a eliminar.
+            orden.pop(indice_a_eliminar)
+            # A maximos se le remueve el indice a eliminar
+            maximos.pop(indice_a_eliminar)
+            # A ordered_lista_prioridades se le remueve el ultimo elemento (la menor prioridad), y se lo comprime 
+            #     (para asegurar la integridad de las columnas a las cuales apunta la lista).
+            ordered_lista_prioridades = compress_lista(ordered_lista_prioridades[0:cantidad_columnas - 1])
+            # Se recalcula cantidad_columnas
+            cantidad_columnas = len(ordered_lista_prioridades)
 
-            # --- Se analizan nuevamente parametros en la tabla --- #
-            ordered_lista_tipo_datos = reordenar_lista_tipo_datos(ordered_lista_tipo_datos, new_orden)
-            cadena_prioridades = check_cadena_prioridades(ordered_lista_tipo_datos, None, True)
-
-    return ordered_lista_tipo_datos, cadena_prioridades, anchos
+    return anchos, orden
 
 
-def check_cadena_prioridades(ordered_lista_tipo_datos = None, cadena_prioridades = None, internal = False):
+def check_lista_prioridades(ordered_lista_tipo_datos = None, lista_prioridades = None, internal = False):
     # Esta funcion se encarga de chequear la integridad de las prioridades ingresadas.
     # En caso de ser deficientes (o ausentes), intenta reconstruirlas.
     if ordered_lista_tipo_datos == None:
-        return 'Render: check_cadena_prioridades: No se proveyo ordered_lista_tipo_datos.'
+        raise Exception('Render: check_lista_prioridades: No se proveyo ordered_lista_tipo_datos.')
 
     ##############################
     #   CHEQUEOS DE INTEGRIDAD   #
@@ -465,92 +506,99 @@ def check_cadena_prioridades(ordered_lista_tipo_datos = None, cadena_prioridades
     # Estado que permite saber si se necesita o no reconstruccion.
     reconstruir = False
 
-    # Si cadena_prioridades es None.
-    if cadena_prioridades == None:
+    # Si lista_prioridades es None.
+    if type(lista_prioridades) != list:
         reconstruir = True
         # internal es usada por las demas funciones para generar prioridades en modo silencioso.
         if internal == False:
-            errores.append('Render > check_cadena_prioridades: cadena_prioridades no fue especificada.')
+            errores.append('Render > check_lista_prioridades: No se proveyo lista_prioridades o esta es invalida.')
     else:
-        # Longitud de cadena_prioridades.
-        len_cadena_prioridades = len(cadena_prioridades)
+        # Longitud de lista_prioridades.
+        len_lista_prioridades = len(lista_prioridades)
 
     # Longitud de lista_tipo datos.
     len_ordered_lista_tipo_datos = len(ordered_lista_tipo_datos)
 
-    # Si el texto de cadena_prioridades es numerico:
-    if widgets.check_isnumerico(cadena_prioridades):
-        # En caso de que la lista de prioridades sea mayor a ordered_lista_tipo_datos, se envia a reconstrir la lista.
-        if len_cadena_prioridades > len_ordered_lista_tipo_datos:
-            errores.append('Render > check_cadena_prioridades: cadena_prioridades es muy larga.')
+    # Si lista_prioridades no es None
+    if lista_prioridades != None:
+        # Si cada elemento de lista_prioridades es numerico:
+        for x in lista_prioridades:
+            if type(x) != int:
+                reconstruir = True
+
+        # En caso de que len_lista de prioridades sea mayor a ordered_lista_tipo_datos, reconstruir = True.
+        if len_lista_prioridades > len_ordered_lista_tipo_datos:
+            errores.append('Render > check_lista_prioridades: lista_prioridades es muy larga.')
             reconstruir = True
 
-        # En caso de ser menor, se reconstruye el faltante.
-        if len_cadena_prioridades < len_ordered_lista_tipo_datos:
-            errores.append('Render > check_cadena_prioridades: cadena_prioridades es muy corta.')
-            for x in range(len_cadsena_prioridades, len_ordered_lista_tipo_datos):
-                reconstruir = True
+        # En caso de que len_lista de prioridades sea mayor a ordered_lista_tipo_datos, reconstruir = True.
+        if len_lista_prioridades < len_ordered_lista_tipo_datos:
+            errores.append('Render > check_lista_prioridades: lista_prioridades es muy corta.')
+            reconstruir = True
 
         # Se chequea la integridad de los elementos.
-        for x in range(len_cadena_prioridades):
-            errores.append('Render > check_cadena_prioridades: cadena_prioridades no es integra.')
-            if int(cadena_prioridades[x]) > len_ordered_lista_tipo_datos or int(cadena_prioridades[x]) < 0:
+        for x in lista_prioridades:
+            if x >= len_ordered_lista_tipo_datos or x < 0:
                 reconstruir = True
+            if reconstruir:
+                errores.append('Render > check_lista_prioridades: lista_prioridades no es integra.')
 
     # Si se necesita reconstruir
     if reconstruir:
-        # Se inicializa una cadena_prioridades vacia.
-        cadena_prioridades = ''
+
+        # Se inicializa una lista_prioridades vacia.
+        lista_prioridades = []
 
         # Se intenta identificar elementos Id y Value, a los que se les asigna maxima prioridad.
         for elemento in range(len_ordered_lista_tipo_datos):
             if ordered_lista_tipo_datos[elemento] in ['id', 'value']:
-                cadena_prioridades += str(elemento)
+                lista_prioridades.append(elemento)
 
         # Se intenta identificar elementos name, asignandole su prioridad.
         for elemento in range(len_ordered_lista_tipo_datos):
             if ordered_lista_tipo_datos[elemento] == 'name':
-                cadena_prioridades += str(elemento)
+                lista_prioridades.append(elemento)
 
         # Se intenta identificar elementos date, asignandole su prioridad.
         for elemento in range(len_ordered_lista_tipo_datos):
             if ordered_lista_tipo_datos[elemento] == 'date':
-                cadena_prioridades += str(elemento)
+                lista_prioridades.append(elemento)
 
         # Se intenta identificar elementos time, asignandole su prioridad.
         for elemento in range(len_ordered_lista_tipo_datos):
             if ordered_lista_tipo_datos[elemento] == 'time':
-                cadena_prioridades += str(elemento)
+                lista_prioridades.append(elemento)
 
         # Se intenta identificar elementos desc, asignandole su prioridad.
         for elemento in range(len_ordered_lista_tipo_datos):
             if ordered_lista_tipo_datos[elemento] == 'desc':
-                cadena_prioridades += str(elemento)
+                lista_prioridades.append(elemento)
 
         # Si hay elementos sin identificar en ordered_lista_tipo_datos, se rellena el faltante con prioridades minimas.
-        if len(cadena_prioridades) < len_ordered_lista_tipo_datos:
-            errores.append('Render > check_cadena_prioridades: ordered_lista_tipo_datos contiene elementos no identificables')
-            for elemento in range(len_cadena_prioridades, len_ordered_lista_tipo_datos):
-                cadena_prioridades += str(elemento)
+        if len(lista_prioridades) < len_ordered_lista_tipo_datos:
+            errores.append('Render > check_lista_prioridades: ordered_lista_tipo_datos contiene elementos no identificables')
+            for elemento in range(len_lista_prioridades, len_ordered_lista_tipo_datos):
+                lista_prioridades.append(elemento)
 
-    return cadena_prioridades
+    return lista_prioridades
 
 
 # Esta funcion reordena lista_tipo_datos en base al orden provisto.
 def reordenar_lista_tipo_datos(lista_tipo_datos = None, orden = None):
     # Se chequea si se proveyeron datos.
     if lista_tipo_datos == None:
-        return 'Render > reordenar_lista_tipo_datos: No se proveyeron datos.'
+        raise Exception('Render > reordenar_lista_tipo_datos: No se proveyo lista_tipo_datos.')
 
     # Si no se provee orden, o este no es list, se retorna lista_tipo_datos sin mas.
-    if orden == None or type(orden) != list:
+    if type(orden) != list:
+        errores.append('Render > reordenar_lista_tipo_datos: No se proveyo orden o este no es valido.')
         return lista_tipo_datos
     else:
         ordered_lista_tipo_datos = []
         # Se genera la tupla reordenada.
         for elemento in orden:
             try:
-                ordered_lista_tipo_datos.append(lista_tipo_datos[int(elemento)])
+                ordered_lista_tipo_datos.append(lista_tipo_datos[elemento])
             except:
                 errores.append('Render > reordenar_lista_tipo_datos: Error al intentar reordenar lista_tipo_datos.')
                 return lista_tipo_datos
@@ -623,7 +671,7 @@ def check_lista_tipo_datos_integrity(analyze_threshold = 10, data = None, lista_
         # Si la lista de tipo de datos tiene mas elementos que columnas los datos, la lista se recorta.
         if len(lista_tipo_datos) > len(data[0]):
             lista_tipo_datos = lista_tipo_datos[0:len(data[0])]
-            errores.append('Render > check_lista_tipo_datos_integrity: Fue necesario acortar lista_tipo_datos.')
+            errores.append('Render > check_lista_tipo_datos_integrity: Se acorto lista_tipo_datos.')
         # Si es menor, se agrega None a lista_tipo_datos.
         elif len(lista_tipo_datos) < len(data[0]):
             errores.append('Render > check_lista_tipo_datos_integrity: lista_tipo_datos es muy corta.')
@@ -761,7 +809,7 @@ def reordenar_datos(data = None, orden = None):
         return 'Render > reordenar_datos: No se proveyeron datos.'
     else:
         # Chequea si la entrada a reordenar_datos es la correcta
-        if orden == None or type(orden) != list:
+        if type(orden) != list:
             ordered_data = data
         else:
             ordered_data = []
@@ -770,7 +818,7 @@ def reordenar_datos(data = None, orden = None):
                 # Se genera la tupla reordenada.
                 for elemento in orden:
                     try:
-                        new_tupla.append(tupla[int(elemento)])
+                        new_tupla.append(tupla[elemento])
                     except:
                         errores.append('Render > reordenar_datos: Error al intentar reordenar los datos.')
                         return data
@@ -780,7 +828,7 @@ def reordenar_datos(data = None, orden = None):
 
 
 def check_separador(separador = None, screen_x = 80):
-    if separador == None or type(separador) != str:
+    if type(separador) != str:
         return ' '
     elif len(separador) > screen_x:
         errores.append('Render > check_separador: El separador provisto es invalido')
@@ -795,7 +843,7 @@ def check_orden(data = None, orden = None):
         return []
 
     # --- Se chequea la validez del orden provisto en base a sus propiedades --- #
-    if orden == None or type(orden) != list:
+    if type(orden) != list:
         errores.append('Render > check_orden: El orden es invalido o no fue provisto.')
         if len(data) > 0:
             orden = []
@@ -823,7 +871,7 @@ def check_orden(data = None, orden = None):
         return []
 
     for x in to_remove:
-        orden.remove(x)
+        orden.pop(x)
 
     return orden
 
@@ -847,3 +895,26 @@ def check_maximos(ordered_data = None):
         return maximo
     else:
         errores.append('Render > check_maximos: Error al intentar chequear el maximo.')
+
+
+def compress_lista(lista_a_comprimir):
+    #Si lista_a_comprimir esta vacia se retorna la misma lista, ya que es imposible comprimir eso.
+    if lista_a_comprimir == []:
+        return lista_a_comprimir
+
+    lista_comprimida = []
+    # Se rellena de ceros la lista lista_comprimida, de la misma longitud que lista_a_comprimir.
+    for x in range(len(lista_a_comprimir)):
+        lista_comprimida.append(0)
+
+    # Num con el que se rellenara lista_comprimida.
+    num = 0
+    # Se recorren los numeros del cero al maximo presente la lista lista_a_comprimir.
+    for x in range(max(lista_a_comprimir) + 1):
+        # Si el numero que se esta recorriendo esta en la lista lista_a_comprimir.
+        numero = min(lista_a_comprimir) + x
+        if numero in lista_a_comprimir:
+            lista_comprimida[lista_a_comprimir.index(numero)] = num
+            num += 1
+
+    return lista_comprimida
