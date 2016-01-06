@@ -10,7 +10,7 @@ setup(
     author = 'Carlos A. Planchon',
     author_email = 'urucrafters@gmail.com',
     url = 'https://github.com/carlosplanchon/outfancy',
-    download_url = 'https://github.com/carlosplanchon/outfancy/archive/0.2.3.tar.gz',
+    download_url = 'https://github.com/carlosplanchon/outfancy/archive/0.3.1.tar.gz',
     keywords = ['rendering', 'graphical', 'terminal'],
     classifiers = [],
 )
