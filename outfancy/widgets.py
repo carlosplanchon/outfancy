@@ -28,6 +28,7 @@
 #    fecha_actual()                         - Devuelve la fecha actual.                             #
 #    hora_actual()                          - Devuelve la hora actual.                              #
 #    medir_dimensiones()                    - Mide los caracteres que caben en pantalla.            #
+#    compress_lista()                       - Comprime una lista, Ej: [1,6,4] pasa a ser [0,2,1].   #
 #                                                                                                   #
 #####################################################################################################
 
@@ -136,3 +137,26 @@ def medir_dimensiones():
     if not cr:
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
     return int(cr[1]), int(cr[0])
+
+
+def compress_lista(lista_a_comprimir):
+    #Si lista_a_comprimir esta vacia se retorna la misma lista, ya que es imposible comprimir eso.
+    if lista_a_comprimir == []:
+        return lista_a_comprimir
+
+    lista_comprimida = []
+    # Se rellena de ceros la lista lista_comprimida, de la misma longitud que lista_a_comprimir.
+    for x in range(len(lista_a_comprimir)):
+        lista_comprimida.append(0)
+
+    # Num con el que se rellenara lista_comprimida.
+    num = 0
+    # Se recorren los numeros del cero al maximo presente la lista lista_a_comprimir.
+    for x in range(max(lista_a_comprimir) + 1):
+        # Si el numero que se esta recorriendo esta en la lista lista_a_comprimir.
+        numero = min(lista_a_comprimir) + x
+        if numero in lista_a_comprimir:
+            lista_comprimida[lista_a_comprimir.index(numero)] = num
+            num += 1
+
+    return lista_comprimida
