@@ -4,6 +4,7 @@
 from . import widgets
 
 letras = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ'
+letras_minusculas = 'abcdefghijklmnñopqrstuvwxyz'
 
 # Chequeo inicial.
 widgets.check_inicio()
@@ -32,9 +33,9 @@ class Recordset:
 
         '''Opciones'''
         # Con esta opcion los errores se muestran en pantalla luego de la impresion.
-        self.show_errores = True
+        self.show_errores = False
         # Se especifica si se registran o no errores en el log del programa.
-        self.log_errores = True
+        self.log_errores = False
         # Se especifica si deben mostrarse o no las etiquetas sobre la tabla.
         self.show_etiquetas = True
 
@@ -212,18 +213,18 @@ class Recordset:
 
         error = False
         # Se chequea que el dato enviado sea una lista.
-        if type(data) != list:
+        if not isinstance(data, list):
             error = True
         else:
             if len(data) > 0:
                 # Se chequea que, dentro de la lista, los elementos sean listas.
                 for tupla in data:
-                    if type(tupla) != tuple:
+                    if not isinstance(tupla, tuple):
                         error = True
                     # Se chequea que los elementos de las tuplas no sean listas o bool.
                     try:
                         for elemento in tupla:
-                            if type(elemento) == list or type(elemento) == bool:
+                            if isinstance(elemento, (list, bool)):
                                 error = True
                     except:
                         error = True
@@ -245,7 +246,7 @@ class Recordset:
 
 
     def check_separador(self, separador = None, screen_x = 80):
-        if type(separador) != str:
+        if not isinstance(separador, str):
             return ' '
         elif len(separador) > screen_x:
             errores.append('Recordset > Render > check_separador: El separador provisto es invalido')
@@ -260,7 +261,7 @@ class Recordset:
             return []
 
         # --- Se chequea la validez del orden provisto en base a sus propiedades --- #
-        if type(orden) != list:
+        if not isinstance(orden, list):
             errores.append('Recordset > Render > check_orden: El orden es invalido o no fue provisto.')
             if len(data) > 0:
                 orden = []
@@ -300,7 +301,7 @@ class Recordset:
             return 'Recordset > Render > reordenar_datos: No se proveyeron datos.'
         else:
             # Chequea si la entrada a reordenar_datos es la correcta
-            if type(orden) != list:
+            if not isinstance(orden, list):
                 ordered_data = data
             else:
                 ordered_data = []
@@ -358,7 +359,7 @@ class Recordset:
         # Se chequea si hay tuplas en los datos provistos.
         if len(data) > 0:
             # Si la entrada para lista_tipo_datos es invalida, se preparan datos para reconstruirla.
-            if type(lista_tipo_datos) != list:
+            if not isinstance(lista_tipo_datos, list):
                 lista_tipo_datos = []
                 for x in range(len(data[0])):
                     lista_tipo_datos.append(None)
@@ -505,7 +506,7 @@ class Recordset:
             raise Exception('Recordset > Render > reordenar_lista_tipo_datos: No se proveyo lista_tipo_datos.')
 
         # Si no se provee orden, o este no es list, se retorna lista_tipo_datos sin mas.
-        if type(orden) != list:
+        if not isinstance(orden, list):
             errores.append('Recordset > Render > reordenar_lista_tipo_datos: No se proveyo orden o este no es valido.')
             return lista_tipo_datos
         else:
@@ -543,7 +544,7 @@ class Recordset:
         reconstruir = False
 
         # Si lista_prioridades es None.
-        if type(lista_prioridades) != list:
+        if not isinstance(lista_prioridades, list):
             reconstruir = True
             # internal es usada por las demas funciones para generar prioridades en modo silencioso.
             if internal == False:
@@ -556,7 +557,7 @@ class Recordset:
             if lista_prioridades != None:
                 # Si un elemento de lista_prioridades no es numerico, reconstruir es True.
                 for x in lista_prioridades:
-                    if type(x) != int:
+                    if not isinstance(x, int):
                         reconstruir = True
 
             # En caso de que len_lista de prioridades sea mayor a ordered_lista_tipo_datos, reconstruir = True.
@@ -618,24 +619,24 @@ class Recordset:
 
     def asign_ancho_columnas(self, anchos = None, ordered_lista_prioridades = False, maximos = None, screen_x = None, len_separador = None, len_orden = None):
         # Si len_separador no es provista o es menor a 0 se restaura a 1 y se emite un error.
-        if type(len_separador) != int or len_separador < 0:
+        if not isinstance(len_separador, int) or len_separador < 0:
             len_separador = 1
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo len_separador o este es invalido.')
 
         # Si no se provee len_orden ni ordered_lista_prioridades.
-        if len_orden == None and maximos == None and type(ordered_lista_prioridades) != list:
+        if len_orden == None and maximos == None and not isinstance(ordered_lista_prioridades, list):
             raise Exception('Recordset > Render > asign_ancho_columnas: No se proveyo ordered_lista_prioridades ni len_orden ni maximos.')
 
         # Si len_orden no es provisto o es menor a 0 se restaura a 1 y se emite un error.
-        if type(len_orden) != int or len_orden < 0:
+        if not isinstance(len_orden, int) or len_orden < 0:
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo len_orden o este es invalido.')
 
         # Se intenta reconstruir len_orden a partir de ordered_lista_prioridades.
-        if len_orden == None and type(ordered_lista_prioridades) == list:
+        if len_orden == None and isinstance(ordered_lista_prioridades, list):
             len_orden = len(ordered_lista_prioridades)
 
         # Se intenta reconstruir len_orden a partir de maximos.
-        if len_orden == None and type(maximos) == list:
+        if len_orden == None and isinstance(maximos, list):
             len_orden = len(maximos)
 
         # Obtiene el ancho medio de cada columna en base a espacio_restante.
@@ -658,10 +659,10 @@ class Recordset:
         a_reconstruir = False
         longitud_total_elementos = 0
         # Si el elemento es una lista.
-        if type(anchos) == list:
+        if isinstance(anchos, list):
             # Se chequea que cada elemento sea numerico, y que su suma no sea mayor al espacio disponible.
             for elemento in anchos:
-                if type(elemento) == int:
+                if isinstance(elemento, int):
                     if elemento > 0:
                         longitud_total_elementos += elemento
                     else:
@@ -680,18 +681,18 @@ class Recordset:
             return anchos, orden
 
         # Si screen_x es None o es menor a 1, asigna 80, una medida muy comun, y emite un error.
-        if type(screen_x) != int or screen_x < 1:
+        if not isinstance(screen_x, int) or screen_x < 1:
             screen_x = 80
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo screen_x o este es invalido.')
 
         # Si show_ancho_threshold no es provisto o es menor a 1, lo asigna a 5 y emite un error.
-        if type(self.show_ancho_threshold) != int or self.show_ancho_threshold < 1:
+        if not isinstance(self.show_ancho_threshold, int) or self.show_ancho_threshold < 1:
             self.show_ancho_threshold = 5
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo show_ancho_threshold o este es invalido.')
 
         # Si ordered_lista_prioridades == False, se asigna el mismo ancho a todas las columnas en base a len(orden).
         # Si maximos no fue provisto o es invalido se emite un error y se reconstruye.
-        if type(maximos) != list or ordered_lista_prioridades == False or anchos == False:
+        if not isinstance(maximos, list) or ordered_lista_prioridades == False or anchos == False:
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo maximos o este es invalido.')
             maximos = []
 
@@ -715,7 +716,7 @@ class Recordset:
                 maximos.append(ancho_medio)
 
         # Se chequea lista_prioridades.
-        if type(ordered_lista_prioridades) == bool or ordered_lista_prioridades == None:
+        if isinstance(ordered_lista_prioridades, bool) or ordered_lista_prioridades == None:
             ordered_lista_prioridades = []
             for x in range(len_orden):
                 ordered_lista_prioridades.append(x)       
@@ -887,14 +888,14 @@ class Recordset:
         # Lista de elementos que deben intentar ser reconstruidos #
         to_rebuild = []
         # Si lista etiquetas es invalida, se reconstruye.
-        if type(lista_etiquetas) != list:
+        if not isinstance(lista_etiquetas, list):
             errores.append('Recordset > Render > check_lista_etiquetas: lista_etiquetas no fue provista o es invalida.')
             lista_etiquetas = []
             for x in range(len(lista_tipo_datos)):
                 lista_etiquetas.append(None)
 
         for x in range(len(lista_etiquetas)):
-            if type(lista_etiquetas[x]) != str or lista_etiquetas[x] == None:
+            if not isinstance(lista_etiquetas[x], str) or lista_etiquetas[x] == None:
                 to_rebuild.append(x)
                 lista_etiquetas[x] = None
 
@@ -937,7 +938,7 @@ class Recordset:
         if len(to_rebuild) > 0:
             errores.append('Recordset > Render > check_lista_etiquetas: Fue necesario reconstruir lista_etiquetas.')
 
-        if type(orden) != list:
+        if not isinstance(orden, list):
             errores.append('Recordset > Render > check_lista_etiquetas: No se proveyo orden o este es invalido.')
             ordered_lista_etiquetas = lista_etiquetas
         else:
@@ -1075,10 +1076,10 @@ class Oneline:
         if data == None:
             return '--- Oneline > Render: No se han recibido datos para imprimir --- '
         else:
-            if type(data) in [list, tuple]:
+            if isinstance(data, (list, tuple)):
                 if len(data) > 0:
                     # Si el contenido del primero elemento de los datos no es una tupla.
-                    if type(data[0]) != tuple:
+                    if not isinstance(data[0], tuple):
                         # Se insertan los datos convertidos a tupla en una lista vacia.
                         new_data = []
                         new_data.append(tuple(data))
@@ -1089,3 +1090,235 @@ class Oneline:
 
             # Se renderizan los datos preparados. (Hay que tener en cuenta que Recordset aplicara sus propios chequeos).
             return self.renderizador.render(new_data, separador, False, orden, None, lista_prioridades, anchos)
+
+
+
+class Grafica:
+    """
+    Funcion en desarrollo.
+    Inspirarse en graficas de Gnumeric.
+    """
+    def __init__(self):
+        self.max_heigth_margin_down = 5
+        self.max_width_margin_left = 10 
+
+    def area(self, tabla, etiquetas_x):
+        pass
+
+    def barras(self, tabla):
+        pass
+
+    def columnas(self, tabla):
+        pass
+
+    def linea(self, tabla = None, etiquetas_x = None):
+        # Se lleva a cabo el chequeo de datos.
+        if not self.check_data_integrity(tabla):
+            return '--- Grafica > Linea > Los datos ingresados son invalidos. ---'
+
+        ##############################
+        # --- AREA DE PRE-RENDER --- #
+        ##############################
+        # --- Se analizan las dimensiones de la pantalla --- #
+        self.screen_x, self.screen_y = widgets.medir_dimensiones()
+        # --- Se obtiene el rango en el que opera la tabla --- #
+        self.minimo, self.maximo, self.rango = self.get_rango(tabla)
+        # --- Se asignan las letras para cada elemento de la tabla --- #
+        self.letras_asignadas = self.asign_letras(tabla)
+
+        print('--- DEVELOPMENT ---')
+        print('screen_x, screen_y', screen_x, screen_y)
+        print('minimo', minimo, 'maximo', maximo, 'rango', rango)
+        print('letras_asignadas', letras_asignadas)
+
+
+        
+        '''
+            Renderizar.
+            Como?
+
+            - Se analizan los datos para obtener el rango numerico de operacion.
+                Como? (Buscando el maximo y el minimo numero entre TODOS los elementos de la tabla).
+            - Se asignan letras de relleno para cada elemento.
+            - Se determinan los margenes y espacios necesarios para representar los elementos y las etiquetas.
+            - Se determina el lugar de paso de la linea.
+            - Se renderiza la pre_tabla.
+            - Se post_renderiza la tabla.
+        '''
+
+    def torta(self, linea):
+        pass
+
+    def anillo(self, tabla):
+        pass
+
+    def dropbar(self, linea):
+        pass
+
+
+    def test(self):
+        # Funcion de demostracion.
+        tabla = [(100, 200, 150), (200, 160, 300), (230, 170, 280)]
+        input('--- Presione ENTER para ver la tabla tal cual es ---')
+        print(tabla)
+        input('--- Ahora presione ENTER para ver la tabla renderizada por Outfancy ---')
+        print('--- GRAFICO DE LINEAS ---')
+        print(self.linea(tabla))
+
+    def check_data_integrity(self, tabla):
+        error = False
+        # Se chequean los datos de la tabla.
+        if isinstance(tabla, list):
+            len_fila = len(tabla[0])
+            # Se chequean las filas de la tabla.
+            for fila in tabla:
+                if isinstance(fila, tuple):
+                    # Si la longitud de la fila es distinta a la longitud medida inicialmente.
+                    if len(fila) != len_fila:
+                        error = True
+                    # Para cada elemento de las filas.
+                    for elemento in fila:
+                        # El elemento es valido si es un entero o es nulo.
+                        if not isinstance(elemento, int) or elemento != None:
+                            error = True
+                else:
+                    error = True
+        else:
+            error = True
+
+        return error
+
+
+    def get_rango(self, tabla):
+        # Se obtiene el valor maximo existente en la tabla.
+        maximo = max(max(tabla))
+        # Se obtiene el valor minimo existente en la tabla.
+        minimo = min(min(tabla))
+        # Se calcula el rango de valores que la tabla tiene.
+        rango = maximo - minimo
+
+        return minimo, maximo, rango
+
+
+    def asign_letras(self, tabla):
+        # Si la tabla tiene elementos.
+        letras_asignadas = []
+        if len(tabla) > 0:
+            # A cada entidad a representar en la grafica se le asigna una letra.
+            for elemento in range(len(tabla[0])):
+                letras_asignadas.append(letras_minusculas[elemento])
+
+        return letras_asignadas
+
+
+    def generar_margen_izq(self):
+        """Genera el margen izquierdo, con sus etiquetas, medidas y valores, que seran usados posteriormente en el render."""
+        # Define el alto de la tabla.
+        alto = self.screen_y - self.max_heigth_margin_down
+        # Obtiene el porcentaje que representa el rango frente a (alto_pantalla - alto_maximo_margen_inferior).
+        porcentaje_rango_en_screen_y = self.rango * 100 / alto
+        # Obtiene el orden numerico que tendra cada espacio.
+        orden_numerico = len(str(porcentaje_rango_en_screen_y))
+        # Obtiene el numero de unidades por intervalo, y lo redondea.
+        unidades_por_espacio = round(self.rango / alto)
+
+        lista_etiquetas_y = []
+        for x in range(0, self.rango):
+            # A lista etiquetas y se le añaden las etiquetas.
+            lista_etiquetas_y.append(self.minimo + (x * unidades_por_espacio))
+        # El intervalo sera definido como NUMERO * MULTIPLICADOR_ORDEN.
+
+        return lista_etiquetas_y
+
+'''
+###  PLANIFICACION Y DESARROLLO  ###
+
+        Pseudo:
+            Supongamos:
+            maximo = 1234
+            minimo = 1200
+
+            screen_y = 25
+            -= max_heigth_margin_down = 5
+            range = 34 / 20
+            etiquetas_per_pixel = 1.7
+
+            rango = 34
+
+            De y a y2 la resolucion es de cantidad_numeros per etiqueta.
+
+            A calculo mental se deduce que:
+
+            0 - 20 res. 1pp ORDEN 1
+
+            20 - 40 res. 2pp
+
+            40 - 100 res. 5pp
+
+            100 - 200 res. 10pp ORDEN 2
+
+            200 - 400 res. 20pp
+
+            400 - 1000 res. 50pp
+
+            1000 - 2000 res. 100pp ORDEN 3
+
+            2000 - 4000 res. 200pp
+
+            4000 - 10000 res. 500pp
+
+            10000 - 20000 res. 1000pp ORDEN 4
+
+            20000 - 40000 res. 2000pp
+
+            40000 - 100000 res. 5000pp
+
+            100000 - 200000 res. 10000pp ORDEN 5
+
+            200000 - 400000 res. 20000pp
+
+            Se calcula etiquetas_per_pixel.
+
+            Se ajusta etiquetas_per_pixel A LA BAJA.
+            En el valor mas cercano en la lista de valores.
+
+            De la muestra se deduce que la lista de valores es - Orden 1: [1, 2, 5] - Orden 2: [1, 2, 5]
+
+            Se deberia mostrar:
+            1200, 1205, 1210 ..., 1235.
+
+#######################################
+
+        Pseudocodigo del algoritmo.
+            1 - Se genera lista_etiquetas_y y se evalua un posible acortamiento.
+                - Como?
+                    - Dividir el rango por el tamaño de la pantalla.
+                    - Ver si todos los elementos son divisibles entre un millon.
+                    - En caso de no serlo, ver si todos los elementos son divisibles entre mil.
+                    - En caso de no serlo, y ser el valor mayor a mil, ver si son divisibles entre 100.
+                    - En caso de no serlo, no modificar el valor.
+            2 - En caso de poder acortarse, se acorta.
+            3 - Se mide el tamaño de lista_etiquetas_y,
+            4 - Se retorna el ancho calculado para el margen izquierdo y la lista de etiquetas.
+
+#######################################
+
+Para una grafica.
+A B C
+1 4 7
+2 5 8
+3 6 9
+
+Descripcion de la tabla.
+Una tupla contiene x valores, pudiendose asignar cada valor a una y solo una entidad/motivo productor de los numeros.
+
+Como en el ejemplo de arriba, donde en cada fila estan diferentes valores de A B C en diferentes tiempos.
+
+tabla = [(100, 200, 300), (120, 150, 330), (110, 160, 350)]
+
+#######################################
+
+Falta:
+    - SISTEMA DE CHEQUEO DE ANCHOS.
+    - OPCION PARA ANULAR EL CHEQUEO AUTOMATICO DE ANCHOS.
+'''
