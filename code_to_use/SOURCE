@@ -1,2 +1,4 @@
 Bashplotlib
 https://github.com/glamp/bashplotlib/
+
+The version stored in this folder is Bashplotlib ported to Python3 (yet using optparse)
