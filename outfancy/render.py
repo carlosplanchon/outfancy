@@ -40,34 +40,34 @@ class Recordset:
         self.show_etiquetas = True
 
 
-    def set_check_data(self, x = True):
+    def set_check_data(self, x=True):
         self.check_data = x
 
-    def set_check_dimensiones(self, x = True):
+    def set_check_dimensiones(self, x=True):
         self.check_dimensiones = x
 
-    def set_corrector(self, x = -2):
+    def set_corrector(self, x=-2):
         self.corrector = x
 
-    def set_max_y_cuadro_threshold(self, x = 20):
+    def set_max_y_cuadro_threshold(self, x=20):
         self.max_y_cuadro_threshold = x
 
-    def set_analyze_threshold(self, x = 10):
+    def set_analyze_threshold(self, x=10):
         self.analyze_threshold = x
 
-    def set_show_ancho_threshold(self, x = True):
+    def set_show_ancho_threshold(self, x=True):
         self.show_ancho_threshold = x
 
-    def set_show_errores(self, x = True):
+    def set_show_errores(self, x=True):
         self.show_errores = x
 
-    def set_log_errores(self, x = True):
+    def set_log_errores(self, x=True):
         self.log_errores = x
 
-    def set_show_etiquetas(self, x = True):
+    def set_show_etiquetas(self, x=True):
         self.show_etiquetas = x
 
-    def set_cantidad_maxima_filas(self, x = -1):
+    def set_cantidad_maxima_filas(self, x=-1):
         self.cantidad_maxima_filas = x
 
 
@@ -102,7 +102,7 @@ class Recordset:
         print(self.cantidad_maxima_filas)
 
 
-    def render(self, data = None, separador = None, lista_etiquetas = None, orden = None, lista_tipo_datos = None, lista_prioridades = None, anchos = None):
+    def render(self, data=None, separador=None, lista_etiquetas=None, orden=None, lista_tipo_datos=None, lista_prioridades=None, anchos=None):
         """
         Render recibe seis (6) parametros, y se encarga de renderizar
         un recordset (respuestas a consultas SQL en bases de datos), de manera organizada.
@@ -194,7 +194,7 @@ class Recordset:
 
 
     # Esta funcion chequea la integridad de los datos.
-    def check_dimensiones_correctas(self, data = None):
+    def check_dimensiones_correctas(self, data=None):
         # Se chequea si se proveyeron datos.
         if data == None:
             return 'Recordset > Render > check_dimensiones: No se proveyeron datos.'
@@ -206,7 +206,7 @@ class Recordset:
             return False
 
     # Esta funcion chequea la integridad de los datos.
-    def check_data_integrity(self, data = None):
+    def check_data_integrity(self, data=None):
         # Se chequea si se proveyeron datos.
         if data == None:
             return 'Recordset > Render > check_data_integrity: No se proveyeron datos.'
@@ -245,7 +245,7 @@ class Recordset:
         return error
 
 
-    def check_separador(self, separador = None, screen_x = 80):
+    def check_separador(self, separador=None, screen_x=80):
         if not isinstance(separador, str):
             return ' '
         elif len(separador) > screen_x:
@@ -255,7 +255,7 @@ class Recordset:
             return separador
 
 
-    def check_orden(self, data = None, orden = None):
+    def check_orden(self, data=None, orden=None):
         if data == None:
             errores.append('Recordset > Render > check_orden: No se proveyo data.')
             return []
@@ -295,7 +295,7 @@ class Recordset:
 
 
     # Esta funcion reordena columnas en base a un recordset.
-    def reordenar_datos(self, data = None, orden = None):
+    def reordenar_datos(self, data=None, orden=None):
         # Se chequea si se proveyeron datos.
         if data == None:
             return 'Recordset > Render > reordenar_datos: No se proveyeron datos.'
@@ -320,7 +320,7 @@ class Recordset:
 
 
     # Chequea la longitud maxima para mostrar cada campo, asigna la longitud a maximo[x].
-    def check_maximos(self, ordered_data = None):
+    def check_maximos(self, ordered_data=None):
         # Se chequea si se proveyeron datos.
         if ordered_data == None:
             return 'Recordset > Render > check_maximos: No se proveyeron datos ordenados.'
@@ -340,7 +340,7 @@ class Recordset:
             errores.append('Recordset > Render > check_maximos: Error al intentar chequear el maximo.')
 
 
-    def check_lista_tipo_datos_integrity(self, lista_etiquetas = False, lista_prioridades = None, data = None, lista_tipo_datos = None):
+    def check_lista_tipo_datos_integrity(self, lista_etiquetas=False, lista_prioridades=None, data=None, lista_tipo_datos=None):
         # Si lista_etiquetas y lista_prioridades son False, lista_tipo_datos no se chequea por ser irrelevante en este caso de uso.
         if lista_etiquetas == False and lista_prioridades == False:
             return False
@@ -500,7 +500,7 @@ class Recordset:
 
 
     # Esta funcion reordena lista_tipo_datos en base al orden provisto.
-    def reordenar_lista_tipo_datos(self, lista_tipo_datos = None, orden = None):
+    def reordenar_lista_tipo_datos(self, lista_tipo_datos=None, orden=None):
         # Se chequea si se proveyeron datos.
         if lista_tipo_datos == None:
             raise Exception('Recordset > Render > reordenar_lista_tipo_datos: No se proveyo lista_tipo_datos.')
@@ -523,7 +523,7 @@ class Recordset:
             return ordered_lista_tipo_datos
 
 
-    def check_lista_prioridades(self, ordered_lista_tipo_datos = None, lista_prioridades = None, internal = False):
+    def check_lista_prioridades(self, ordered_lista_tipo_datos=None, lista_prioridades=None, internal=False):
         # Esta funcion se encarga de chequear la integridad de las prioridades ingresadas.
         # En caso de ser deficientes (o ausentes), intenta reconstruirlas.
 
@@ -617,7 +617,7 @@ class Recordset:
         return lista_prioridades
 
 
-    def asign_ancho_columnas(self, anchos = None, ordered_lista_prioridades = False, maximos = None, screen_x = None, len_separador = None, len_orden = None):
+    def asign_ancho_columnas(self, anchos=None, ordered_lista_prioridades=False, maximos=None, screen_x=None, len_separador=None, len_orden=None):
         # Si len_separador no es provista o es menor a 0 se restaura a 1 y se emite un error.
         if not isinstance(len_separador, int) or len_separador < 0:
             len_separador = 1
@@ -785,7 +785,7 @@ class Recordset:
         return anchos, orden
 
 
-    def generar_cuadros_pantalla(self, ordered_data = None, ancho = None, maximo = None, screen_y = None):
+    def generar_cuadros_pantalla(self, ordered_data=None, ancho=None, maximo=None, screen_y=None):
         # --- Si no se proveen datos, retorna una lista vacia --- #
         if ordered_data == None:
             errores.append('Recordset > Render > generar_cuadros: No se proveyo ordered_data.')
@@ -850,7 +850,7 @@ class Recordset:
 
 
     # Esta funcion une las casillas intercalandoles el separador.
-    def generar_pantalla(self, linea_cuadros = None, separador = None):
+    def generar_pantalla(self, linea_cuadros=None, separador=None):
         if linea_cuadros == None:
             return 'Recordset > Render > generar_pantalla: No se proveyo linea_cuadros.'
 
@@ -880,7 +880,7 @@ class Recordset:
 
 
     # Esta funcion chequea que la lista de etiquetas este en orden, si no es asi intenta reconstruirla.
-    def check_lista_etiquetas(self, lista_etiquetas = None, lista_tipo_datos = None, ancho = None, orden = None, separador = None):
+    def check_lista_etiquetas(self, lista_etiquetas=None, lista_tipo_datos=None, ancho=None, orden=None, separador=None):
         # Si lista_etiquetas es False, se retorna, ya que este valor tiene validez en otras partes del programa.
         if lista_etiquetas == False:
             return lista_etiquetas
@@ -967,7 +967,7 @@ class Recordset:
         return separador + separador.join(ordered_lista_etiquetas)
 
 
-    def post_render(self, pantalla = None, lista_etiquetas = None, len_separador = None):
+    def post_render(self, pantalla=None, lista_etiquetas=None, len_separador=None):
         # Si no se provee pantalla.
         if pantalla == None:
             errores.append('Recordset > Render > post_render: No se proveyo pantalla, esto pasa si los datos no son validos.')
@@ -1026,25 +1026,25 @@ class Oneline:
         self.renderizador.set_check_dimensiones(True)
         self.renderizador.set_cantidad_maxima_filas(1)
 
-    def set_check_data(self, x = True):
+    def set_check_data(self, x=True):
         self.renderizador.check_data = x
 
-    def set_corrector(self, x = -2):
+    def set_corrector(self, x=-2):
         self.renderizador.corrector = x
 
-    def set_max_y_cuadro_threshold(self, x = 20):
+    def set_max_y_cuadro_threshold(self, x=20):
         self.renderizador.max_y_cuadro_threshold = x
 
-    def set_show_ancho_threshold(self, x = True):
+    def set_show_ancho_threshold(self, x=True):
         self.renderizador.show_ancho_threshold = x
 
-    def set_show_errores(self, x = True):
+    def set_show_errores(self, x=True):
         self.renderizador.show_errores = x
 
-    def set_log_errores(self, x = True):
+    def set_log_errores(self, x=True):
         self.renderizador.log_errores = x
 
-    def set_cantidad_maxima_filas(self, x = 1):
+    def set_cantidad_maxima_filas(self, x=1):
         self.renderizador.cantidad_maxima_filas = x
 
 
@@ -1070,7 +1070,7 @@ class Oneline:
         print(self.renderizador.cantidad_maxima_filas)
 
 
-    def render(self, data = None, anchos = None, separador = None, orden = None, lista_prioridades = None):
+    def render(self, data=None, anchos=None, separador=None, orden=None, lista_prioridades=None):
         """Funcion que imprime una linea por vez, en base a los datos provistos"""
         # --- Si los datos son provistos, se preparan para su renderizado. ---
         if data == None:
@@ -1096,7 +1096,7 @@ class Oneline:
 class Grafica:
     """
     Funcion en desarrollo.
-    Inspirarse en graficas de Gnumeric.
+    Inspirarse en graficas de Gnumeric(diseño) y el codigo de Matplotlib (funcionamiento).
     """
     def __init__(self):
         self.max_heigth_margin_down = 5
@@ -1111,7 +1111,7 @@ class Grafica:
     def columnas(self, tabla):
         pass
 
-    def linea(self, tabla = None, etiquetas_x = None):
+    def linea(self, tabla=None, etiquetas_x=None):
         # Se lleva a cabo el chequeo de datos.
         if not self.check_data_integrity(tabla):
             return '--- Grafica > Linea > Los datos ingresados son invalidos. ---'
