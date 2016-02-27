@@ -7,7 +7,7 @@
 http://showterm.io/42f0bfa286232758acf18
 
 ## what is it?
-Outfancy is a python library to print charts in Termianl. It's a quick way to visualize data when you don't have a GUI and can be integrated easily in your programs. It's written in python3 and can quickly be installed anywhere using pip3.
+Outfancy is a python library to print charts in Terminal. It's a quick way to visualize data when you don't have a GUI and can be integrated easily in your programs. It's written in python3 and can quickly be installed anywhere using pip3.
 
 ## installation
 ### install with pip3
