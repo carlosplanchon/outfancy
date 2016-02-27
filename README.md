@@ -30,7 +30,7 @@ import outfancy
 motor = outfancy.render.Recordset()
 some_data = [(1, 'Foo'), (2, 'Bar')]
 print(motor.render(some_data))
----
+```
 
 ##to do (Colaboration is welcome)
 - Translate code to english.
