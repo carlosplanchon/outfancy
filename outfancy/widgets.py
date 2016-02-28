@@ -3,90 +3,88 @@
 
 #####################################################################################################
 #                                                                                                   #
-#    MODULO WIDGETS                                                                                 #
+#    WIDGETS MODULE                                                                                 #
 #                                                                                                   #
-#    Este modulo se encarga de mostrar informacion con un buen formato                              #
-#    La forma en la cual esta informacion se muestra depende del tamaño                             #
-#    de la pantalla.                                                                                #
+#    This module have little but important widgets that are useful to other modules.                #
 #                                                                                                   #
-#    Puede recibir comandos para imprimir en formato ficha o sin formato.                           #
-#    La funcion para recibir comandos es interna, y debe ser llamada                                #
-#    desde el programa en si                                                                        #
-#                                                                                                   #
-#    INDICE DE FUNCIONES DEL MODULO                                                                 #
+#    MODULE FUNCTION INDEX                                                                          #
 #---------------------------------------------------------------------------------------------------#
 #                                                                                                   #
-#    check_inicio()                         - Hace el chequeo inicial.                              #
-#    list_join(lista_comando)               - Une una lista por espacios.                           #
-#    escribirarchivo(namearchivo, cadena)   - Esta funcion escribe un archivo.                      #
-#    leerarchivo(namearchivo)               - Esta funcion lee un archivo.                          #
-#    write_log(text)                        - Esta funcion escribe el log.                          #
-#    check_isnumerico(text)                 - Esto chequea si el ingreso es numerico.               #
-#    text_desrelajar(text)                  - Esta funcion quita el formato relajado de las fechas. #
-#    isfecha(text)                          - Esto chequea si lo ingresado es una fecha.            #
-#    ishora_complete(text)                  - Esto chequea si lo ingresado es una hora o no.        #
-#    fecha_actual()                         - Devuelve la fecha actual.                             #
-#    hora_actual()                          - Devuelve la hora actual.                              #
-#    medir_dimensiones()                    - Mide los caracteres que caben en pantalla.            #
-#    compress_lista()                       - Comprime una lista, Ej: [1,6,4] pasa a ser [0,2,1].   #
+#    start_check()                         - Do the start check.                                    #
+#    list_join(lista_comando)              - Join a list using spaces.                              #
+#    write_file(name_file, cadena)         - Write a text in a file.                                #
+#    read_file(name_file)                  - Read a file.                                           #
+#    write_log(text)                       - This function writes the log.                          #
+#    check_isnumerico(text)                - Check if the input is numeric.                         #
+#    normalise_text(text)                  - This function normalise dates.                         #
+#    is_date(text)                         - Check if the input is a valid date.                    #
+#    is_complete_hour(text)                - Check if the input is a valid hour.                    #
+#    actual_date()                         - Returns the actual date.                               #
+#    actual_hour()                         - Returns the actual hour.                               #
+#    measure_screen()                      - Measures characters that can fit on the screen.        #
+#    compress_lista(list_to_compress)      - Compress a list, I.e: [1,6,4] is converted in [0,2,1]. #
 #                                                                                                   #
 #####################################################################################################
 
-import os, fcntl, termios, struct, string
+import os
+import fcntl
+import termios
+import struct
+import string
 from time import strptime
 from datetime import datetime
 
-# Archivo de registro.
+# Log file location.
 log_file = '/tmp/outfancy/registro.log'
 
-# Esto hace el chequeo inicial.
-def check_inicio():
+# This function do the start checking.
+def start_check():
     if not os.path.exists('/tmp/outfancy'):
         os.mkdir('/tmp/outfancy')
     if not os.path.exists('/tmp/outfancy/registro.log'):
         os.system('touch /tmp/outfancy/registro.log')
 
-# Esta funcion une una lista por espacios
-def list_join(lista_comando):
-    return ' '.join(lista_comando)
+# This function join a list using spaces.
+def list_join(the_list):
+    return ' '.join(the_list)
 
-# Esta funcion escribe un archivo.
-def escribirarchivo(namearchivo, cadena):
-    archivo = open(namearchivo, 'w')
-    archivo.write(cadena)
-    archivo.close()
+# This function write a file
+def write_file(name_file, string):
+    file = open(name_file, 'w')
+    file.write(string)
+    file.close()
 
-# Esta funcion lee un archivo.
-def leerarchivo(namearchivo):
-    archivo = open(namearchivo, 'r')
-    contenido = archivo.read()
-    archivo.close()
-    return contenido
+# This function read a file.
+def read_file(name_file):
+    file = open(name_file, 'r')
+    content = file.read()
+    file.close()
+    return content
 
-# Esta funcion escribe el log.
+# This function writes the log.
 def write_log(text):
-    log = leerarchivo(log_file)
-    escribirarchivo(log_file, log + '\n' + text)
+    log = read_file(log_file)
+    write_file(log_file, log + '\n' + text)
 
-# Esto chequea si el ingreso es numerico.
-def check_isnumerico(text):
+# This function check if the input is numeric.
+def check_isnumeric(text):
     try:
         str(int(text))
         return True
     except:
         return False
 
-# Esta funcion quita el formato relajado de las fechas.
-def text_desrelajar(text):
+# This function normalize text, is useful to normalize dates.
+def normalise_text(text):
     text = text.replace('/','-')
     text = text.replace(':','-')
     text = text.replace('.','-')
     text = text.replace('@','-')
     return text
 
-# Esto chequea si lo ingresado es una fecha.
-def isfecha(text):
-    text = text_desrelajar(text)
+# This function check if the input is a valid date.
+def is_date(text):
+    text = normalise_text(text)
     for format in ['%d-%m-%Y', '%d-%m-%y', '%d-%m-%Y %H-%M-%S', '%d-%m-%y %H-%M-%S']:
         try:
             strptime(text, format)
@@ -95,8 +93,8 @@ def isfecha(text):
             pass
     return False
 
-# Esto chequea si lo ingresado es una hora o no.
-def ishora_complete(text):
+# This function check if the input is a valid hour.
+def is_complete_hour(text):
     for format in ['%H:%M:%S', '%H:%M']:
         try:
             strptime(text, format)
@@ -105,18 +103,18 @@ def ishora_complete(text):
             pass
     return False
 
-# Esto devuelve la fecha actual
-def fecha_actual():
-    fecha_actual = datetime.now()
-    return str(fecha_actual.day) + '-' + str(fecha_actual.month) + '-' + str(fecha_actual.year)
+# This function return the actual date.
+def actual_date():
+    actual_date = datetime.now()
+    return str(actual_date.day) + '-' + str(actual_date.month) + '-' + str(actual_date.year)
 
-# Esto devuelve la hora actual
-def hora_actual():
-    hora_actual = datetime.now()
-    return str(hora_actual.hour) + ':' + str(hora_actual.minute) + ':' + str(hora_actual.second)
+# This function return the actual hour.
+def actual_hour():
+    actual_hour = datetime.now()
+    return str(actual_hour.hour) + ':' + str(actual_hour.minute) + ':' + str(actual_hour.second)
 
-# Mide las dimensiones de la pantalla, retornando una lista de dos valores, X y Y.
-def medir_dimensiones():
+# Measure the screen dimensions (in characters), returning two values, X and Y.
+def measure_screen():
     env = os.environ
     def ioctl_GWINSZ(fd):
         try:
@@ -139,24 +137,25 @@ def medir_dimensiones():
     return int(cr[1]), int(cr[0])
 
 
-def compress_lista(lista_a_comprimir):
-    #Si lista_a_comprimir esta vacia se retorna la misma lista, ya que es imposible comprimir eso.
-    if lista_a_comprimir == []:
-        return lista_a_comprimir
+def compress_lista(list_to_compress):
+    # If list_to_compress is empty the same list is returnet, becose is imposible to compress.
+    if list_to_compress == []:
+        return list_to_compress
 
-    lista_comprimida = []
-    # Se rellena de ceros la lista lista_comprimida, de la misma longitud que lista_a_comprimir.
-    for x in range(len(lista_a_comprimir)):
-        lista_comprimida.append(0)
+    compressed_list = []
+    # The list compressed_list is filled by a number of zeros that equals the len of list_to_compress.
+    for x in range(len(list_to_compress)):
+        compressed_list.append(0)
 
-    # Num con el que se rellenara lista_comprimida.
+    # Num used to fill compressed_list.
     num = 0
-    # Se recorren los numeros del cero al maximo presente la lista lista_a_comprimir.
-    for x in range(max(lista_a_comprimir) + 1):
-        # Si el numero que se esta recorriendo esta en la lista lista_a_comprimir.
-        numero = min(lista_a_comprimir) + x
-        if numero in lista_a_comprimir:
-            lista_comprimida[lista_a_comprimir.index(numero)] = num
+    # It walks the numbers from zero to maxima present in the list list_to_compress.
+    for x in range(max(list_to_compress) + 1):
+        # If x (the minimal number in list_to_compress + x) is in the list list_to_compress.
+        number = min(list_to_compress) + x
+        if number in list_to_compress:
+            # num is added to compresed list in the index that is occupied by the minimal number of list_to_compress.
+            compressed_list[list_to_compress.index(number)] = num
             num += 1
 
-    return lista_comprimida
+    return compressed_list
