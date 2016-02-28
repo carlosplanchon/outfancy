@@ -4,17 +4,16 @@
 from . import widgets
 
 letras = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ'
-letras_minusculas = 'abcdefghijklmnñopqrstuvwxyz'
+minus_letters = 'abcdefghijklmnñopqrstuvwxyz'
 
-# Chequeo inicial.
-widgets.check_inicio()
+# Start check.
+widgets.start_check()
 
-class Recordset:
-    """Recordset permite renderizar en buen formato las salidas de un recordset, 
-    para esto es recomendable usar objeto.render(DATOS)"""
+class Chart:
+    """Chart allow to render a chart with nice format, the data input have to acomplish the format [(1, 'foo'), (2, 'bar')]"""
     def __init__(self):
-        '''Parametros de renderizado.'''
-        # Check_data especifica si debe chequearse o no la informacion del recordset. 
+        '''Rendering parameters.'''
+        # Check_data specify if the input data have to be checked or not.
         self.check_data = True
         # Check_dimensiones especifica si debe chequearse o no el tamaño de los datos del recordset. 
         self.check_dimensiones = False
@@ -25,13 +24,13 @@ class Recordset:
         # Threshold de analisis al reconstruir datos de screen.lista_tipo_datos.
         self.analyze_threshold = 10
         # El ancho minimo que puede tener una columna antes de que se deje de mostrar.
-        self.show_ancho_threshold = 5
+        self.show_width_threshold = 5
 
-        '''Dimensiones'''
+        '''Dimensions'''
         # La cantidad maxima de filas que puede tener una tabla (-1 = ilimitadas).
         self.cantidad_maxima_filas = -1
 
-        '''Opciones'''
+        '''Options'''
         # Con esta opcion los errores se muestran en pantalla luego de la impresion.
         self.show_errores = False
         # Se especifica si se registran o no errores en el log del programa.
@@ -56,7 +55,7 @@ class Recordset:
         self.analyze_threshold = x
 
     def set_show_ancho_threshold(self, x=True):
-        self.show_ancho_threshold = x
+        self.show_width_threshold = x
 
     def set_show_errores(self, x=True):
         self.show_errores = x
@@ -87,7 +86,7 @@ class Recordset:
         print(self.analyze_threshold)
 
     def show_show_ancho_threshold(self):
-        print(self.show_ancho_threshold)
+        print(self.show_width_threshold)
 
     def show_show_errores(self):
         print(self.show_errores)
@@ -145,7 +144,7 @@ class Recordset:
         # --- AREA DE PRE-RENDER --- #
         ##############################
         # --- Se analizan las dimensiones de la pantalla --- #
-        screen_x, screen_y = widgets.medir_dimensiones()
+        screen_x, screen_y = widgets.measure_screen()
         # --- Se aplica valor de correccion a screen_x --- #
         screen_x += self.corrector
         # --- Se chequea el separador --- #
@@ -278,7 +277,7 @@ class Recordset:
             # Para cada elemento en len(orden)
             for x in range(len(orden)):
                 # Si el orden es numerico
-                if widgets.check_isnumerico(orden[x]):
+                if widgets.check_isnumeric(orden[x]):
                     # Si el numero que contiene orden[x] es mayor al numero de columnas del recordset o menor a 0 se remueve.
                     if orden[x] >= len(data[0]) or orden[x] < -1:
                         to_remove.append(orden[x])
@@ -403,13 +402,13 @@ class Recordset:
                     for tupla in range(analyze):
                         # data[tupla][x], es un elemento de la columna.
                         # --- Chequea si el elemento se corresponde con una hora --- #
-                        if widgets.ishora_complete(str(data[tupla][x])):
+                        if widgets.is_complete_hour(str(data[tupla][x])):
                             tipo = 'time'
                         # --- Chequea si el elemento se corresponde con una fecha --- #
-                        elif widgets.isfecha(str(data[tupla][x])):
+                        elif widgets.is_date(str(data[tupla][x])):
                             tipo = 'date'
                         # --- Chequea si el elemento es numerico --- #
-                        elif widgets.check_isnumerico(str(data[tupla][x])):
+                        elif widgets.check_isnumeric(str(data[tupla][x])):
                             # Intenta identificar si el elemento es numerico o Id
                             try:
                                 if int(data[tupla + 1][x]) - int(data[tupla][x]) == 1:
@@ -617,42 +616,42 @@ class Recordset:
         return lista_prioridades
 
 
-    def asign_ancho_columnas(self, anchos=None, ordered_lista_prioridades=False, maximos=None, screen_x=None, len_separador=None, len_orden=None):
+    def asign_ancho_columnas(self, anchos=None, ordered_lista_prioridades=False, maximos=None, screen_x=None, len_separador=None, len_order=None):
         # Si len_separador no es provista o es menor a 0 se restaura a 1 y se emite un error.
         if not isinstance(len_separador, int) or len_separador < 0:
             len_separador = 1
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo len_separador o este es invalido.')
 
-        # Si no se provee len_orden ni ordered_lista_prioridades.
-        if len_orden == None and maximos == None and not isinstance(ordered_lista_prioridades, list):
-            raise Exception('Recordset > Render > asign_ancho_columnas: No se proveyo ordered_lista_prioridades ni len_orden ni maximos.')
+        # Si no se provee len_order ni ordered_lista_prioridades.
+        if len_order == None and maximos == None and not isinstance(ordered_lista_prioridades, list):
+            raise Exception('Recordset > Render > asign_ancho_columnas: No se proveyo ordered_lista_prioridades ni len_order ni maximos.')
 
-        # Si len_orden no es provisto o es menor a 0 se restaura a 1 y se emite un error.
-        if not isinstance(len_orden, int) or len_orden < 0:
-            errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo len_orden o este es invalido.')
+        # Si len_order no es provisto o es menor a 0 se restaura a 1 y se emite un error.
+        if not isinstance(len_order, int) or len_order < 0:
+            errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo len_order o este es invalido.')
 
-        # Se intenta reconstruir len_orden a partir de ordered_lista_prioridades.
-        if len_orden == None and isinstance(ordered_lista_prioridades, list):
-            len_orden = len(ordered_lista_prioridades)
+        # Se intenta reconstruir len_order a partir de ordered_lista_prioridades.
+        if len_order == None and isinstance(ordered_lista_prioridades, list):
+            len_order = len(ordered_lista_prioridades)
 
-        # Se intenta reconstruir len_orden a partir de maximos.
-        if len_orden == None and isinstance(maximos, list):
-            len_orden = len(maximos)
+        # Se intenta reconstruir len_order a partir de maximos.
+        if len_order == None and isinstance(maximos, list):
+            len_order = len(maximos)
 
-        # Obtiene el ancho medio de cada columna en base a espacio_restante.
-        def get_ancho_medio(espacio_restante, len_orden):
-            if len_orden == 0:
+        # Obtiene el ancho medio de cada columna en base a remaining_space.
+        def get_ancho_medio(remaining_space, len_order):
+            if len_order == 0:
                 return 0
             else:
-                return int(espacio_restante / len_orden)
+                return int(remaining_space / len_order)
 
         def get_espacio_pantalla():
             # Se desprovee a screen_x de los separadores, para obtener un dato claro sobre el espacio existente.
-            return screen_x - len_separador * len_orden     
+            return screen_x - len_separador * len_order     
 
         # Se crea el orden que toma como base asign_ancho_columnas a la hora de comunicar los cambios hechos en las variables generales.
         orden = []
-        for x in range(len_orden):
+        for x in range(len_order):
             orden.append(x)
 
         # Si anchos es provisto, los chequea, y, en caso de ser validos lo retorna.
@@ -686,8 +685,8 @@ class Recordset:
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo screen_x o este es invalido.')
 
         # Si show_ancho_threshold no es provisto o es menor a 1, lo asigna a 5 y emite un error.
-        if not isinstance(self.show_ancho_threshold, int) or self.show_ancho_threshold < 1:
-            self.show_ancho_threshold = 5
+        if not isinstance(self.show_width_threshold, int) or self.show_width_threshold < 1:
+            self.show_width_threshold = 5
             errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo show_ancho_threshold o este es invalido.')
 
         # Si ordered_lista_prioridades == False, se asigna el mismo ancho a todas las columnas en base a len(orden).
@@ -698,13 +697,13 @@ class Recordset:
 
             checking = True
             while checking:
-                if len_orden > 0:
-                    ancho_medio = get_ancho_medio(get_espacio_pantalla(), len_orden)
+                if len_order > 0:
+                    ancho_medio = get_ancho_medio(get_espacio_pantalla(), len_order)
                     # Si el ancho_medio es menor o igual a 0.
                     if ancho_medio <= 0:
                         # Se elimina el elemento de menor prioridad.
-                        ordered_lista_prioridades = widgets.compress_lista(ordered_lista_prioridades[0:len_orden - 1])
-                        len_orden -= 1
+                        ordered_lista_prioridades = widgets.compress_lista(ordered_lista_prioridades[0:len_order - 1])
+                        len_order -= 1
                     else:
                         checking = False
                 else:
@@ -712,13 +711,13 @@ class Recordset:
                     checking = False
 
             # Los maximos para cada columna son iguales al ancho_medio obtenido en funcion del ancho de la pantalla.
-            for x in range(len_orden):
+            for x in range(len_order):
                 maximos.append(ancho_medio)
 
         # Se chequea lista_prioridades.
         if isinstance(ordered_lista_prioridades, bool) or ordered_lista_prioridades == None:
             ordered_lista_prioridades = []
-            for x in range(len_orden):
+            for x in range(len_order):
                 ordered_lista_prioridades.append(x)       
 
         no_finalizado = True
@@ -726,33 +725,33 @@ class Recordset:
             # Lista vacia que contendra los anchos.
             anchos = []
             # Lista para registrar maximos menores a show_ancho_thresholding. 
-            maximos_menor_a_show_ancho_threshold = []
+            maxima_less_than_show_width_threshold = []
 
-            # espacio_restante se inicializa igual al espacio disponible en pantalla, a medida que se vaya usando se acortara.
-            espacio_restante = get_espacio_pantalla()
+            # remaining_space se inicializa igual al espacio disponible en pantalla, a medida que se vaya usando se acortara.
+            remaining_space = get_espacio_pantalla()
 
-            for x in range(len_orden):
+            for x in range(len_order):
                 anchos.append(0)
 
             # Para cada elemento de lista prioridades.
             # Notar que se asigna espacio iniciando por la mayor prioridad.
-            for columna in range(len_orden):
+            for columna in range(len_order):
                 # Se obtiene el ancho medio del espacio de las columnas disponibles.
-                ancho_medio = get_ancho_medio(espacio_restante, len_orden)
+                ancho_medio = get_ancho_medio(remaining_space, len_order)
 
                 # Si maximo[columna] es menor al ancho medio se asigna ese valor.
                 if maximos[columna] < ancho_medio:
                     anchos[columna] = maximos[columna]
-                    if maximos[columna] < self.show_ancho_threshold:
-                        maximos_menor_a_show_ancho_threshold.append(columna)
+                    if maximos[columna] < self.show_width_threshold:
+                        maxima_less_than_show_width_threshold.append(columna)
                 # Si maximo[columna] es mayor el ancho pasa a ser igual a ancho_medio.
                 else:
                     anchos[columna] = ancho_medio
 
-                # Se recalcula espacio_restante.
-                espacio_restante -= anchos[columna]
+                # Se recalcula remaining_space.
+                remaining_space -= anchos[columna]
                 # Se resta una columna.
-                len_orden -= 1
+                len_order -= 1
 
             # Se da por finalizado el proceso de reparto, aun asi, el chequeo puede volver a poner no_finalizado en True.
             no_finalizado = False
@@ -763,24 +762,24 @@ class Recordset:
             #    el ancho_medio menor a maximo[columna], recortando igual.
             if len_anchos > 1:
                 # Se chequea si hay elementos bajo show_ancho_threshold, si es asi, y este no esta en 
-                #    maximos_menor_a_show_ancho_threshold no_finalizado = True.
+                #    maxima_less_than_show_width_threshold no_finalizado = True.
                 for columna in range(len_anchos):
-                    if anchos[columna] < self.show_ancho_threshold:
-                        if columna not in maximos_menor_a_show_ancho_threshold:
+                    if anchos[columna] < self.show_width_threshold:
+                        if columna not in maxima_less_than_show_width_threshold:
                             no_finalizado = True
 
             if no_finalizado:
                 # Se determina el indice a eliminar (indicado por el ultimo elemento de ordered_lista_prioridades).
-                indice_a_eliminar = ordered_lista_prioridades[len_orden - 1]
+                indice_a_eliminar = ordered_lista_prioridades[len_order - 1]
                 # Al orden se le remueve el indice a eliminar.
                 orden.pop(indice_a_eliminar)
                 # A maximos se le remueve el indice a eliminar
                 maximos.pop(indice_a_eliminar)
                 # A ordered_lista_prioridades se le remueve el ultimo elemento (la menor prioridad), y se lo comprime 
                 #     (para asegurar la integridad de las columnas a las cuales apunta la lista).
-                ordered_lista_prioridades = widgets.compress_lista(ordered_lista_prioridades[0:len_orden - 1])
-                # Se recalcula len_orden
-                len_orden = len(ordered_lista_prioridades)
+                ordered_lista_prioridades = widgets.compress_lista(ordered_lista_prioridades[0:len_order - 1])
+                # Se recalcula len_order
+                len_order = len(ordered_lista_prioridades)
 
         return anchos, orden
 
@@ -993,7 +992,7 @@ class Recordset:
         post_renderizado += pantalla + '\x1b[0;99m'
         # Si en la configuracion se especifica que se debe mostrar errores.
         if self.show_errores and len(errores) > 0:
-            post_renderizado += '\n' * 2 + ' ' + ' ' * (len_separador - 1) + '\x1b[1;36mRecordset > Render > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + '\x1b[0;91m\n'
+            post_renderizado += '\n' * 2 + ' ' + ' ' * (len_separador - 1) + '\x1b[1;36mRecordset > Render > Errores > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + '\x1b[0;91m\n'
             for x in range(len(errores)): 
                 post_renderizado += ' ' * len_separador + errores[x] + '\n'
 
@@ -1005,7 +1004,7 @@ class Recordset:
 
         # Si en la configuracion se especifica que se deben registrar los errores.
         if self.log_errores:
-            widgets.write_log('Recordset > Render > Errores > ' + widgets.fecha_actual() + ' ' + widgets.hora_actual() + ' -\n' + '\n'.join(errores))
+            widgets.write_log('Recordset > Render > Errores > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + ' -\n' + '\n'.join(errores))
 
         return post_renderizado
 
@@ -1120,7 +1119,7 @@ class Grafica:
         # --- AREA DE PRE-RENDER --- #
         ##############################
         # --- Se analizan las dimensiones de la pantalla --- #
-        self.screen_x, self.screen_y = widgets.medir_dimensiones()
+        self.screen_x, self.screen_y = widgets.measure_screen()
         # --- Se obtiene el rango en el que opera la tabla --- #
         self.minimo, self.maximo, self.rango = self.get_rango(tabla)
         # --- Se asignan las letras para cada elemento de la tabla --- #
@@ -1206,7 +1205,7 @@ class Grafica:
         if len(tabla) > 0:
             # A cada entidad a representar en la grafica se le asigna una letra.
             for elemento in range(len(tabla[0])):
-                letras_asignadas.append(letras_minusculas[elemento])
+                letras_asignadas.append(minus_letters[elemento])
 
         return letras_asignadas
 
