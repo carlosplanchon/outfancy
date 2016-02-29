@@ -35,14 +35,15 @@ from time import strptime
 from datetime import datetime
 
 # Log file location.
-log_file = '/tmp/outfancy/registro.log'
+outfancy_temp_files = '/tmp/outfancy/'
+log_file = 'log.log'
 
 # This function do the start checking.
 def start_check():
-    if not os.path.exists('/tmp/outfancy'):
-        os.mkdir('/tmp/outfancy')
-    if not os.path.exists('/tmp/outfancy/registro.log'):
-        os.system('touch /tmp/outfancy/registro.log')
+    if not os.path.exists(outfancy_temp_files):
+        os.mkdir(outfancy_temp_files)
+    if not os.path.exists(outfancy_temp_files + log_file):
+        os.system('touch ' + outfancy_temp_files + log_file)
 
 # This function join a list using spaces.
 def list_join(the_list):
