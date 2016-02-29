@@ -10,19 +10,19 @@
 #    MODULE FUNCTION INDEX                                                                          #
 #---------------------------------------------------------------------------------------------------#
 #                                                                                                   #
-#    start_check()                         - Do the start check.                                    #
-#    list_join(lista_comando)              - Join a list using spaces.                              #
-#    write_file(name_file, cadena)         - Write a text in a file.                                #
-#    read_file(name_file)                  - Read a file.                                           #
-#    write_log(text)                       - This function writes the log.                          #
-#    check_isnumeric(text)                - Check if the input is numeric.                         #
-#    normalise_text(text)                  - This function normalise dates.                         #
-#    is_date(text)                         - Check if the input is a valid date.                    #
-#    is_complete_hour(text)                - Check if the input is a valid hour.                    #
-#    actual_date()                         - Returns the actual date.                               #
-#    actual_hour()                         - Returns the actual hour.                               #
-#    measure_screen()                      - Measures characters that can fit on the screen.        #
-#    compress_list(list_to_compress)      - Compress a list, I.e: [1,6,4] is converted in [0,2,1]. #
+#    start_check()                        - Do the start check.                                     #
+#    list_join(lista_comando)             - Join a list using spaces.                               #
+#    write_file(name_file, cadena)        - Write a text in a file.                                 #
+#    read_file(name_file)                 - Read a file.                                            #
+#    write_log(text)                      - This function writes the log.                           #
+#    check_isnumeric(text)                - Check if the input is numeric.                          #
+#    normalise_text(text)                 - This function normalise dates.                          #
+#    is_date(text)                        - Check if the input is a valid date.                     #
+#    is_complete_hour(text)               - Check if the input is a valid hour.                     #
+#    actual_date()                        - Returns the actual date.                                #
+#    actual_hour()                        - Returns the actual hour.                                #
+#    measure_screen()                     - Measures characters that can fit on the screen.         #
+#    compress_list(list_to_compress)      - Compress a list, I.e: [1,6,4] is converted in [0,2,1].  #
 #                                                                                                   #
 #####################################################################################################
 
@@ -136,9 +136,9 @@ def measure_screen():
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
     return int(cr[1]), int(cr[0])
 
-
+# This function compress a list, I.e: [1,6,4] is converted in [0,2,1].
 def compress_list(list_to_compress):
-    # If list_to_compress is empty the same list is returnet, becose is imposible to compress.
+    # If list_to_compress is empty the same list is returned, becose is imposible to compress.
     if list_to_compress == []:
         return list_to_compress
 
