@@ -1,5 +1,5 @@
 # outfancy
-*Chart printing in Terminal*
+*Table printing in Terminal*
 
 <img src='examples/chart_auto.png'>
 
@@ -7,7 +7,7 @@
 http://showterm.io/42f0bfa286232758acf18
 
 ## what is it?
-Outfancy is a python library to print charts in Terminal. It's a quick way to visualize data when you don't have a GUI and can be integrated easily in your programs. It's written in python3 and can quickly be installed anywhere using pip3.
+Outfancy is a python library to print tables in Terminal. It's a quick way to visualize data when you don't have a GUI and can be integrated easily in your programs. It's written in python3 and can quickly be installed anywhere using pip3.
 
 ## installation
 ### install with pip3
@@ -27,7 +27,7 @@ $ pip3 install outfancy
 ### In the interpreter
 ```
 import outfancy
-motor = outfancy.render.Recordset()
+motor = outfancy.render.Table()
 some_data = [(1, 'Foo'), (2, 'Bar')]
 print(motor.render(some_data))
 ```
@@ -35,4 +35,4 @@ print(motor.render(some_data))
 ##to do (Colaboration is welcome)
 - Translate code to english.
 - color option.
-- Add basic plot function (in the folder code_to_use i have some code found in internet that can be used to that functions).
+- Add basic chart function (in the folder code_to_use i have some code found in internet that can be used to that functions).
