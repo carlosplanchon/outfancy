@@ -3,53 +3,74 @@
 
 from . import widgets
 
-letras = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ'
-minus_letters = 'abcdefghijklmnñopqrstuvwxyz'
+letters = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ'
+lower_letters = 'abcdefghijklmnñopqrstuvwxyz'
 
 # Start check.
 widgets.start_check()
 
-class Chart:
-    """Chart allow to render a chart with nice format, the data input have to acomplish the format [(1, 'foo'), (2, 'bar')]"""
+class Table:
+    """Table allow to render a table with nice format, the data input have to acomplish the format [(1, 'foo'), (2, 'bar')]"""
     def __init__(self):
         '''Rendering parameters.'''
         # Check_data specify if the input data have to be checked or not.
         self.check_data = True
-        # Check_dimensiones especifica si debe chequearse o no el tamaño de los datos del recordset. 
-        self.check_dimensiones = False
-        # Corrector = Indica el valor de correcion a aplicar en el eje x (margen en blanco a la derecha. de la pantalla).
+        # Check_data_size specify if the size of table data have to be checked or not.
+        self.check_data_size = False
+        # Corrector = Indicates the correction value to be applied to the x axis (margin of spaces at right of the screen).
         self.corrector = -2
-        # Alto maximo que puede tener una tupla en pantalla.
-        self.max_y_cuadro_threshold = 20
-        # Threshold de analisis al reconstruir datos de screen.lista_tipo_datos.
+        # Maximum heigth that a tuple can have in screen.
+        self.max_heigth_of_a_frame_threshold = 20
+        # Analysis threshold (in rows) at the moment of analyze data_type_list.
         self.analyze_threshold = 10
-        # El ancho minimo que puede tener una columna antes de que se deje de mostrar.
+        # The minimum width that a column need to be showed in screen.
         self.show_width_threshold = 5
 
-        '''Dimensions'''
-        # La cantidad maxima de filas que puede tener una tabla (-1 = ilimitadas).
-        self.cantidad_maxima_filas = -1
+        '''Measures'''
+        # The maximum number of rows that a table can have (-1 = unlimited).
+        self.maximum_number_of_rows = -1
 
         '''Options'''
-        # Con esta opcion los errores se muestran en pantalla luego de la impresion.
-        self.show_errores = False
-        # Se especifica si se registran o no errores en el log del programa.
-        self.log_errores = False
-        # Se especifica si deben mostrarse o no las etiquetas sobre la tabla.
-        self.show_etiquetas = True
+        # This option toggle the error screen showing.
+        self.show_errors = False
+        # This option toggle the error logging.
+        self.log_errors = False
+        # Toggle the label showing above the table.
+        self.show_labels = True
+
+        ''' Check_lista_tipo_datos_integrity data type recognizer configuration. '''
+        # The values by default works well, is not recommended his modification.
+
+        # Number of letters required to be considered desc (below this value is assumed that the type is a name).
+        self.chk_dlti_num_letters_in_field = 15
+        # Percentage of letters required to be considered a name.
+        self.chk_dlti_pecentage_letters_in_field = 90
+
+        # Percentage of type 'date' to be considered date.
+        self.chk_dtli_date = 70
+        # Percentage of type 'time' to be considered time.
+        self.chk_dtli_time = 70
+        # Percentage of type 'id' to be considered id.
+        self.chk_dtli_id = 50
+        # Percentage of type 'value' to be considered value.
+        self.chk_dlti_value = 100
+        # Percentage of type 'name' to be considered name.
+        self.chk_dlti_name = 60
+        # Percentage of type 'desc' to be considered desc.
+        self.chk_dlti_desc = 60
 
 
     def set_check_data(self, x=True):
         self.check_data = x
 
     def set_check_dimensiones(self, x=True):
-        self.check_dimensiones = x
+        self.check_data_size = x
 
     def set_corrector(self, x=-2):
         self.corrector = x
 
-    def set_max_y_cuadro_threshold(self, x=20):
-        self.max_y_cuadro_threshold = x
+    def set_max_heigth_of_a_frame_threshold(self, x=20):
+        self.max_heigth_of_a_frame_threshold = x
 
     def set_analyze_threshold(self, x=10):
         self.analyze_threshold = x
@@ -57,182 +78,187 @@ class Chart:
     def set_show_ancho_threshold(self, x=True):
         self.show_width_threshold = x
 
-    def set_show_errores(self, x=True):
-        self.show_errores = x
+    def set_show_errors(self, x=True):
+        self.show_errors = x
 
-    def set_log_errores(self, x=True):
-        self.log_errores = x
+    def set_log_errors(self, x=True):
+        self.log_errors = x
 
-    def set_show_etiquetas(self, x=True):
-        self.show_etiquetas = x
+    def set_show_labels(self, x=True):
+        self.show_labels = x
 
-    def set_cantidad_maxima_filas(self, x=-1):
-        self.cantidad_maxima_filas = x
+    def set_maximum_number_of_rows(self, x=-1):
+        self.maximum_number_of_rows = x
 
 
     def show_check_data(self):
         print(self.check_data)
 
-    def show_check_dimensiones(self):
-        print(self.check_dimensiones)
+    def show_check_data_size(self):
+        print(self.check_data_size)
 
     def show_corrector(self):
         print(self.corrector)
 
-    def show_max_y_cuadro_threshold(self):
-        print(self.max_y_cuadro_threshold)
+    def show_max_heigth_of_a_frame_threshold(self):
+        print(self.max_heigth_of_a_frame_threshold)
 
     def show_analyze_threshold(self):
         print(self.analyze_threshold)
 
-    def show_show_ancho_threshold(self):
+    def show_show_width_threshold(self):
         print(self.show_width_threshold)
 
-    def show_show_errores(self):
-        print(self.show_errores)
+    def show_show_errors(self):
+        print(self.show_errors)
 
-    def show_log_errores(self):
-        print(self.log_errores)
+    def show_log_errors(self):
+        print(self.log_errors)
 
-    def show_show_etiquetas(self):
-        print(self.show_etiquetas)
+    def show_show_labels(self):
+        print(self.show_labels)
 
-    def show_cantidad_maxima_filas(self):
-        print(self.cantidad_maxima_filas)
+    def show_maximum_number_of_rows(self):
+        print(self.maximum_number_of_rows)
 
 
-    def render(self, data=None, separador=None, lista_etiquetas=None, orden=None, lista_tipo_datos=None, lista_prioridades=None, anchos=None):
+    def render(self, data=None, separator=None, label_list=None, order=None, data_type_list=None, priority_list=None, width=None):
+        """Render receive six (6) parameters, and is responsible for the rendering of data
+        in a table in an organized way.
+
+        Parameters:
+        data: It have to be specified in the next format: [(1, 'Amelia', 'Lawyer'), (2, 'Camille', 'Chef')].
+        separator: It allow to modify the string that separate the columns, by default is a white space " ".
+        label_list: Allows to modify the label list that is showed above renderized table.
+            If it is not provided, the program will try to find out what label will have each column.
+            If label_list == False, it will not showed.
+        order: Allow to modify the order in what columns are showed, allowing to supress column too.
+        data_type_list: Allow to modify the data_type that render system asign to a column.
+            If it is not provided, the program will try to find out what data type have each column.
+        priority_list: Allow to modify the priority that is assigned to each column, if it is not provided,
+            the program will asign priorities based on data_type_list.
+        If the space to show columns is not sufficient, the program will start to supress columns
+        (starting with lowest priority column).
+        width: Allow to specify width to columns.
+            If it is False, same width will be asigned to each column.
+            If it is not provided, the program will asign width automatically based in priority_list.
         """
-        Render recibe seis (6) parametros, y se encarga de renderizar
-        un recordset (respuestas a consultas SQL en bases de datos), de manera organizada.
-
-        Parametros:
-        data: Se debe especificar un recordset Ej: [('a','b','c'),('d','e','f')].
-        separador: Permite modificar la cadena que separa las columnas, por defecto es un espacio en blanco " ".
-        lista_etiquetas: Permite modificar la lista de etiquetas que aparece sobre la tabla renderizada.
-            Si lista_etiquetas es None el programa generara etiquetas en base a lista_tipo_datos.
-        orden: Permite modificar el orden en el cual se muestran las columnas, suprimiendo estas inclusive.
-        lista_tipo_datos: Permite modificar el tipo de datos que el sistema de render asigna a una columna.
-            Si no se especifica, el programa intentara averiguar que tipo de datos tiene cada columna.
-        lista_prioridades: Permite modificar la prioridad que se le asigna a cada columna, si no se especifica
-        el programa asignara prioridades en base a lista_tipo_datos.
-        Si el espacio para mostrar las columnas no es suficiente, el programa podra suprimir columnas
-        (iniciando por las de baja prioridad).
-        anchos: Permite especificar anchos para las columnas.
-        """
-        # Setea el registro interno de errores a 0.
-        global errores
-        errores = []
-        ###############################################
-        # --- CHEQUEOS DE INTEGRIDAD EN LOS DATOS --- #
-        ###############################################
-        # --- Se chequea la existencia de los datos --- #
+        # Set the internal error logging to an empty list.
+        global errors
+        errors = []
+        #######################################
+        # --- INTEGRITY CHECK IN THE DATA --- #
+        #######################################
+        # --- The existence of data is checked --- #
         if data == None:
-            return '--- Recordset > Render: No se han recibido datos para imprimir ---'
+            return '--- Table > Render: Data to print was not received ---'
 
-        # --- Si en configuracion se especifica, Se chequea la integridad de los datos --- #
+        # --- If it is specified in configuration, the data integrity is checked --- #
         if self.check_data:
             if self.check_data_integrity(data):
-                return '--- Recordset > Render > check_data_integrity: Dato invalido o no integro ---'
+                return '--- Table > Render > check_data_integrity: Corrupt or invalid data. ---'
 
-        # --- Si en configuracion se especifica, se chequean las dimensiones de los datos --- #
-        if self.check_dimensiones:
-            if self.check_dimensiones_correctas(data):
-                return '--- Recordset > Render: El dato tiene mas lineas que las permitidas. --- '
+        # --- If it is specified in configuration, the data size is checked --- #
+        if self.check_data_size:
+            if self.check_correct_data_size(data):
+                return '--- Table > Render: The data dimensions are incongruent. --- '
 
-        ##############################
-        # --- AREA DE PRE-RENDER --- #
-        ##############################
-        # --- Se analizan las dimensiones de la pantalla --- #
+        ###########################
+        # --- PRE-RENDER AREA --- #
+        ###########################
+
+
+        # --- The screen measures are obtained --- #
         screen_x, screen_y = widgets.measure_screen()
-        # --- Se aplica valor de correccion a screen_x --- #
+        # --- The correction value is applied to screen_x --- #
         screen_x += self.corrector
-        # --- Se chequea el separador --- #
-        separador = self.check_separador(separador, screen_x)
-        # --- Se chequea la validez del orden provisto --- #
-        orden = self.check_orden(data, orden)
-        # --- Se reordenan los datos y las etiquetas --- #
-        ordered_data = self.reordenar_datos(data, orden)
-        # --- Chequea la longitud maxima para mostrar cada campo de ordered_data --- #
-        maximo = self.check_maximos(ordered_data)
-        # --- Se chequea la integridad de la lista de tipos de datos --- #
-        lista_tipo_datos = self.check_lista_tipo_datos_integrity(lista_etiquetas, lista_prioridades, data, lista_tipo_datos)
-        # --- Se reordena lista_tipo_datos --- #
-        ordered_lista_tipo_datos = self.reordenar_lista_tipo_datos(lista_tipo_datos, orden)
-        # --- Se chequea la integridad de lista_prioridades, si no existe o es defectuosa, se intenta reconstruir --- #
-        lista_prioridades = self.check_lista_prioridades(ordered_lista_tipo_datos, lista_prioridades)
-        ##########################
-        # --- AREA DE RENDER --- #
-        ##########################
-        # --- Asigna el ancho para mostrar las columnas, si este no es provisto, intenta deducirlo --- #
-        anchos, orden = self.asign_ancho_columnas(anchos, lista_prioridades, maximo, screen_x, len(separador), len(orden))
-        # --- Por 2da vez: Se reordena lista_tipo_datos --- #
-        ordered_lista_tipo_datos = self.reordenar_lista_tipo_datos(lista_tipo_datos, orden)
-        # --- Por 2da vez: Se reordenan los datos --- #
-        ordered_data = self.reordenar_datos(data, orden)        
-        # --- Genera las casillas que contienen los datos --- #
-        linea_cuadros = self.generar_cuadros_pantalla(ordered_data, anchos, maximo, screen_y)
-        # --- Genera el area de la pantalla que contiene el pre_render del recordset --- #
-        pantalla = self.generar_pantalla(linea_cuadros, separador)
-        # --- Chequea la lista de etiquetas --- #
-        lista_etiquetas = self.check_lista_etiquetas(lista_etiquetas, lista_tipo_datos, anchos, orden, separador)
-        ###############################
-        # --- AREA DE POST-RENDER --- #
-        ###############################
-        # --- Lleva a cabo el post_render, uniendo el pre_render del recordset con los demas datos --- #
-        return self.post_render(pantalla, lista_etiquetas, len(separador))
+        # --- The separator is checked --- #
+        separator = self.check_separator(separator, screen_x)
+        # --- The validity of provided order is checked --- #
+        order = self.check_order(data, order)
+        # --- The data is rearranged --- #
+        rearranged_data = self.rearrange_data(data, order)
+        # --- Check the maximum length required to show each field of rearranged_data --- #
+        maximum = self.check_maximums(rearranged_data)
+        # --- The integrity of data_type_list is checked --- #
+        data_type_list = self.check_data_type_list_integrity(label_list, priority_list, data, data_type_list)
+        # --- data_type_list is rearranged --- #
+        rearranged_data_type_list = self.rearrange_data_type_list(data_type_list, order)
+        # --- The integrity of priority_list is checked, if not exist or ir have defects, the program will try to rebuild it --- #
+        priority_list = self.check_priority_list(rearranged_data_type_list, priority_list)
+        ########################
+        # ---  RENDER AREA --- #
+        ########################
+        # --- Asign the width to show each column, if it is not provided, the system will try to rebuild it --- #
+        width, order = self.asign_column_width(width, priority_list, maximum, screen_x, len(separator), len(order))
+        # --- For twice data_type_list is rearranged --- #
+        rearranged_data_type_list = self.rearrange_data_type_list(data_type_list, order)
+        # --- For twice data is rearranged --- #
+        rearranged_data = self.rearrange_data(data, order)
+        # --- The fields that contains the data are generated --- #
+        frame_lines = self.generate_table_frames(rearranged_data, width, maximum, screen_y)
+        # --- Generates the table area that contains the data. --- #
+        pre_table = self.generate_pre_table(frame_lines, separator)
+        # --- Label list is checked. --- #
+        label_list = self.check_label_list(label_list, data_type_list, width, order, separator)
+        ############################
+        # --- POST-RENDER AREA --- #
+        ############################
+        # --- It do the post_render, joining the pre_table with the other data (labels, errors) --- #
+        return self.post_render(pre_table, label_list, len(separator))
 
 
+    # Demonstration function.
     def test(self):
-        # Funcion de demostracion.
-        recordset = [(1, 'Feisbuk', '18-10-2015', '21:57:17', '18-10-2015', '21:57:17', 1234, 'Red social bla bla bla utilizada por gente bla bla.'), (2, 'Gugle', '18-10-2015', '21:57:44', '18-10-2015', '21:57:44', 12323, 'Motor de busqueda que categoriza resultados por la cantidad de links bla bla bla.'), (3, 'Opera', '18-10-2015', '21:58:39', '18-10-2015', '21:58:39', 4324, 'Navegador de internerd, también es una disciplina musical, que, valga la redundancia, requiere de una brutal disciplina por parte de los interpretes.'), (4, 'Audi', '18-10-2015', '21:59:51', '18-10-2015', '21:59:51', 0, 'OOOO <-- Fabricante alemán de vehiculos de alta gama.'), (5, 'The Simpsons', '18-10-2015', '22:0:44', '18-10-2015', '22:0:44', 0, 'Una sitcom que lleva veintipico de temporadas, si no la viste, se puede presumir que vivís bajo una piedra.'), (6, 'BMW', '18-10-2015', '22:1:18', '18-10-2015', '22:1:18', 98765, 'Fabricante alemán de autos de lujo.'), (7, 'Yahoo', '18-10-2015', '22:1:56', '18-10-2015', '22:1:56', 53430, 'Expresión de alegría, o compañía gringolandesa.'), (8, 'Coca Cola', '18-10-2015', '22:3:19', '18-10-2015', '22:3:19', 200, 'Compañía que fabrica bebidas, y que no nos paga por ponerla en py-test :c.'), (9, 'Pepsi', '18-10-2015', '22:3:40', '18-10-2015', '22:3:40', 340, 'Competidora de la anterior compañía mencionada, y que tampoco nos paga :c.'), (10, 'GitHub', '18-10-2015', '22:4:42', '18-10-2015', '22:4:42', 563423, 'Plataforma de gestión de co0o0o0ó0digo.'), (11, 'Johnny Walker', '18-10-2015', '22:5:34', '18-10-2015', '22:5:34', 4252, 'Whisky escocés.'), (12, 'Mercury', '18-10-2015', '22:5:51', '18-10-2015', '22:5:51', 23423, 'Fabricante de motores fuera de borda.'), (13, 'Rolls Royce', '18-10-2015', '22:6:7', '18-10-2015', '22:6:7', 75832, 'Fabricante de motores para aviones, y autos de alta gama.')]
-        input('--- Presione ENTER para ver el recordset tal cual es ---')
+        recordset = [(1, 'Feisbuk', '18-10-2015', '21:57:17', '18-10-2015', '21:57:17', 1234, 'Social network bla bla bla used by people bla bla.'), (2, 'Gugle', '18-10-2015', '21:57:44', '18-10-2015', '21:57:44', 12323, 'Search engine that categorize results using an algorithm that bla bla bla.'), (3, 'Opera', '18-10-2015', '21:58:39', '18-10-2015', '21:58:39', 4324, 'Navegador de internerd, también es una disciplina musical, que, valga la redundancia, requiere de una brutal disciplina por parte de los interpretes.'), (4, 'Audi', '18-10-2015', '21:59:51', '18-10-2015', '21:59:51', 0, 'OOOO <-- Fabricante alemán de vehiculos de alta gama.'), (5, 'The Simpsons', '18-10-2015', '22:0:44', '18-10-2015', '22:0:44', 0, 'Una sitcom que lleva veintipico de temporadas, si no la viste, se puede presumir que vivís bajo una piedra.'), (6, 'BMW', '18-10-2015', '22:1:18', '18-10-2015', '22:1:18', 98765, 'Fabricante alemán de autos de lujo.'), (7, 'Yahoo', '18-10-2015', '22:1:56', '18-10-2015', '22:1:56', 53430, 'Expresión de alegría, o compañía gringolandesa.'), (8, 'Coca Cola', '18-10-2015', '22:3:19', '18-10-2015', '22:3:19', 200, 'Compañía que fabrica bebidas, y que no nos paga por ponerla en py-test :c.'), (9, 'Pepsi', '18-10-2015', '22:3:40', '18-10-2015', '22:3:40', 340, 'Competidora de la anterior compañía mencionada, y que tampoco nos paga :c.'), (10, 'GitHub', '18-10-2015', '22:4:42', '18-10-2015', '22:4:42', 563423, 'Plataforma de gestión de co0o0o0ó0digo.'), (11, 'Johnny Walker', '18-10-2015', '22:5:34', '18-10-2015', '22:5:34', 4252, 'Whisky escocés.'), (12, 'Mercury', '18-10-2015', '22:5:51', '18-10-2015', '22:5:51', 23423, 'Fabricante de motores fuera de borda.'), (13, 'Rolls Royce', '18-10-2015', '22:6:7', '18-10-2015', '22:6:7', 75832, 'Fabricante de motores para aviones, y autos de alta gama.')]
+        input('--- Press ENTER to see the recordset as is ---')
         print(recordset)
-        input('--- Ahora presione ENTER para ver el recordset renderizado por Outfancy ---')
+        input('--- Now press ENTER to see the recordset renderized by Outfancy ---')
         print(self.render(recordset))
 
 
-    # Esta funcion chequea la integridad de los datos.
-    def check_dimensiones_correctas(self, data=None):
-        # Se chequea si se proveyeron datos.
+    # This function check the data integrity.
+    def check_correct_data_size(self, data=None):
+        # Is checked if data was provided.
         if data == None:
-            return 'Recordset > Render > check_dimensiones: No se proveyeron datos.'
+            return 'Table > Render > check_correct_data_size: Data have not provided.'
 
-        # Se chequea que los datos no tengan mas filas que las permitidas.
-        if len(data) > self.cantidad_maxima_filas and self.cantidad_maxima_filas > -1:
+        # Is checked if the data have more rows than allowed.
+        if len(data) > self.maximum_number_of_rows and self.maximum_number_of_rows > -1:
             return True
         else:
             return False
 
-    # Esta funcion chequea la integridad de los datos.
+
+    # This function check the data integrity.
     def check_data_integrity(self, data=None):
-        # Se chequea si se proveyeron datos.
+        # Is checked if data is provided.
         if data == None:
-            return 'Recordset > Render > check_data_integrity: No se proveyeron datos.'
+            return 'Table > Render > check_data_integrity: Data was not provided.'
 
         error = False
-        # Se chequea que el dato enviado sea una lista.
+        # Is checked if the type of data is a list.
         if not isinstance(data, list):
             error = True
         else:
             if len(data) > 0:
-                # Se chequea que, dentro de la lista, los elementos sean listas.
-                for tupla in data:
-                    if not isinstance(tupla, tuple):
+                # Is checked that, into the list, the elements type are tuples. 
+                for the_tuple in data:
+                    if not isinstance(the_tuple, tuple):
                         error = True
-                    # Se chequea que los elementos de las tuplas no sean listas o bool.
+                    # Is checked that the elements of tuples are not list or bool.
                     try:
-                        for elemento in tupla:
-                            if isinstance(elemento, (list, bool)):
+                        for element in the_tuple:
+                            if isinstance(element, (list, bool)):
                                 error = True
                     except:
                         error = True
 
                 if len(data) > 0:
                     try:
-                        longitud_primera_tupla = len(data[0])
-                        for tupla in data:
-                            if len(tupla) != longitud_primera_tupla:
+                        length_of_first_tuple = len(data[0])
+                        for the_tuple in data:
+                            if len(the_tuple) != length_of_first_tuple:
                                 error = True
                     except:
                         error = True
@@ -240,846 +266,861 @@ class Chart:
                 error = True
 
         if error == True:
-            errores.append('--- Recordset > Render > check_data_integrity: Dato invalido o no integro ---')
+            errors.append('--- Table > Render > check_data_integrity: Corrupt or invalid data ---')
         return error
 
 
-    def check_separador(self, separador=None, screen_x=80):
-        if not isinstance(separador, str):
+    def check_separator(self, separator=None, screen_x=80):
+        if not isinstance(separator, str):
             return ' '
-        elif len(separador) > screen_x:
-            errores.append('Recordset > Render > check_separador: El separador provisto es invalido')
+        elif len(separator) > screen_x:
+            errors.append('Table > Render > check_separator: The provided separator is invalid.')
             return ' '
         else:
-            return separador
+            return separator
 
 
-    def check_orden(self, data=None, orden=None):
+    def check_order(self, data=None, order=None):
         if data == None:
-            errores.append('Recordset > Render > check_orden: No se proveyo data.')
+            errors.append('Table > Render > check_order: Data was not provided.')
             return []
 
-        # --- Se chequea la validez del orden provisto en base a sus propiedades --- #
-        if not isinstance(orden, list):
-            errores.append('Recordset > Render > check_orden: El orden es invalido o no fue provisto.')
+        # --- The validity of provided order is checked based on his properties --- #
+        if not isinstance(order, list):
+            errors.append('Table > Render > check_order: The order is invalid or was not provided.')
             if len(data) > 0:
-                orden = []
+                order = []
                 for x in range(len(data[0])):
-                    orden.append(x)
-                return orden
+                    order.append(x)
+                return order
             else:
                 return []
 
-        # --- Se analiza si los elementos del orden son validos en referencia a los datos --- #
-        # Lista de elementos a remover.
+        # --- Is analized if the order elements are valid in reference of the data --- #
+        # List of elements to remove.
         to_remove = []
         if len(data) > 0:
-            # Para cada elemento en len(orden)
-            for x in range(len(orden)):
-                # Si el orden es numerico
-                if widgets.check_isnumeric(orden[x]):
-                    # Si el numero que contiene orden[x] es mayor al numero de columnas del recordset o menor a 0 se remueve.
-                    if orden[x] >= len(data[0]) or orden[x] < -1:
-                        to_remove.append(orden[x])
-                # Si el orden no es numerico, se remueve.
+            # For each element in len(order).
+            for x in range(len(order)):
+                # If element is numeric.
+                if widgets.check_isnumeric(order[x]):
+                    # If the number order[x] contain is greater than columns number of data or less than 0 this value is removed.
+                    if order[x] >= len(data[0]) or order[x] < -1:
+                        to_remove.append(order[x])
+                # If element is not numeric, it is removed.
                 else:
-                    to_remove.append(orden[x])
+                    to_remove.append(order[x])
         else:
             return []
 
         for x in to_remove:
-            orden.pop(x)
+            order.pop(x)
 
-        return orden
+        return order
 
 
-    # Esta funcion reordena columnas en base a un recordset.
-    def reordenar_datos(self, data=None, orden=None):
-        # Se chequea si se proveyeron datos.
+    # This function rearrange columns based in the data and the order provided.
+    def rearrange_data(self, data=None, order=None):
+        # Is checked if data was provided.
         if data == None:
-            return 'Recordset > Render > reordenar_datos: No se proveyeron datos.'
+            return 'Table > Render > rearrange_data: Data was not provided.'
         else:
-            # Chequea si la entrada a reordenar_datos es la correcta
-            if not isinstance(orden, list):
-                ordered_data = data
+            # Is checked if the order input to rearrange_data is valid.
+            if not isinstance(order, list):
+                # If it is not valid, the data is returned without rearrange.
+                return data
             else:
-                ordered_data = []
-                for tupla in data:
-                    new_tupla = []
-                    # Se genera la tupla reordenada.
-                    for elemento in orden:
+                rearranged_data = []
+                for the_tuple in data:
+                    new_tuple = []
+                    # The rearranged tuple is generated.
+                    for element in order:
                         try:
-                            new_tupla.append(tupla[elemento])
+                            new_tuple.append(the_tuple[element])
                         except:
-                            errores.append('Recordset > Render > reordenar_datos: Error al intentar reordenar los datos.')
+                            errors.append('Table > Render > rearrange_data: Error when trying to rearrange data.')
                             return data
-                    # Se añade la tupla generada al nuevo recordset.
-                    ordered_data.append(new_tupla)
-            return ordered_data
+                    # The generated tuple is added to rearranged_data.
+                    rearranged_data.append(new_tuple)
+
+            return rearranged_data
 
 
-    # Chequea la longitud maxima para mostrar cada campo, asigna la longitud a maximo[x].
-    def check_maximos(self, ordered_data=None):
-        # Se chequea si se proveyeron datos.
-        if ordered_data == None:
-            return 'Recordset > Render > check_maximos: No se proveyeron datos ordenados.'
+    # Check the maximum length of a field in each column, and asing this length to maximum[x].
+    def check_maximums(self, rearranged_data=None):
+        # Is checked if data is provided.
+        if rearranged_data == None:
+            return 'Table > Render > check_maximums: Rearranged data was not provided.'
 
-        if len(ordered_data) > 0:
-            maximo = []
-            # Rellena de ceros los valores maximos para cada elemento
-            for columna in ordered_data[0]:
-                maximo.append(0)
-            # Mide los elementos de la tabla y asigna maximos para cada elemento.
-            for tupla in range(len(ordered_data)):
-                for elemento in range(len(ordered_data[0])):
-                    if len(str(ordered_data[tupla][elemento])) > maximo[elemento]:
-                        maximo[elemento] = len(str(ordered_data[tupla][elemento]))
-            return maximo
+        if len(rearranged_data) > 0:
+            maximum = []
+            # Fill of zeros the maximum values of each element.
+            for columna in rearranged_data[0]:
+                maximum.append(0)
+            # Measure the table elements and assing the maximum of each column in each element of maximums list.
+            for tupla in range(len(rearranged_data)):
+                for element in range(len(rearranged_data[0])):
+                    if len(str(rearranged_data[tupla][element])) > maximum[element]:
+                        maximum[element] = len(str(rearranged_data[tupla][element]))
+            return maximum
         else:
-            errores.append('Recordset > Render > check_maximos: Error al intentar chequear el maximo.')
+            errors.append('Table > Render > check_maximums: Error when trying to check maximums.')
 
 
-    def check_lista_tipo_datos_integrity(self, lista_etiquetas=False, lista_prioridades=None, data=None, lista_tipo_datos=None):
-        # Si lista_etiquetas y lista_prioridades son False, lista_tipo_datos no se chequea por ser irrelevante en este caso de uso.
-        if lista_etiquetas == False and lista_prioridades == False:
+    # This function check the integrity of data_type_list.
+    def check_data_type_list_integrity(self, label_list=False, priority_list=None, data=None, data_type_list=None):
+        # If label_list and priority_list are False, data_type_list is not checked becose is irrelevant in this use-case.
+        if label_list == False and priority_list == False:
             return False
 
-        # Se chequea si se proveyeron datos.
+        # Is checked if data was provided.
         if data == None:
-            return 'Recordset > Render > check_lista_tipo_datos_integrity: No se proveyeron datos.'
+            return 'Table > Render > check_data_type_list_integrity: Data was not provided.'
 
-        # Se emite un error si no se provee la lista de tipos de datos.
-        if lista_tipo_datos == None:
-            errores.append('Recordset > Render > check_lista_tipo_datos_integrity: No se proveyo lista_tipo_datos.')
+        # An error is emitted if data_type_list is not provided.
+        if data_type_list == None:
+            errors.append('Table > Render > check_data_type_list_integrity: data_type_list was not provided.')
 
-        # --- Lista de elementos que deben intentar ser detectados --- #
+        # --- List of columns numbers whose type should try to be detected --- #
         to_rebuild = []
-
-        # Se chequea si hay tuplas en los datos provistos.
+        # Is checked if tuples exist in data provided.
         if len(data) > 0:
-            # Si la entrada para lista_tipo_datos es invalida, se preparan datos para reconstruirla.
-            if not isinstance(lista_tipo_datos, list):
-                lista_tipo_datos = []
+            # If data_type_list is not valid, a new list is prepared to rebuild it.
+            if not isinstance(data_type_list, list):
+                data_type_list = []
                 for x in range(len(data[0])):
-                    lista_tipo_datos.append(None)
+                    data_type_list.append(None)
                     to_rebuild.append(x)
 
-            # Si la lista de tipo de datos tiene mas elementos que columnas los datos, la lista se recorta.
-            if len(lista_tipo_datos) > len(data[0]):
-                lista_tipo_datos = lista_tipo_datos[0:len(data[0])]
-                errores.append('Recordset > Render > check_lista_tipo_datos_integrity: Se acorto lista_tipo_datos.')
-            # Si es menor, se agrega None a lista_tipo_datos.
-            elif len(lista_tipo_datos) < len(data[0]):
-                errores.append('Recordset > Render > check_lista_tipo_datos_integrity: lista_tipo_datos es muy corta.')
-                for x in range(len(lista_tipo_datos),len(data[0])):
-                    lista_tipo_datos.append(None)
+            # If data_type_list have more elements that the number of columns of the data the list is shortened.
+            if len(data_type_list) > len(data[0]):
+                data_type_list = data_type_list[0:len(data[0])]
+                errors.append('Table > Render > check_data_type_list_integrity: data_type_list was shortened.')
+            # If it is shorter, missing elements of data_type_list are filled with None.
+            elif len(data_type_list) < len(data[0]):
+                errors.append('Table > Render > check_data_type_list_integrity: data_type_list is too short.')
+                for x in range(len(data_type_list), len(data[0])):
+                    data_type_list.append(None)
 
-            contador = 0
-            # --- Se chequea que los elementos de lista_tipo_datos pertenezcan a los tipos admitidos --- #
-            for elemento in lista_tipo_datos:
-                if not elemento in ['id', 'name', 'date', 'time', 'value', 'desc']:
-                    # Si no pertenecen, se envia a reconstruir lo necesario.
-                    to_rebuild.append(contador)
-                contador += 1
+            counter = 0
+            # --- Is checked if the elements of data_type_list belong to supported types --- #
+            for element in data_type_list:
+                if not element in ['id', 'name', 'date', 'time', 'value', 'desc']:
+                    # If not belong, the element will be rebuilded.
+                    to_rebuild.append(counter)
+                counter += 1
 
-            # --- Se chequean y establecen la cantidad de tuplas a analizar --- #
+            # --- Is checked and established the quantity of tuples to analyze --- #
             if len(data) > self.analyze_threshold:
                 analyze = self.analyze_threshold
             else:
                 analyze = len(data)
 
-            #####################################
-            # --- Seccion de reconstruccion --- #
-            #####################################
-            # --- Se chequea si hay datos para reconstruir --- #
+            ###########################
+            # --- Rebuild section --- #
+            ###########################
+            # --- Is checked if exist data to rebuild --- #
             if len(to_rebuild) > 0:
-                # --- Se reconstruyen los elementos invalidos o faltantes de la lista --- #
+                # --- The missing or invalid elements of the list are rebuilded --- #
                 for x in to_rebuild:
-                    # --- Se analiza cada elemento de la columna, intentando determinar a que tipo pertenece --- #
-                    # lista_tipos almacena los tipos detectados.
-                    lista_tipos = []
-                    # --- Para cada elemento en el rango de tuplas a analizar --- #
-                    for tupla in range(analyze):
-                        # data[tupla][x], es un elemento de la columna.
-                        # --- Chequea si el elemento se corresponde con una hora --- #
-                        if widgets.is_complete_hour(str(data[tupla][x])):
-                            tipo = 'time'
-                        # --- Chequea si el elemento se corresponde con una fecha --- #
-                        elif widgets.is_date(str(data[tupla][x])):
-                            tipo = 'date'
-                        # --- Chequea si el elemento es numerico --- #
-                        elif widgets.check_isnumeric(str(data[tupla][x])):
-                            # Intenta identificar si el elemento es numerico o Id
+                    # --- Each element of column is analyzed, trying to determine what type belongs --- #
+                    # list_of_types store the detected types.
+                    list_of_types = []
+                    # --- For each element in the range of tuple to analyze --- #
+                    for the_tuple in range(analyze):
+                        # data[the_tuple][x], is an element of column.
+                        # --- Check if the element correspond to an hour --- #
+                        if widgets.is_complete_hour(str(data[the_tuple][x])):
+                            the_type = 'time'
+                        # --- Check if the element correspond to a date --- #
+                        elif widgets.is_date(str(data[the_tuple][x])):
+                            the_type = 'date'
+                        # --- Chequea if the element is numeric --- #
+                        elif widgets.check_isnumeric(str(data[the_tuple][x])):
+                            # Try to identify if the element is a value or an Id.
                             try:
-                                if int(data[tupla + 1][x]) - int(data[tupla][x]) == 1:
-                                    tipo = 'id'
+                                if int(data[the_tuple + 1][x]) - int(data[the_tuple][x]) == 1:
+                                    the_type = 'id'
                                 else:
-                                    tipo = 'value'
+                                    the_type = 'value'
                             except:
-                                tipo = 'value'
-                            if tupla != 0:
+                                the_type = 'value'
+                            if the_tuple != 0:
                                 try:
-                                    if int(data[tupla][x]) - int(data[tupla - 1][x]) == 1:
-                                        tipo = 'id'
+                                    if int(data[the_tuple][x]) - int(data[the_tuple - 1][x]) == 1:
+                                        the_type = 'id'
                                     else:
-                                        tipo = 'value'
+                                        the_type = 'value'
                                 except:
                                     pass
-                        # --- Si no es numerico, se asume que es texto --- #
+                        # --- If is not numeric, it is assumed that is a text --- #
                         else:
-                            if len(str(data[tupla][x])) > 15:
-                                num_letras = 0
-                                # Se cuenta el numero de letras en el elemento.
-                                for letra in str(data[tupla][x]):
-                                    if letra in letras:
-                                        num_letras += 1
-                                # Se toma como name si tiene 90% de letras.
-                                if (num_letras * 100 / len(str(data[tupla][x]))) > 90:
-                                    tipo = 'name'
+                            if len(str(data[the_tuple][x])) > self.chk_dlti_num_letters_in_field:
+                                num_letters = 0
+                                # The number of letters in the element is counted.
+                                for letter in str(data[the_tuple][x]):
+                                    if letter in letters:
+                                        num_letters += 1
+                                # If the field have 90% or more of letters its assumed that it is a name.
+                                if (num_letters * 100 / len(str(data[the_tuple][x]))) > self.chk_dlti_pecentage_letters_in_field:
+                                    the_type = 'name'
                                 else:
-                                    tipo = 'desc'
+                                    the_type = 'desc'
                             else:
-                                tipo = 'name'
+                                the_type = 'name'
 
-                        # Se añade el tipo a la lista_tipos generada
-                        lista_tipos.append(tipo)
+                        # The type is added to the generated list_of_types.
+                        list_of_types.append(the_type)
 
-                    # --- Se analizan los datos obtenidos (pertenecientes a una columna) --- #
-                    tipo_date = 0
-                    tipo_time = 0
-                    tipo_id = 0
-                    tipo_value = 0
-                    tipo_name = 0
-                    tipo_desc = 0
-                    for a in lista_tipos:
-                        if a == 'date':
-                            tipo_date += 1
-                        elif a == 'time':
-                            tipo_time += 1
-                        elif a == 'id':
-                            tipo_id += 1
-                        elif a == 'value':
-                            tipo_value += 1
-                        elif a == 'name':
-                            tipo_name += 1
-                        elif a == 'desc':
-                            tipo_desc += 1
-                    # --- Se procesan los datos del analisis y se integra a la lista de prioridades --- #
-                    # Se obtienen los porcentajes en los cuales cada tipo esta presente dentro del analyze.
-                    tipo_date *= 100 / analyze
-                    tipo_time *= 100 / analyze
-                    tipo_id *= 100 / analyze
-                    tipo_value *= 100 / analyze
-                    tipo_name *= 100 / analyze
-                    tipo_desc *= 100 / analyze
-                    # --- Se deduce que resultado es a partir de la correspondencia de los resultados con el thresholding.
-                    if tipo_date >= 70:
-                        tipo = 'date'
-                    elif tipo_time >= 70:
-                        tipo = 'time'
-                    elif tipo_id >= 50:
-                        tipo = 'id'
-                    elif tipo_value == 100:
-                        tipo = 'value'
-                    elif tipo_name >= 60:
-                        tipo = 'name'
-                    elif tipo_desc >= 60:
-                        tipo = 'desc'
+                    # --- The obtained data are analyzed (belonging to a column) --- #
+                    date_type = 0
+                    time_type = 0
+                    id_type = 0
+                    value_type = 0
+                    name_type = 0
+                    desc_type = 0
+                    for the_type in list_of_types:
+                        if the_type == 'date':
+                            date_type += 1
+                        elif the_type == 'time':
+                            time_type += 1
+                        elif the_type == 'id':
+                            id_type += 1
+                        elif the_type == 'value':
+                            value_type += 1
+                        elif the_type == 'name':
+                            name_type += 1
+                        elif the_type == 'desc':
+                            desc_type += 1
+                    # --- The analysis data is processed and integrated to priority list --- #
+                    # The percentages of each type over analyze are obtained.
+                    date_type *= 100 / analyze
+                    time_type *= 100 / analyze
+                    id_type *= 100 / analyze
+                    value_type *= 100 / analyze
+                    name_type *= 100 / analyze
+                    desc_type *= 100 / analyze
+                    # --- It follows that the resulting type is based in the correspondency of results with the thresholding.
+                    if date_type >= self.chk_dtli_date:
+                        the_type = 'date'
+                    elif time_type >= self.chk_dtli_time:
+                        the_type = 'time'
+                    elif id_type >= self.chk_dtli_id:
+                        the_type = 'id'
+                    elif value_type >= self.chk_dlti_value:
+                        the_type = 'value'
+                    elif name_type >= self.chk_dlti_name:
+                        the_type = 'name'
+                    elif desc_type >= self.chk_dlti_desc:
+                        the_type = 'desc'
                     else:
-                        tipo = 'desc'
+                        the_type = 'desc'
 
-                    # Se asigna el tipo averiguado a la lista_tipo_datos
-                    lista_tipo_datos[x] = tipo
+                    # The type found is assigned to corresponding element in data_type_list.
+                    data_type_list[x] = the_type
 
             if len(to_rebuild) > 0:
-                errores.append('Recordset > Render > check_lista_tipo_datos_integrity: Fue necesario reconstruir lista_tipo_datos.')
+                errors.append('Table > Render > check_data_type_list_integrity: data_type_list was rebuilded of modified.')
 
-            # Se retorna la lista de tipos de datos.
-            return lista_tipo_datos
+            # The data_type_list is returned.
+            return data_type_list
 
 
-    # Esta funcion reordena lista_tipo_datos en base al orden provisto.
-    def reordenar_lista_tipo_datos(self, lista_tipo_datos=None, orden=None):
-        # Se chequea si se proveyeron datos.
-        if lista_tipo_datos == None:
-            raise Exception('Recordset > Render > reordenar_lista_tipo_datos: No se proveyo lista_tipo_datos.')
+    # This function rearrange data_type_list based on provided order.
+    def rearrange_data_type_list(self, data_type_list=None, order=None):
+        # Is checked if data_type_list was provided.
+        if data_type_list == None:
+            raise Exception('Table > Render > rearrange_data_type_list: data_type_list was not provided.')
 
-        # Si no se provee orden, o este no es list, se retorna lista_tipo_datos sin mas.
-        if not isinstance(orden, list):
-            errores.append('Recordset > Render > reordenar_lista_tipo_datos: No se proveyo orden o este no es valido.')
-            return lista_tipo_datos
+        # If order is not provided, or if it is not list, data_type_list is returned.
+        if not isinstance(order, list):
+            errors.append('Table > Render > rearrange_data_type_list: The order was not provided or is not valid.')
+            return data_type_list
         else:
-            ordered_lista_tipo_datos = []
-            # Se genera la tupla reordenada.
-            for elemento in orden:
+            rearranged_data_type_list = []
+            # The rearranged tuple is generated.
+            for element in order:
                 try:
-                    ordered_lista_tipo_datos.append(lista_tipo_datos[elemento])
+                    rearranged_data_type_list.append(data_type_list[element])
                 except:
-                    errores.append('Recordset > Render > reordenar_lista_tipo_datos: Error al intentar reordenar lista_tipo_datos.')
-                    return lista_tipo_datos
+                    errors.append('Table > Render > rearrange_data_type_list: Error when trying to rearrange data_type_list.')
+                    return data_type_list
 
-            # Si se pudo reordenar sin errores, retorna lista_tipo_datos ordenada.
-            return ordered_lista_tipo_datos
+            # If rearrange process finish without errors, the rearranged data_type_list is returned.
+            return rearranged_data_type_list
 
 
-    def check_lista_prioridades(self, ordered_lista_tipo_datos=None, lista_prioridades=None, internal=False):
-        # Esta funcion se encarga de chequear la integridad de las prioridades ingresadas.
-        # En caso de ser deficientes (o ausentes), intenta reconstruirlas.
+    # This function checks the integrity of the priority_list, in case or be defficient (or ausent), try to rebuild it.
+    def check_priority_list(self, rearranged_data_type_list=None, priority_list=None, silent=False):
+        # If label_list is False, it will be returned it, becose this value is valid in other parts of the program.
+        if priority_list == False:
+            return priority_list
 
-        # Si lista_etiquetas es False, se retorna, ya que este valor tiene validez en otras partes del programa.
-        if lista_prioridades == False:
-            return lista_prioridades
+        if rearranged_data_type_list == None:
+            raise Exception('Table > Render > check_priority_list: rearranged_data_type_list was not provided.')
 
-        if ordered_lista_tipo_datos == None:
-            raise Exception('Render: check_lista_prioridades: No se proveyo ordered_lista_tipo_datos.')
+        # Length of rearranged_data_type_list
+        len_rearranged_data_type_list = len(rearranged_data_type_list)
 
-        # Longitud de lista_tipo datos.
-        len_ordered_lista_tipo_datos = len(ordered_lista_tipo_datos)
+        ########################
+        #   INTEGRITY CHECKS   #
+        ########################
+        # Bool variable to check if reconstruction is needed or not.
+        rebuild = False
 
-        ##############################
-        #   CHEQUEOS DE INTEGRIDAD   #
-        ##############################
-        # Estado que permite saber si se necesita o no reconstruccion.
-        reconstruir = False
-
-        # Si lista_prioridades es None.
-        if not isinstance(lista_prioridades, list):
-            reconstruir = True
-            # internal es usada por las demas funciones para generar prioridades en modo silencioso.
-            if internal == False:
-                errores.append('Recordset > Render > check_lista_prioridades: No se proveyo lista_prioridades o esta es invalida.')
+        # If priority_list is None.
+        if not isinstance(priority_list, list):
+            rebuild = True
+            # silent is used by the rest of the functions to call check_priority_list in silent mode.
+            if silent == False:
+                errors.append('Table > Render > check_priority_list: priority_list was not provided or is not valid.')
         else:
-            # Longitud de lista_prioridades.
-            len_lista_prioridades = len(lista_prioridades)
+            # Length of priority_list.
+            len_priority_list = len(priority_list)
 
-            # Si lista_prioridades no es None
-            if lista_prioridades != None:
-                # Si un elemento de lista_prioridades no es numerico, reconstruir es True.
-                for x in lista_prioridades:
+            # If priority_list is not None.
+            if priority_list != None:
+                # If an element of priority_list is not numeric. rebuild is True.
+                for x in priority_list:
                     if not isinstance(x, int):
-                        reconstruir = True
+                        rebuild = True
 
-            # En caso de que len_lista de prioridades sea mayor a ordered_lista_tipo_datos, reconstruir = True.
-            if len_lista_prioridades > len_ordered_lista_tipo_datos:
-                errores.append('Recordset > Render > check_lista_prioridades: lista_prioridades es muy larga.')
-                reconstruir = True
+            # If len_priority_list is greater than rearranged_data_type_list, rebuild = True.
+            if len_priority_list > len_rearranged_data_type_list:
+                errors.append('Table > Render > check_priority_list: priority_list is too long.')
+                rebuild = True
 
-            # En caso de que len_lista de prioridades sea mayor a ordered_lista_tipo_datos, reconstruir = True.
-            if len_lista_prioridades < len_ordered_lista_tipo_datos:
-                errores.append('Recordset > Render > check_lista_prioridades: lista_prioridades es muy corta.')
-                reconstruir = True
+            # If len_priority_list is shorter than rearranged_data_type_list, rebuild = True.
+            if len_priority_list < len_rearranged_data_type_list:
+                errors.append('Table > Render > check_priority_list: priority_list is too short.')
+                rebuild = True
 
-            # Se chequea la integridad de los elementos.
-            for x in lista_prioridades:
-                if x >= len_ordered_lista_tipo_datos or x < 0:
-                    reconstruir = True
-                if reconstruir:
-                    errores.append('Recordset > Render > check_lista_prioridades: lista_prioridades no es integra.')
+            # The integrity of elements is checked.
+            for x in priority_list:
+                if x >= len_rearranged_data_type_list or x < 0:
+                    rebuild = True
+                if rebuild:
+                    errors.append('Table > Render > check_priority_list: priority_list is not valid.')
 
-        # Si se necesita reconstruir
-        if reconstruir:
+        # If rebuild is needed.
+        if rebuild:
 
-            # Se inicializa una lista_prioridades vacia.
-            lista_prioridades = []
+            # An empty priority_list is declarated.
+            priority_list = []
 
-            # Se intenta identificar elementos Id y Value, a los que se les asigna maxima prioridad.
-            for elemento in range(len_ordered_lista_tipo_datos):
-                if ordered_lista_tipo_datos[elemento] in ['id', 'value']:
-                    lista_prioridades.append(elemento)
+            # It tries to identify Id and Value elements, maximum priority is assigned to it.
+            for element in range(len_rearranged_data_type_list):
+                if rearranged_data_type_list[element] in ['id', 'value']:
+                    priority_list.append(element)
 
-            # Se intenta identificar elementos name, asignandole su prioridad.
-            for elemento in range(len_ordered_lista_tipo_datos):
-                if ordered_lista_tipo_datos[elemento] == 'name':
-                    lista_prioridades.append(elemento)
+            # It tries to identify name elements, assigning the corresponding priority.
+            for element in range(len_rearranged_data_type_list):
+                if rearranged_data_type_list[element] == 'name':
+                    priority_list.append(element)
 
-            # Se intenta identificar elementos date, asignandole su prioridad.
-            for elemento in range(len_ordered_lista_tipo_datos):
-                if ordered_lista_tipo_datos[elemento] == 'date':
-                    lista_prioridades.append(elemento)
+            # It tries to identify date elements, assigning the corresponding priority.
+            for element in range(len_rearranged_data_type_list):
+                if rearranged_data_type_list[element] == 'date':
+                    priority_list.append(element)
 
-            # Se intenta identificar elementos time, asignandole su prioridad.
-            for elemento in range(len_ordered_lista_tipo_datos):
-                if ordered_lista_tipo_datos[elemento] == 'time':
-                    lista_prioridades.append(elemento)
+            # It tries to identify time elements, assigning the corresponding priority.
+            for element in range(len_rearranged_data_type_list):
+                if rearranged_data_type_list[element] == 'time':
+                    priority_list.append(element)
 
-            # Se intenta identificar elementos desc, asignandole su prioridad.
-            for elemento in range(len_ordered_lista_tipo_datos):
-                if ordered_lista_tipo_datos[elemento] == 'desc':
-                    lista_prioridades.append(elemento)
+            # It tries to identify desc elements, assigning the corresponding priority.
+            for element in range(len_rearranged_data_type_list):
+                if rearranged_data_type_list[element] == 'desc':
+                    priority_list.append(element)
 
-            # Si hay elementos sin identificar en ordered_lista_tipo_datos, se rellena el faltante con prioridades minimas.
-            if len(lista_prioridades) < len_ordered_lista_tipo_datos:
-                errores.append('Recordset > Render > check_lista_prioridades: ordered_lista_tipo_datos contiene elementos no identificables')
-                for elemento in range(len(lista_prioridades), len_ordered_lista_tipo_datos):
-                    lista_prioridades.append(elemento)
+            # If exists elements without identify in rearranged_data_type_list, 
+            #   the missing elements of the lists are filled with minimal priorities.
+            if len(priority_list) < len_rearranged_data_type_list:
+                errors.append('Table > Render > check_priority_list: rearranged_data_type_list have uncategorizable elements.')
+                for element in range(len(priority_list), len_rearranged_data_type_list):
+                    priority_list.append(element)
 
-        return lista_prioridades
+        return priority_list
 
+    # Asign the width to each column.
+    def asign_column_width(self, width=None, ordered_priority_list=False, maximums=None, screen_x=None, len_separator=None, len_order=None):
+        # If len_separator is not provided or is less than 0, it will be asigned to 1 and an error will be emitted.
+        if not isinstance(len_separator, int) or len_separator < 0:
+            len_separator = 1
+            errors.append('Table > Render > asign_column_width: len_separator was not provided or it is invalid.')
 
-    def asign_ancho_columnas(self, anchos=None, ordered_lista_prioridades=False, maximos=None, screen_x=None, len_separador=None, len_order=None):
-        # Si len_separador no es provista o es menor a 0 se restaura a 1 y se emite un error.
-        if not isinstance(len_separador, int) or len_separador < 0:
-            len_separador = 1
-            errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo len_separador o este es invalido.')
+        # If len_order and ordered_priority_list was not provided.
+        if len_order == None and maximums == None and not isinstance(ordered_priority_list, list):
+            raise Exception('Table > Render > asign_column_width: ordered_priority_list and len_order and maximums was not provided.')
 
-        # Si no se provee len_order ni ordered_lista_prioridades.
-        if len_order == None and maximos == None and not isinstance(ordered_lista_prioridades, list):
-            raise Exception('Recordset > Render > asign_ancho_columnas: No se proveyo ordered_lista_prioridades ni len_order ni maximos.')
-
-        # Si len_order no es provisto o es menor a 0 se restaura a 1 y se emite un error.
+        # If len_order is not provided or is less than 0, it will be asigned to 1 and an error will be emitted.
         if not isinstance(len_order, int) or len_order < 0:
-            errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo len_order o este es invalido.')
+            errors.append('Table > Render > asign_column_width: len_order was not provided or it is invalid.')
 
-        # Se intenta reconstruir len_order a partir de ordered_lista_prioridades.
-        if len_order == None and isinstance(ordered_lista_prioridades, list):
-            len_order = len(ordered_lista_prioridades)
+        # The system check len_order, and if it is invalid, try to rebuild it based on len(ordered_priority_list).
+        if len_order == None and isinstance(ordered_priority_list, list):
+            len_order = len(ordered_priority_list)
 
-        # Se intenta reconstruir len_order a partir de maximos.
-        if len_order == None and isinstance(maximos, list):
-            len_order = len(maximos)
+        # The system check len_order, and if it is invalid, try to rebuild it based on len(maximums)
+        if len_order == None and isinstance(maximums, list):
+            len_order = len(maximums)
 
-        # Obtiene el ancho medio de cada columna en base a remaining_space.
-        def get_ancho_medio(remaining_space, len_order):
+        # Get the medium width based on remaining_space.
+        def get_medium_width(remaining_space, len_order):
             if len_order == 0:
                 return 0
             else:
                 return int(remaining_space / len_order)
 
-        def get_espacio_pantalla():
-            # Se desprovee a screen_x de los separadores, para obtener un dato claro sobre el espacio existente.
-            return screen_x - len_separador * len_order     
+        # Calculate the space on screen removing the length of the separators to screen_x.
+        def get_screen_x_axis_space():
+            return screen_x - len_separator * len_order     
 
-        # Se crea el orden que toma como base asign_ancho_columnas a la hora de comunicar los cambios hechos en las variables generales.
-        orden = []
+        # The order that asign_column_width take as basis at hour of communicate the changse maded in the general variables.
+        order = []
         for x in range(len_order):
-            orden.append(x)
+            order.append(x)
 
-        # Si anchos es provisto, los chequea, y, en caso de ser validos lo retorna.
-        a_reconstruir = False
-        longitud_total_elementos = 0
-        # Si el elemento es una lista.
-        if isinstance(anchos, list):
-            # Se chequea que cada elemento sea numerico, y que su suma no sea mayor al espacio disponible.
-            for elemento in anchos:
-                if isinstance(elemento, int):
-                    if elemento > 0:
-                        longitud_total_elementos += elemento
+        # If width is provided, is checked, and, in case of be valid, it is returned.
+        to_rebuild = False
+        total_length_of_elements = 0
+        # If the element is a list.
+        if isinstance(width, list):
+            # Is checked that each element are numeric, and his sum not is greater than remaining_space.
+            for element in width:
+                if isinstance(element, int):
+                    if element > 0:
+                        total_length_of_elements += element
                     else:
-                        a_reconstruir = True
+                        to_rebuild = True
                 else:
-                    a_reconstruir = True
+                    to_rebuild = True
         else:
-            a_reconstruir = True
+            to_rebuild = True
 
-        # Si el total de los anchos es mayor al espacio de la pantalla, se envia este a reconstruir.
-        if longitud_total_elementos > get_espacio_pantalla():
-            a_reconstruir = True
+        # If the width total is greater than screen space (screen_x_axis_space()), it will be rebuilded.
+        if total_length_of_elements > get_screen_x_axis_space():
+            to_rebuild = True
 
-        # Si el chequeo demuestra que todo esta en orden, se retornan los anchos.
-        if not a_reconstruir:
-            return anchos, orden
+        # If the check demonstrats that all is fine, the width list and order list are returned.
+        if not to_rebuild:
+            return width, order
 
-        # Si screen_x es None o es menor a 1, asigna 80, una medida muy comun, y emite un error.
+        # If screen_x is None or less than 1, 80 (a common value (See: IBM Cards, World War II), and an error is emitted).
         if not isinstance(screen_x, int) or screen_x < 1:
             screen_x = 80
-            errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo screen_x o este es invalido.')
+            errors.append('Table > Render > asign_column_width: screen_x was not provided or it is invalid.')
 
-        # Si show_ancho_threshold no es provisto o es menor a 1, lo asigna a 5 y emite un error.
+        # If show_width_threshold is not provided or is less than 1, it is assigned to 5 and an error is emitted.
         if not isinstance(self.show_width_threshold, int) or self.show_width_threshold < 1:
             self.show_width_threshold = 5
-            errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo show_ancho_threshold o este es invalido.')
+            errors.append('Table > Render > asign_column_width: show_ancho_threshold was not provided or it is invalid.')
 
-        # Si ordered_lista_prioridades == False, se asigna el mismo ancho a todas las columnas en base a len(orden).
-        # Si maximos no fue provisto o es invalido se emite un error y se reconstruye.
-        if not isinstance(maximos, list) or ordered_lista_prioridades == False or anchos == False:
-            errores.append('Recordset > Render > asign_ancho_columnas: No se proveyo maximos o este es invalido.')
-            maximos = []
+        # If ordered_priority_list == False, it is asigned the same width to same columns based in len(order).
+        # If maximums was not provided or it is invalid an error is emitted and maximum is rebuilded.
+        if not isinstance(maximums, list) or ordered_priority_list == False or width == False:
+            errors.append('Table > Render > asign_column_width: Maximums was not provided or it is invalid.')
+            maximums = []
 
             checking = True
             while checking:
                 if len_order > 0:
-                    ancho_medio = get_ancho_medio(get_espacio_pantalla(), len_order)
-                    # Si el ancho_medio es menor o igual a 0.
-                    if ancho_medio <= 0:
-                        # Se elimina el elemento de menor prioridad.
-                        ordered_lista_prioridades = widgets.compress_lista(ordered_lista_prioridades[0:len_order - 1])
+                    medium_width = get_medium_width(get_screen_x_axis_space(), len_order)
+                    # If medium_width is less or equal to 0.
+                    if medium_width <= 0:
+                        # The element of less priority is removed.
+                        # And the list is compressed to maintain the congruency of data.
+                        ordered_priority_list = widgets.compress_list(ordered_priority_list[0:len_order - 1])
                         len_order -= 1
                     else:
                         checking = False
                 else:
-                    ancho_medio = 0
+                    medium_width = 0
                     checking = False
 
-            # Los maximos para cada columna son iguales al ancho_medio obtenido en funcion del ancho de la pantalla.
+            # The maximums for each column are equals to the medium_width obtained in function of screen width.
             for x in range(len_order):
-                maximos.append(ancho_medio)
+                maximums.append(medium_width)
 
-        # Se chequea lista_prioridades.
-        if isinstance(ordered_lista_prioridades, bool) or ordered_lista_prioridades == None:
-            ordered_lista_prioridades = []
+        # Priority_list is checked.
+        if isinstance(ordered_priority_list, bool) or ordered_priority_list == None:
+            ordered_priority_list = []
             for x in range(len_order):
-                ordered_lista_prioridades.append(x)       
+                ordered_priority_list.append(x)       
 
-        no_finalizado = True
-        while no_finalizado:
-            # Lista vacia que contendra los anchos.
-            anchos = []
-            # Lista para registrar maximos menores a show_ancho_thresholding. 
+        not_finished = True
+        while not_finished:
+            # An empty list that will contain the width is generated.
+            width = []
+            # List to record maximums less than show_width_threshold.
             maxima_less_than_show_width_threshold = []
 
-            # remaining_space se inicializa igual al espacio disponible en pantalla, a medida que se vaya usando se acortara.
-            remaining_space = get_espacio_pantalla()
+            # remaining_space is initialized with a value that equals to screen_x_axis_space, when it being used it will be shortened.
+            remaining_space = get_screen_x_axis_space()
 
             for x in range(len_order):
-                anchos.append(0)
+                width.append(0)
 
-            # Para cada elemento de lista prioridades.
-            # Notar que se asigna espacio iniciando por la mayor prioridad.
-            for columna in range(len_order):
-                # Se obtiene el ancho medio del espacio de las columnas disponibles.
-                ancho_medio = get_ancho_medio(remaining_space, len_order)
+            # For each element of priority_list.
+            # Take account that the space is asigned starting with the major priority.
+            for column in range(len_order):
+                # The medium_width of available columns is obtained.
+                medium_width = get_medium_width(remaining_space, len_order)
 
-                # Si maximo[columna] es menor al ancho medio se asigna ese valor.
-                if maximos[columna] < ancho_medio:
-                    anchos[columna] = maximos[columna]
-                    if maximos[columna] < self.show_width_threshold:
-                        maxima_less_than_show_width_threshold.append(columna)
-                # Si maximo[columna] es mayor el ancho pasa a ser igual a ancho_medio.
+                # If maximum[column] is less than medium_width this value is assigned.
+                if maximums[column] < medium_width:
+                    width[column] = maximums[column]
+                    if maximums[column] < self.show_width_threshold:
+                        maxima_less_than_show_width_threshold.append(column)
+                # If maximum[column] is greater the width will be equal to medium_width.
                 else:
-                    anchos[columna] = ancho_medio
+                    width[column] = medium_width
 
-                # Se recalcula remaining_space.
-                remaining_space -= anchos[columna]
-                # Se resta una columna.
+                # remaining_space is recalculated.
+                remaining_space -= width[column]
+                # A column is removed (from len_order) (becose the space of a column is now assigned).
                 len_order -= 1
 
-            # Se da por finalizado el proceso de reparto, aun asi, el chequeo puede volver a poner no_finalizado en True.
-            no_finalizado = False
+            # The assignement process is marked as finished, but the posterior checking can assign True to not_finished.
+            not_finished = False
 
-            len_anchos = len(anchos)
-            # --- Si hay anchos asignados. ---#
-            # Se pone mayor a 1, para que, en caso de que solo quede una columna en pantalla, esta desobedezca 
-            #    el ancho_medio menor a maximo[columna], recortando igual.
-            if len_anchos > 1:
-                # Se chequea si hay elementos bajo show_ancho_threshold, si es asi, y este no esta en 
-                #    maxima_less_than_show_width_threshold no_finalizado = True.
-                for columna in range(len_anchos):
-                    if anchos[columna] < self.show_width_threshold:
-                        if columna not in maxima_less_than_show_width_threshold:
-                            no_finalizado = True
+            len_width = len(width)
+            # --- If assigned width exists. ---#
+            # The greater than 1 width check is used in case that the screen only have a column, allowing this column
+            #    to dissobey medium_width less to maximum[column], reducing the column width anyway.
+            if len_width > 1:
+                # Is checked if exists elements below show_width_threshold, if it is the case, and the element is not in
+                #    maxima_less_than_show_width_thresold, not_finished = True.
+                for column in range(len_width):
+                    if width[column] < self.show_width_threshold:
+                        if column not in maxima_less_than_show_width_threshold:
+                            not_finished = True
 
-            if no_finalizado:
-                # Se determina el indice a eliminar (indicado por el ultimo elemento de ordered_lista_prioridades).
-                indice_a_eliminar = ordered_lista_prioridades[len_order - 1]
-                # Al orden se le remueve el indice a eliminar.
-                orden.pop(indice_a_eliminar)
-                # A maximos se le remueve el indice a eliminar
-                maximos.pop(indice_a_eliminar)
-                # A ordered_lista_prioridades se le remueve el ultimo elemento (la menor prioridad), y se lo comprime 
-                #     (para asegurar la integridad de las columnas a las cuales apunta la lista).
-                ordered_lista_prioridades = widgets.compress_lista(ordered_lista_prioridades[0:len_order - 1])
-                # Se recalcula len_order
-                len_order = len(ordered_lista_prioridades)
+            if not_finished:
+                # The index to remove is determinated (indicated by the last element of ordered_priority_list).
+                index_to_remove = ordered_priority_list[len_order - 1]
+                # Index_to_remove is removed to order.
+                order.pop(index_to_remove)
+                # Index_to_remove is removed from maximums list.
+                maximums.pop(index_to_remove)
+                # The last element is removed from ordered_priority_list (the lower priority), later, the list
+                #     is compressed (to ensure the integrity of the dat registered in that list).
+                ordered_priority_list = widgets.compress_list(ordered_priority_list[0:len_order - 1])
+                # len_order is recalculated.
+                len_order = len(ordered_priority_list)
 
-        return anchos, orden
+        return width, order
 
 
-    def generar_cuadros_pantalla(self, ordered_data=None, ancho=None, maximo=None, screen_y=None):
-        # --- Si no se proveen datos, retorna una lista vacia --- #
-        if ordered_data == None:
-            errores.append('Recordset > Render > generar_cuadros: No se proveyo ordered_data.')
+    # Generate the table frames, where the text is contained.
+    def generate_table_frames(self, rearranged_data=None, width=None, maximum=None, screen_y=None):
+        # --- If data is not provided, an empty list is returned --- #
+        if rearranged_data == None:
+            errors.append('Table > Render > generate_table_frames: rearranged_data was not provided.')
             return []
 
-        # --- Si no se provee ancho de columnas, se retorna una lista vacia --- #
-        if ancho == None:
-            errores.append('Recordset > Render > generar_cuadros: No se proveyo ancho_columnas.')
+        # --- If column width list was not provided, an empty list is returned --- #
+        if width == None:
+            errors.append('Table > Render > generate_table_frames: Column width list was not provided.')
             return []
 
-        # --- Si no se provee ancho de columnas, se retorna una lista vacia --- #
-        if maximo == None:
-            errores.append('Recordset > Render > generar_cuadros: No se proveyo maximo[].')
+        # --- If maximums list is not provided, an empty list is returned --- #
+        if maximum == None:
+            errors.append('Table > Render > generate_table_frames: maximums list was not provided.')
             return []
 
-        # Lineas pantalla guarda las lineas que seran generadas.
-        linea_cuadros = []
-        for tupla in range(len(ordered_data)):
-            # Se analiza cada columna de la tupla
-            cuadros_a_insertar = []
-            for columna in range(len(ancho)):
-                # --- Se genera un cuadro --- #
-                after = ancho[columna]
-                cuadro = []
-                cuadro_a_recortar = str(ordered_data[tupla][columna])
-                # --- Mientras la longitud del cuadro sea mayor al ancho de la columna, este se recorta --- #
-                if ancho[columna] > 0:
-                    # Si ancho[columna] es igual o menor a 0, se recortara infinitamente.
-                    while len(cuadro_a_recortar) > ancho[columna]:
-                        cuadro.append(cuadro_a_recortar[0:after])
-                        cuadro_a_recortar = cuadro_a_recortar[after:]
-                # --- Si cuadro_a_recortar y ancho[columna] son iguales, se appendea el cuadro sin mas --- #
-                if len(cuadro_a_recortar) == ancho[columna]:
-                    cuadro.append(cuadro_a_recortar)
-                # --- Si el contenido de cuadro a recortar es menor al ancho de la columna
-                #     se rellena el faltante de espacios en blanco --- #
-                if len(cuadro_a_recortar) < ancho[columna]:
-                    cuadro.append(cuadro_a_recortar + ' ' * (ancho[columna] - len(cuadro_a_recortar)))
-                # --- Se recorta el cuadro generado segun el max_y_cuadro_threshold (alto maximo) --- #
-                if len(cuadro) > self.max_y_cuadro_threshold:
-                    cuadro = cuadro[0:self.max_y_cuadro_threshold]
+        # Frame_lines store the lines that are generated.
+        frame_lines = []
+        for the_tuple in range(len(rearranged_data)):
+            # Each field of tuple are analyzed.
+            frame_to_insert = []
+            for column in range(len(width)):
+                # --- A frame is generated --- #
+                after = width[column]
+                frame = []
+                field_to_process = str(rearranged_data[the_tuple][column])
+                # --- While frame´s length is greater than column width, it is cutted --- #
+                if width[column] > 0:
+                    # If width[column] is equal or less than 0, it will be cutted infinitely.
+                    while len(field_to_process) > width[column]:
+                        frame.append(field_to_process[0:after])
+                        field_to_process = field_to_process[after:]
+                # --- If field_to_process and width[column] are equals, the frame is appended without any process --- #
+                if len(field_to_process) == width[column]:
+                    frame.append(field_to_process)
+                # --- If the content of the frame to cut is lower than column width the required space is filed
+                #     of whitespaces --- #
+                if len(field_to_process) < width[column]:
+                    frame.append(field_to_process + ' ' * (width[column] - len(field_to_process)))
+                # --- The generated frame is cutted in function of max_heigth_of_a_frame_threshold (maximum heigth) --- #
+                if len(frame) > self.max_heigth_of_a_frame_threshold:
+                    frame = frame[0:self.max_heigth_of_a_frame_threshold]
 
-                # --- Se inserta cada cuadro en la tupla que se esta generando --- #
-                cuadros_a_insertar.append(cuadro)
+                # --- Each frame is inserted in the field that is being generated --- #
+                frame_to_insert.append(frame)
 
-            # --- Se chequea el espacio maximo para cada cuadro --- #
-            maximo = 0
-            for cuadro in cuadros_a_insertar:
-                if len(cuadro) > maximo:
-                    maximo = len(cuadro)
-            # --- Se rellena de lineas en blanco el faltante a y_maximos --- #
-            for columna in range(len(cuadros_a_insertar)):
-                # Si la longitud del cuadro es menor al maximo(cuadro).
-                while len(cuadros_a_insertar[columna]) < maximo:
-                    cuadros_a_insertar[columna].append(' ' * ancho[columna])
+            # --- Maximum space (y axis) for each frame is checkd --- #
+            maximum = 0
+            for frame in frame_to_insert:
+                if len(frame) > maximum:
+                    maximum = len(frame)
+            # --- The missing lines in each field are filled with white lines to get equal heigth fields --- #
+            for column in range(len(frame_to_insert)):
+                # If the length of frame is lower than maximum[frame]
+                while len(frame_to_insert[column]) < maximum:
+                    frame_to_insert[column].append(' ' * width[column])
 
-            # --- Se inserta cada tupla de cuadros en linea_cuadros. --- #
-            linea_cuadros.append(cuadros_a_insertar)
+            # --- Each field is appended to frame_lines --- #
+            frame_lines.append(frame_to_insert)
 
-        # --- Se retorna la lista linea_cuadros --- #
-        return linea_cuadros
-
-
-    # Esta funcion une las casillas intercalandoles el separador.
-    def generar_pantalla(self, linea_cuadros=None, separador=None):
-        if linea_cuadros == None:
-            return 'Recordset > Render > generar_pantalla: No se proveyo linea_cuadros.'
-
-        if separador == None:
-            errores.append('Recordset > Render > generar_pantalla: No se proveyo separador.')
-            separador = ' '
-
-        pre_pantalla = ''
-        # --- Para cada tupla de linea_cuadros. --- #
-        for tupla in range(len(linea_cuadros)):
-            la_tupla = linea_cuadros[tupla]
-            if len(la_tupla) > 0:
-                # Para cada linea en el numero que equivale al alto de la fila en la tabla.
-                for linea in range(len(la_tupla[0])):
-                    # --- Para cada cuadro se retirara una linea --- #
-                    for cuadro in la_tupla:
-                        pre_pantalla += separador + cuadro[linea]
-
-                    pre_pantalla += '\n'
-
-        # Si pre_pantalla termina con \n (ENTER) se retira ese ultimo ENTER.
-        if len(pre_pantalla) > 0:
-            if pre_pantalla[len(pre_pantalla) - 1] == '\n':
-                pre_pantalla = pre_pantalla[0:len(pre_pantalla) - 1]
-
-        return pre_pantalla
+        # --- frame_lines list is returned --- #
+        return frame_lines
 
 
-    # Esta funcion chequea que la lista de etiquetas este en orden, si no es asi intenta reconstruirla.
-    def check_lista_etiquetas(self, lista_etiquetas=None, lista_tipo_datos=None, ancho=None, orden=None, separador=None):
-        # Si lista_etiquetas es False, se retorna, ya que este valor tiene validez en otras partes del programa.
-        if lista_etiquetas == False:
-            return lista_etiquetas
+    # This function join the fields and separator, creating the data area of the table.
+    def generate_pre_table(self, frame_lines=None, separator=None):
+        # Check if frame_lines is provided, if it is not, return an error.
+        if frame_lines == None:
+            return 'Table > Render > generate_pre_table: frame_lines was not provided.'
 
-        # Lista de elementos que deben intentar ser reconstruidos #
+        # If separator is not provided is assigned by default to " ".
+        if separator == None:
+            errors.append('Table > Render > generate_pre_table: searator was not provided.')
+            separator = ' '
+
+        # pre_table start as an empty string, it will be filled with the frame_lines.
+        pre_table = ''
+        # --- For each row of frame_lines. --- #
+        for row in range(len(frame_lines)):
+            the_tuple = frame_lines[row]
+            if len(the_tuple) > 0:
+                # For each line in the range of number that equals to heigth of the row in the table.
+                for line in range(len(the_tuple[0])):
+                    # --- A line of each field will be added to pre_table, and will be integrated with the separator --- #
+                    for field in the_tuple:
+                        pre_table += separator + field[line]
+
+                    pre_table += '\n'
+
+        # If pre_table ends with \n (ENTER), this last ENTER is removed.
+        if len(pre_table) > 0:
+            if pre_table[len(pre_table) - 1] == '\n':
+                pre_table = pre_table[0:len(pre_table) - 1]
+
+        # pre_table is returned.
+        return pre_table
+
+
+    # This function check the label_list, if it do not exist or it is invalid, it will try to rebuild it.
+    def check_label_list(self, label_list=None, data_type_list=None, width=None, order=None, separator=None):
+        # If label_list is False, this value is retorned, becose it have validity in other parts of the program.
+        if label_list == False:
+            return label_list
+
+        # List of elemnts that have to be rebuilded #
+        # If label_list is invalid, it will be rebuilded.
         to_rebuild = []
-        # Si lista etiquetas es invalida, se reconstruye.
-        if not isinstance(lista_etiquetas, list):
-            errores.append('Recordset > Render > check_lista_etiquetas: lista_etiquetas no fue provista o es invalida.')
-            lista_etiquetas = []
-            for x in range(len(lista_tipo_datos)):
-                lista_etiquetas.append(None)
+        if not isinstance(label_list, list):
+            errors.append('Table > Render > check_label_list: label_list was not provided or it is invalid.')
+            label_list = []
+            # If the type of label_list is not a list, a new list is generated, and it is filled by None.
+            for x in range(len(data_type_list)):
+                label_list.append(None)
 
-        for x in range(len(lista_etiquetas)):
-            if not isinstance(lista_etiquetas[x], str) or lista_etiquetas[x] == None:
+        # Check the type of the data contained in label_list, if some data is not an string, its assigned to None,
+        #     and it index is added to to_rebuild. 
+        for x in range(len(label_list)):
+            if not isinstance(label_list[x], str) or label_list[x] == None:
                 to_rebuild.append(x)
-                lista_etiquetas[x] = None
+                label_list[x] = None
 
-        if separador == None:
-            errores.append('Recordset > Render > check_lista_etiquetas: No se proveyo separador.')
-            separador = ' '
+        # If separator is not provided, it will be restored to ' '.
+        if separator == None:
+            errors.append('Table > Render > check_label_list: The separator was not provided.')
+            separator = ' '
 
-        # Si la lista de etiquetas tiene mas elementos que elementos lista_tipo_datos, lista_etiquetas se recorta.
-        if len(lista_etiquetas) > len(lista_tipo_datos):
-            lista_etiquetas = lista_etiquetas[0:len(lista_tipo_datos)]
-            errores.append('Recordset > Render > check_lista_etiquetas_integrity: Fue necesario acortar lista_etiquetas.')
-        # Si es menor, se agrega None a lista_etiquetas.
-        elif len(lista_etiquetas) < len(lista_tipo_datos):
-            errores.append('Recordset > Render > check_lista_etiquetas_integrity: lista_etiquetas es muy corta.')
-            for x in range(len(lista_etiquetas),len(lista_tipo_datos)):
-                lista_etiquetas.append(None)
+        # If label_list have more elements than date_type_lits, label_list is shortened.
+        if len(label_list) > len(data_type_list):
+            label_list = label_list[0:len(data_type_list)]
+            errors.append('Table > Render > check_label_list: label_list was shortened.')
+        # Else, the missing elements are filled by None.
+        elif len(label_list) < len(data_type_list):
+            errors.append('Table > Render > check_label_list: label_list is too short.')
+            for x in range(len(label_list),len(data_type_list)):
+                label_list.append(None)
                 to_rebuild.append(x)
 
-        # Para cada elemento de lista_etiquetas que necesita reconstruccion.
+        # For each element of label_list that need to be rebuild.
         for x in to_rebuild:
-            # Se intenta reconstruir lista_etiquetas.
-            if lista_tipo_datos[x] == 'id':
-                etiqueta = 'Id'
-            elif lista_tipo_datos[x] == 'name':
-                etiqueta = 'Nombre'
-            elif lista_tipo_datos[x] == 'date':
-                etiqueta = 'Fecha'
-            elif lista_tipo_datos[x] == 'time':
-                etiqueta = 'Hora'
-            elif lista_tipo_datos[x] == 'value':
-                etiqueta = 'Valor'
-            elif lista_tipo_datos[x] == 'desc':
-                etiqueta = 'Descripción'
+            # It try to rebuild each element.
+            if data_type_list[x] == 'id':
+                label = 'Id'
+            elif data_type_list[x] == 'name':
+                label = 'Name'
+            elif data_type_list[x] == 'date':
+                label = 'Date'
+            elif data_type_list[x] == 'time':
+                label = 'Hour'
+            elif data_type_list[x] == 'value':
+                label = 'Value'
+            elif data_type_list[x] == 'desc':
+                label = 'Description'
             else:
-                etiqueta = 'Col.' + str(x)
+                label = 'Col.' + str(x)
 
-            # Se asigna el tipo averiguado a la lista_tipo_datos
-            lista_etiquetas[x] = etiqueta
+            # The label obtained is assigned to label_list.
+            label_list[x] = label
 
         if len(to_rebuild) > 0:
-            errores.append('Recordset > Render > check_lista_etiquetas: Fue necesario reconstruir lista_etiquetas.')
+            errors.append('Table > Render > check_label_list: label_list was rebuilt.')
 
-        if not isinstance(orden, list):
-            errores.append('Recordset > Render > check_lista_etiquetas: No se proveyo orden o este es invalido.')
-            ordered_lista_etiquetas = lista_etiquetas
+        # Check if order is provided, if it is not, an error is emmited, else, the labels are rearranged.
+        if not isinstance(order, list):
+            errors.append('Table > Render > check_label_list: Order was not prvided or it is invalid.')
+            ordered_label_list = label_list
         else:
-            ordered_lista_etiquetas = []
-            for elemento in orden:
+            ordered_label_list = []
+            for element in order:
                 try:
-                    ordered_lista_etiquetas.append(lista_etiquetas[elemento])
+                    ordered_label_list.append(label_list[element])
                 except:
-                    errores.append('Recordset > Render > check_lista_etiquetas: Error al intentar reordenar las etiquetas.')
+                    errors.append('Table > Render > check_label_list: Error when trying to rearrange the labels.')
 
-        # Si no se proveen anchos, se emite un error y se retorna lista_etiquetas.
-        if ancho == None:
-            errores.append('Recordset > Render > check_lista_etiquetas: No se proveyo lista ancho (lista de anchos).')
-            return separador + separador.join(ordered_lista_etiquetas)
+        # If width is not provided, an error is emitted and label_list (integrated with separator) is returned.
+        if width == None:
+            errors.append('Table > Render > check_label_list: Width list was not provided.')
+            return separator + separator.join(ordered_label_list)
 
-        # Para cada elemento en la longitud de lista anchos.
-        for x in range(len(ancho)):
-            # Si la etiqueta es mayor al ancho de la columna.
-            if len(ordered_lista_etiquetas[x]) > ancho[x]:
-                ordered_lista_etiquetas[x] = ordered_lista_etiquetas[x][0:ancho[x]]
-            # Si la etiqueta es menor.
-            elif len(ordered_lista_etiquetas[x]) < ancho[x]:
-                ordered_lista_etiquetas[x] = ordered_lista_etiquetas[x] + ' ' * (ancho[x] - len(ordered_lista_etiquetas[x]))
+        # For each element in length of width list.
+        for x in range(len(width)):
+            # If length of label is greater than column width, the label is shortened.
+            if len(ordered_label_list[x]) > width[x]:
+                ordered_label_list[x] = ordered_label_list[x][0:width[x]]
+            # Else, the missing space is filled with white spaces.
+            elif len(ordered_label_list[x]) < width[x]:
+                ordered_label_list[x] = ordered_label_list[x] + ' ' * (width[x] - len(ordered_label_list[x]))
 
-        # Se retorna ordered_lista_etiquetas.
-        return separador + separador.join(ordered_lista_etiquetas)
+        # Ordered label list (integrated with separator) is returned.
+        return separator + separator.join(ordered_label_list)
 
 
-    def post_render(self, pantalla=None, lista_etiquetas=None, len_separador=None):
-        # Si no se provee pantalla.
-        if pantalla == None:
-            errores.append('Recordset > Render > post_render: No se proveyo pantalla, esto pasa si los datos no son validos.')
+    def post_render(self, pre_table=None, label_list=None, len_separator=None):
+        # If pre_table is not provided an error is emitted.
+        if pre_table == None:
+            errors.append('Table > Render > post_render: No se proveyo pre_table, esto pasa si los datos no son validos.')
+            pre_table = ''
 
-        # Si separador no es provisto, genera uno y emite un error.
-        if len_separador == None:
-            errores.append('Recordset > Render > post_render: No se proveyo separador.')
-            len_separador = 1
+        # If the length of separator is not provided, an error is emitted and the variable is assigned to 1.
+        if len_separator == None:
+            errors.append('Table > Render > post_render: separator was not provided.')
+            len_separator = 1
 
-        # Si lista_etiquetas no es provista, se asigna una cadena vacia.
-        if lista_etiquetas == None:
-            errores.append('Recordset > Render > post_render: No se proveyo lista_etiquetas.')
-            lista_etiquetas = False
+        # If label_list is not provided, it is asigned to False, and it not will showed.
+        if label_list == None:
+            errors.append('Table > Render > post_render: label_list was not provided.')
+            label_list = False
 
-        # Variable que almacena la tabla renderizada.
-        post_renderizado = ''
+        # Variable that store the render.
+        post_rendering = ''
 
-        # Si lista_etiquetas no es False, se añade a post_renderizado.
-        if lista_etiquetas != False and self.show_etiquetas == True:
-            post_renderizado += '\x1b[1;33m' + lista_etiquetas + '\x1b[0;99m' + '\n'
+        # If label_list is not False, and show_labels is True, label_list are added to post_rendering.
+        if label_list != False and self.show_labels == True:
+            post_rendering += '\x1b[1;33m' + label_list + '\x1b[0;99m' + '\n'
 
-        # Se añade el render de la pantalla a post_renderizado.
-        post_renderizado += pantalla + '\x1b[0;99m'
-        # Si en la configuracion se especifica que se debe mostrar errores.
-        if self.show_errores and len(errores) > 0:
-            post_renderizado += '\n' * 2 + ' ' + ' ' * (len_separador - 1) + '\x1b[1;36mRecordset > Render > Errores > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + '\x1b[0;91m\n'
-            for x in range(len(errores)): 
-                post_renderizado += ' ' * len_separador + errores[x] + '\n'
+        # The pre_table (render of the table data) is added to post_rendering.
+        post_rendering += pre_table + '\x1b[0;99m'
+        # If the configuration specify that errors have to be showed.
+        if self.show_errors and len(errors) > 0:
+            post_rendering += '\n' * 2 + ' ' + ' ' * (len_separator - 1) + '\x1b[1;36mTable > Render > Errors > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + '\x1b[0;91m\n'
+            for x in range(len(errors)): 
+                post_rendering += ' ' * len_separator + errors[x] + '\n'
 
-            # Si post_renderizado termina con \n (ENTER) se retira ese ultimo ENTER.
-            if post_renderizado[len(post_renderizado) - 1] == '\n':
-                post_renderizado = post_renderizado[0:len(post_renderizado) - 1]
+            # If post_rendering ends with \n (ENTER), this last ENTER is removed.
+            if post_rendering[len(post_rendering) - 1] == '\n':
+                post_rendering = post_rendering[0:len(post_rendering) - 1]
 
-            post_renderizado += '\x1b[0;99m'
+            post_rendering += '\x1b[0;99m'
 
-        # Si en la configuracion se especifica que se deben registrar los errores.
-        if self.log_errores:
-            widgets.write_log('Recordset > Render > Errores > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + ' -\n' + '\n'.join(errores))
+        # If the configuration specify that errors have to be registered.
+        if self.log_errors:
+            widgets.write_log('Table > Render > Errors > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + ' -\n' + '\n'.join(errors))
 
-        return post_renderizado
+        # Post_rendering is returned.
+        return post_rendering
 
 
 
 class Oneline:
-    """
-    Oneline es una clase que esta preparada para hacer impresiones linea a linea. 
-    - Al igual que con Recordset se usa objeto.render(DATOS), 
-    - Para esta funcion es altamente recomendable que los parametros de ancho esten bien asignados.
-    - Oneline crea una instancia de Recordset, configurandola de manera que trabaje linea por linea.
+    """Oneline is a class prepared to do printing line by line. 
+    - In the same way as Table instances, the usage is motor.render(data), 
+    - To use this function is highly recommended that width parameters are well asigned.
+    - Oneline creates an instance of Table, configurating it on a way that ables it to work line by line.
     """
     def __init__(self):
-        # Se genera el objeto renderizador.
-        self.renderizador = Recordset()
-        self.renderizador.set_log_errores(False)
-        self.renderizador.set_show_errores(False)
-        self.renderizador.set_check_dimensiones(True)
-        self.renderizador.set_cantidad_maxima_filas(1)
+        # The motor object is generated. (as instance of Table)
+        self.motor = Table()
+        self.motor.set_log_errors(False)
+        self.motor.set_show_errors(False)
+        self.motor.set_check_dimensiones(True)
+        self.motor.set_maximum_number_of_rows(1)
 
     def set_check_data(self, x=True):
-        self.renderizador.check_data = x
+        self.motor.check_data = x
 
     def set_corrector(self, x=-2):
-        self.renderizador.corrector = x
+        self.motor.corrector = x
 
-    def set_max_y_cuadro_threshold(self, x=20):
-        self.renderizador.max_y_cuadro_threshold = x
+    def set_max_heigth_of_a_frame_threshold(self, x=20):
+        self.motor.max_heigth_of_a_frame_threshold = x
 
     def set_show_ancho_threshold(self, x=True):
-        self.renderizador.show_ancho_threshold = x
+        self.motor.show_ancho_threshold = x
 
-    def set_show_errores(self, x=True):
-        self.renderizador.show_errores = x
+    def set_show_errors(self, x=True):
+        self.motor.show_errors = x
 
-    def set_log_errores(self, x=True):
-        self.renderizador.log_errores = x
+    def set_log_errors(self, x=True):
+        self.motor.log_errors = x
 
-    def set_cantidad_maxima_filas(self, x=1):
-        self.renderizador.cantidad_maxima_filas = x
+    def set_maximum_number_of_rows(self, x=1):
+        self.motor.maximum_number_of_rows = x
 
 
     def show_check_data(self):
-        print(self.renderizador.check_data)
+        print(self.motor.check_data)
 
     def show_corrector(self):
-        print(self.renderizador.corrector)
+        print(self.motor.corrector)
 
-    def show_max_y_cuadro_threshold(self):
-        print(self.renderizador.max_y_cuadro_threshold)
+    def show_max_heigth_of_a_frame_threshold(self):
+        print(self.motor.max_heigth_of_a_frame_threshold)
 
-    def show_show_ancho_threshold(self):
-        print(self.renderizador.show_ancho_threshold)
+    def show_show_width_threshold(self):
+        print(self.motor.show_ancho_threshold)
 
-    def show_show_errores(self):
-        print(self.renderizador.show_errores)
+    def show_show_errors(self):
+        print(self.motor.show_errors)
 
-    def show_log_errores(self):
-        print(self.renderizador.log_errores)
+    def show_log_errors(self):
+        print(self.motor.log_errors)
 
-    def show_cantidad_maxima_filas(self):
-        print(self.renderizador.cantidad_maxima_filas)
+    def show_maximum_number_of_rows(self):
+        print(self.motor.maximum_number_of_rows)
 
 
-    def render(self, data=None, anchos=None, separador=None, orden=None, lista_prioridades=None):
-        """Funcion que imprime una linea por vez, en base a los datos provistos"""
-        # --- Si los datos son provistos, se preparan para su renderizado. ---
+    def render(self, data=None, width=None, separator=None, order=None, priority_list=None):
+        """Function that prints a line in each execution, based in provided data and configuration.
+        The variables that this function have are the same as Table.
+        """
+        # --- If data are provided, it be preparated for rendering. --- #
         if data == None:
-            return '--- Oneline > Render: No se han recibido datos para imprimir --- '
+            return '--- Oneline > Render: Data to print was not received ---'
         else:
             if isinstance(data, (list, tuple)):
                 if len(data) > 0:
-                    # Si el contenido del primero elemento de los datos no es una tupla.
+                    # If the content of the first element of the data is not a tuple.
                     if not isinstance(data[0], tuple):
-                        # Se insertan los datos convertidos a tupla en una lista vacia.
+                        # The converted to tuple data are inserted in an empty list.
                         new_data = []
                         new_data.append(tuple(data))
                     else:
@@ -1087,98 +1128,103 @@ class Oneline:
                 else:
                     new_data = data
 
-            # Se renderizan los datos preparados. (Hay que tener en cuenta que Recordset aplicara sus propios chequeos).
-            return self.renderizador.render(new_data, separador, False, orden, None, lista_prioridades, anchos)
+            # The normalized data is renderized. (Remember that Table will apply his own checks).
+            return self.motor.render(new_data, separator, False, order, None, priority_list, width)
+
+
+    # Demonstration function.
+    def test():
+        print('--- IN DEVELOPMENT ---')
 
 
 
-class Grafica:
+class Plot:
     """
-    Funcion en desarrollo.
-    Inspirarse en graficas de Gnumeric(diseño) y el codigo de Matplotlib (funcionamiento).
+    Features in development.
+    Take inspiration on plots of Gnumeric(design) and code style of Matplotlib.
     """
     def __init__(self):
         self.max_heigth_margin_down = 5
         self.max_width_margin_left = 10 
 
-    def area(self, tabla, etiquetas_x):
+    def area(self, table, x_labels):
         pass
 
-    def barras(self, tabla):
+    def bar(self, table):
         pass
 
-    def columnas(self, tabla):
+    def column(self, table):
         pass
 
-    def linea(self, tabla=None, etiquetas_x=None):
-        # Se lleva a cabo el chequeo de datos.
-        if not self.check_data_integrity(tabla):
-            return '--- Grafica > Linea > Los datos ingresados son invalidos. ---'
+    def line(self, table=None, x_labels=None):
+        # The data is checked.
+        if not self.check_data_integrity(table):
+            return '--- Plot > Line > The input data is invalid. ---'
 
-        ##############################
-        # --- AREA DE PRE-RENDER --- #
-        ##############################
-        # --- Se analizan las dimensiones de la pantalla --- #
-        self.screen_x, self.screen_y = widgets.measure_screen()
-        # --- Se obtiene el rango en el que opera la tabla --- #
-        self.minimo, self.maximo, self.rango = self.get_rango(tabla)
-        # --- Se asignan las letras para cada elemento de la tabla --- #
-        self.letras_asignadas = self.asign_letras(tabla)
+        ###########################
+        # --- PRE-RENDER AREA --- #
+        ###########################
+        # --- The screen measures are obtained --- #
+        screen_x, screen_y = widgets.measure_screen()
+        # --- The range of operation of the table is obtained --- #
+        self.minumum, self.maximum, self.the_range = self.get_range(table)
+        # --- Letters are assigned for each element of the chart --- #
+        self.assigned_letters = self.asign_letras(table)
 
         print('--- DEVELOPMENT ---')
         print('screen_x, screen_y', screen_x, screen_y)
-        print('minimo', minimo, 'maximo', maximo, 'rango', rango)
-        print('letras_asignadas', letras_asignadas)
+        print('minimum', minimum, 'maximum', maximum, 'range', the_range)
+        print('assigned_letters', assigned_letters)
 
 
         
         '''
-            Renderizar.
-            Como?
+            Render.
+            How?
 
-            - Se analizan los datos para obtener el rango numerico de operacion.
-                Como? (Buscando el maximo y el minimo numero entre TODOS los elementos de la tabla).
-            - Se asignan letras de relleno para cada elemento.
-            - Se determinan los margenes y espacios necesarios para representar los elementos y las etiquetas.
-            - Se determina el lugar de paso de la linea.
-            - Se renderiza la pre_tabla.
-            - Se post_renderiza la tabla.
+            - The data is analyzed to obtain the numeric range of operation.
+                How? (Getting the maximum and minimum number among ALL elements of the table).
+            - Letters are assigned for each element.
+            - Margin and spaces needed to represent the elements and labels are determinated.
+            - The curve of the chart is determined.
+            - Pre_chart is renderized.
+            - Chart is renderized.
         '''
 
-    def torta(self, linea):
+    def pie(self, table):
         pass
 
-    def anillo(self, tabla):
+    def ring(self, table):
         pass
 
-    def dropbar(self, linea):
+    def candlestick(self, table):
         pass
 
-
+    # Demonstration function.
     def test(self):
-        # Funcion de demostracion.
-        tabla = [(100, 200, 150), (200, 160, 300), (230, 170, 280)]
-        input('--- Presione ENTER para ver la tabla tal cual es ---')
-        print(tabla)
-        input('--- Ahora presione ENTER para ver la tabla renderizada por Outfancy ---')
-        print('--- GRAFICO DE LINEAS ---')
-        print(self.linea(tabla))
+        table = [(100, 200, 150), (200, 160, 300), (230, 170, 280)]
+        input('--- Press ENTER to see the table as is ---')
+        print(table)
+        input('--- Now press ENTER to see the table renderized by Outfancy ---')
+        print('--- LINE CHART ---')
+        print(self.line(table))
 
-    def check_data_integrity(self, tabla):
+
+    def check_data_integrity(self, table):
         error = False
-        # Se chequean los datos de la tabla.
-        if isinstance(tabla, list):
-            len_fila = len(tabla[0])
-            # Se chequean las filas de la tabla.
-            for fila in tabla:
-                if isinstance(fila, tuple):
-                    # Si la longitud de la fila es distinta a la longitud medida inicialmente.
-                    if len(fila) != len_fila:
+        # The table data is checked.
+        if isinstance(table, list):
+            len_of_row = len(table[0])
+            # The rows of table are checked.
+            for row in table:
+                if isinstance(row, tuple):
+                    # If the length of row is different from the initially measured length.
+                    if len(row) != len_of_row:
                         error = True
-                    # Para cada elemento de las filas.
-                    for elemento in fila:
-                        # El elemento es valido si es un entero o es nulo.
-                        if not isinstance(elemento, int) or elemento != None:
+                    # For each element of row.
+                    for element in row:
+                        # The element is valid if his type is an int or None.
+                        if not isinstance(element, int) or element != None:
                             error = True
                 else:
                     error = True
@@ -1188,136 +1234,126 @@ class Grafica:
         return error
 
 
-    def get_rango(self, tabla):
-        # Se obtiene el valor maximo existente en la tabla.
-        maximo = max(max(tabla))
-        # Se obtiene el valor minimo existente en la tabla.
-        minimo = min(min(tabla))
-        # Se calcula el rango de valores que la tabla tiene.
-        rango = maximo - minimo
+    def get_range(self, table):
+        # The maximum value in the table is obtained.
+        maximum = max(max(table))
+        # The minimum value in the table is obtained.
+        minimum = min(min(table))
+        # The range of values ​​of the table is calculated.
+        the_range = maximum - minimum
 
-        return minimo, maximo, rango
-
-
-    def asign_letras(self, tabla):
-        # Si la tabla tiene elementos.
-        letras_asignadas = []
-        if len(tabla) > 0:
-            # A cada entidad a representar en la grafica se le asigna una letra.
-            for elemento in range(len(tabla[0])):
-                letras_asignadas.append(minus_letters[elemento])
-
-        return letras_asignadas
+        return minimum, maximum, the_range
 
 
-    def generar_margen_izq(self):
-        """Genera el margen izquierdo, con sus etiquetas, medidas y valores, que seran usados posteriormente en el render."""
-        # Define el alto de la tabla.
-        alto = self.screen_y - self.max_heigth_margin_down
-        # Obtiene el porcentaje que representa el rango frente a (alto_pantalla - alto_maximo_margen_inferior).
-        porcentaje_rango_en_screen_y = self.rango * 100 / alto
-        # Obtiene el orden numerico que tendra cada espacio.
-        orden_numerico = len(str(porcentaje_rango_en_screen_y))
-        # Obtiene el numero de unidades por intervalo, y lo redondea.
-        unidades_por_espacio = round(self.rango / alto)
+    def asign_letters(self, table):
+        assigned_letters = []
+        # If the table have elements.
+        if len(table) > 0:
+            # For each entity represented in the graph is assigned a letter.
+            for element in range(len(table[0])):
+                assigned_letters.append(lower_letters[element])
 
-        lista_etiquetas_y = []
-        for x in range(0, self.rango):
-            # A lista etiquetas y se le añaden las etiquetas.
-            lista_etiquetas_y.append(self.minimo + (x * unidades_por_espacio))
-        # El intervalo sera definido como NUMERO * MULTIPLICADOR_ORDEN.
+        return assigned_letters
 
-        return lista_etiquetas_y
+
+    def generate_left_margin(self):
+        """Generate the left margin, with its labels, measures and values, that will be used later in the render."""
+        # Define heigth of the table.
+        heigth = self.screen_y - self.max_heigth_margin_down
+        # Get the percentage that represents the range over (screen_y - max_heigth_margin_down)
+        percentage_of_range_in_screen_y = self.the_range * 100 / heigth
+        # Get the numeric order that each interval will have.
+        numeric_order = len(str(percentage_of_range_in_screen_y))
+        # Get the number of units per interval and round it.
+        units_per_interval = round(self.the_range / heigth)
+
+        label_list_y = []
+        for x in range(0, self.the_range):
+            # The labels are added to label_list.
+            label_list_y.append(self.minumum + (x * units_per_interval))
+        # The interval will be defined by NUMBER * ORDER_MULTIPLICATOR.
+
+        return label_list_y
 
 '''
-###  PLANIFICACION Y DESARROLLO  ###
+###  PLANNING AND DEVELOPMENT  ###
 
         Pseudo:
-            Supongamos:
-            maximo = 1234
-            minimo = 1200
+            Suppose:
+            maximum = 1234
+            minimum = 1200
 
             screen_y = 25
             -= max_heigth_margin_down = 5
             range = 34 / 20
-            etiquetas_per_pixel = 1.7
+            labels_per_pixel = 1.7
 
-            rango = 34
+            the_range = 34
 
-            De y a y2 la resolucion es de cantidad_numeros per etiqueta.
+            From y to y2 the resolution is of amount of numbers per label.
 
-            A calculo mental se deduce que:
+            For mental calculation follow that
 
-            0 - 20 res. 1pp ORDEN 1
+            0 - 20 res. 1pp ORDER 1
 
             20 - 40 res. 2pp
 
             40 - 100 res. 5pp
 
-            100 - 200 res. 10pp ORDEN 2
+            100 - 200 res. 10pp ORDER 2
 
             200 - 400 res. 20pp
 
             400 - 1000 res. 50pp
 
-            1000 - 2000 res. 100pp ORDEN 3
+            1000 - 2000 res. 100pp ORDER 3
 
             2000 - 4000 res. 200pp
 
             4000 - 10000 res. 500pp
 
-            10000 - 20000 res. 1000pp ORDEN 4
+            10000 - 20000 res. 1000pp ORDER 4
 
             20000 - 40000 res. 2000pp
 
             40000 - 100000 res. 5000pp
 
-            100000 - 200000 res. 10000pp ORDEN 5
+            100000 - 200000 res. 10000pp ORDER 5
 
             200000 - 400000 res. 20000pp
 
-            Se calcula etiquetas_per_pixel.
+            labels_per_pixel are calculated.
 
-            Se ajusta etiquetas_per_pixel A LA BAJA.
-            En el valor mas cercano en la lista de valores.
+            labels_per_pixel are rounded to the low value.
 
-            De la muestra se deduce que la lista de valores es - Orden 1: [1, 2, 5] - Orden 2: [1, 2, 5]
+            In the nearest value in the value list.
 
-            Se deberia mostrar:
+            From the sample it follows that value list is - Ordee 1: [1, 2, 5] - Order 2: [1, 2, 5]
+
+            It should shows:
             1200, 1205, 1210 ..., 1235.
 
 #######################################
 
-        Pseudocodigo del algoritmo.
-            1 - Se genera lista_etiquetas_y y se evalua un posible acortamiento.
-                - Como?
-                    - Dividir el rango por el tamaño de la pantalla.
-                    - Ver si todos los elementos son divisibles entre un millon.
-                    - En caso de no serlo, ver si todos los elementos son divisibles entre mil.
-                    - En caso de no serlo, y ser el valor mayor a mil, ver si son divisibles entre 100.
-                    - En caso de no serlo, no modificar el valor.
-            2 - En caso de poder acortarse, se acorta.
-            3 - Se mide el tamaño de lista_etiquetas_y,
-            4 - Se retorna el ancho calculado para el margen izquierdo y la lista de etiquetas.
+        Algorithm pseudocode.
+            1 - Label_list is generated and a possible shortening is evaluated.
+                - How?
+                    - Divide the range by the size of the screen.
+                    - See if all elements are divisible by a million.
+                    - If not, see if all elements are divisible by thousand.
+                    - If not, and if the value is greater than 1000, see if the elements are divisible by 100.
+                    - If not, the value is not changed.
+            2 - If it can shorten, it is shortened.
+            3 - The size of label_list_y is obtained.
+            4 - The calculated width for the left margin and the label list is returned.
 
 #######################################
 
-Para una grafica.
-A B C
-1 4 7
-2 5 8
-3 6 9
-
-Descripcion de la tabla.
-Una tupla contiene x valores, pudiendose asignar cada valor a una y solo una entidad/motivo productor de los numeros.
-
-Como en el ejemplo de arriba, donde en cada fila estan diferentes valores de A B C en diferentes tiempos.
-
-tabla = [(100, 200, 300), (120, 150, 330), (110, 160, 350)]
+table = [(100, 200, 300), (120, 150, 330), (110, 160, 350)]
 
 #######################################
 
-Falta:
-    - SISTEMA DE CHEQUEO DE ANCHOS.
-    - OPCION PARA ANULAR EL CHEQUEO AUTOMATICO DE ANCHOS.
+To do:
+    - Check system on width.
+    - Option to cancel the automatical check of width.
 '''
