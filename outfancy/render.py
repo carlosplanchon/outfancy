@@ -400,7 +400,7 @@ class Table:
             counter = 0
             # --- Is checked if the elements of data_type_list belong to supported types --- #
             for element in data_type_list:
-                if not element in ['id', 'name', 'date', 'time', 'value', 'desc']:
+                if not element in ['id', 'name', 'date', 'time', 'value', 'desc', None]:
                     # If not belong, the element will be rebuilded.
                     to_rebuild.append(counter)
                 counter += 1
@@ -424,14 +424,15 @@ class Table:
                     # --- For each element in the range of tuple to analyze --- #
                     for the_tuple in range(analyze):
                         # data[the_tuple][x], is an element of column.
+                        field = str(data[the_tuple][x])
                         # --- Check if the element correspond to an hour --- #
-                        if widgets.is_complete_hour(str(data[the_tuple][x])):
+                        if widgets.is_complete_hour(field):
                             the_type = 'time'
                         # --- Check if the element correspond to a date --- #
-                        elif widgets.is_date(str(data[the_tuple][x])):
+                        elif widgets.is_date(field):
                             the_type = 'date'
                         # --- Chequea if the element is numeric --- #
-                        elif str(data[the_tuple][x]).isdigit():
+                        elif field.isdigit():
                             # Try to identify if the element is a value or an Id.
                             # If length of data is less than two is impossible to know if a value is an Id or not.
                             if len(data) > 1:
@@ -449,16 +450,18 @@ class Table:
                                             the_type = 'id'
                                         else:
                                             the_type = 'value'
+                            else:
+                                the_type = 'value'
                         # --- If is not numeric, it is assumed that is a text --- #
                         else:
-                            if len(str(data[the_tuple][x])) > self.chk_dlti_num_letters_in_field:
+                            if len(field) > self.chk_dlti_num_letters_in_field:
                                 num_letters = 0
                                 # The number of letters in the element is counted.
-                                for letter in str(data[the_tuple][x]):
+                                for letter in field:
                                     if letter in letters:
                                         num_letters += 1
                                 # If the field have 90% or more of letters its assumed that it is a name.
-                                if (num_letters * 100 / len(str(data[the_tuple][x]))) > self.chk_dlti_pecentage_letters_in_field:
+                                if (num_letters * 100 / len(field)) > self.chk_dlti_pecentage_letters_in_field:
                                     the_type = 'name'
                                 else:
                                     the_type = 'desc'
@@ -513,7 +516,7 @@ class Table:
                         the_type = 'desc'
 
                     # The type found is assigned to corresponding element in data_type_list.
-                    data_type_list[x] = the_type
+                    #data_type_list[x] = the_type
 
             if len(to_rebuild) > 0:
                 errors.append('Table > Render > check_data_type_list_integrity: data_type_list was rebuilded of modified.')
