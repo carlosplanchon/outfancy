@@ -143,6 +143,7 @@ class Table:
             If it is False, same width will be asigned to each column.
             If it is not provided, the program will asign width automatically based in priority_list.
         """
+
         # Set the internal error logging to an empty list.
         global errors
         errors = []
@@ -298,7 +299,7 @@ class Table:
             # For each element in len(order).
             for x in range(len(order)):
                 # If element is numeric.
-                if order[x].isdigit():
+                if str(order[x]).isdigit():
                     # If the number order[x] contain is greater than columns number of data or less than 0 this value is removed.
                     if order[x] >= len(data[0]) or order[x] < -1:
                         to_remove.append(order[x])
@@ -431,8 +432,8 @@ class Table:
                         # --- Check if the element correspond to a date --- #
                         elif widgets.is_date(field):
                             the_type = 'date'
-                        # --- Chequea if the element is numeric --- #
-                        elif field.isdigit():
+                        # --- Check if the element is numeric --- #
+                        elif str(field).isdigit():
                             # Try to identify if the element is a value or an Id.
                             # If length of data is less than two is impossible to know if a value is an Id or not.
                             if len(data) > 1:
