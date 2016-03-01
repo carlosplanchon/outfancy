@@ -4,10 +4,8 @@
 <img src='examples/chart_auto.png'>
 
 ##Demonstration
-http://showterm.io/42f0bfa286232758acf18
-http://showterm.io/5a31927cbfdc37e116f8d
-
-<iframe src='http://showterm.io/5a31927cbfdc37e116f8d' width='640' height='480'></iframe> 
+- http://showterm.io/42f0bfa286232758acf18
+- http://showterm.io/5a31927cbfdc37e116f8d
 
 ## what is it?
 Outfancy is a python library to print tables in Terminal. It's a quick way to visualize data when you don't have a GUI and can be integrated easily in your programs. It's written in python3 and can quickly be installed anywhere using pip3.
