@@ -15,7 +15,6 @@
 #    write_file(name_file, cadena)        - Write a text in a file.                                 #
 #    read_file(name_file)                 - Read a file.                                            #
 #    write_log(text)                      - This function writes the log.                           #
-#    check_isnumeric(text)                - Check if the input is numeric.                          #
 #    normalise_text(text)                 - This function normalise dates.                          #
 #    is_date(text)                        - Check if the input is a valid date.                     #
 #    is_complete_hour(text)               - Check if the input is a valid hour.                     #
@@ -23,6 +22,7 @@
 #    actual_hour()                        - Returns the actual hour.                                #
 #    measure_screen()                     - Measures characters that can fit on the screen.         #
 #    compress_list(list_to_compress)      - Compress a list, I.e: [1,6,4] is converted in [0,2,1].  #
+#    index_is_in_list(index, the_list)    - Check if an index is in the specified list.             #
 #                                                                                                   #
 #####################################################################################################
 
@@ -67,14 +67,6 @@ def write_log(text):
     log = read_file(log_file)
     write_file(log_file, log + '\n' + text)
 
-# This function check if the input is numeric.
-def check_isnumeric(text):
-    try:
-        str(int(text))
-        return True
-    except:
-        return False
-
 # This function normalize text, is useful to normalize dates.
 def normalise_text(text):
     text = text.replace('/','-')
@@ -86,23 +78,23 @@ def normalise_text(text):
 # This function check if the input is a valid date.
 def is_date(text):
     text = normalise_text(text)
-    for format in ['%d-%m-%Y', '%d-%m-%y', '%d-%m-%Y %H-%M-%S', '%d-%m-%y %H-%M-%S']:
+    for fmt in ['%d-%m-%Y', '%d-%m-%y', '%d-%m-%Y %H-%M-%S', '%d-%m-%y %H-%M-%S']:
         try:
-            strptime(text, format)
+            strptime(text, fmt)
             return True    
-        except:
+        except ValueError:
             pass
-    return False
+        return False
 
 # This function check if the input is a valid hour.
 def is_complete_hour(text):
-    for format in ['%H:%M:%S', '%H:%M']:
+    for fmt in ['%H:%M:%S', '%H:%M']:
         try:
-            strptime(text, format)
+            strptime(text, fmt)
             return True    
-        except:
+        except ValueError:
             pass
-    return False
+        return False
 
 # This function return the actual date.
 def actual_date():
@@ -131,7 +123,7 @@ def measure_screen():
             cr = ioctl_GWINSZ(fd)
             os.close(fd)
         except:
-                pass
+            pass
 
     if not cr:
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
@@ -160,3 +152,10 @@ def compress_list(list_to_compress):
             num += 1
 
     return compressed_list
+
+# This function check if an index is in the specified list.
+def index_is_in_list(index, the_list):
+    if index < len(the_list) and index >= 0:
+        return True
+    else:
+        return False
