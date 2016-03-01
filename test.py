@@ -5,6 +5,45 @@ import outfancy
 
 from time import sleep
 
+# Function that show all tests.
+def all_tests():
+    print('--- DOING ALL TESTS ---')
+    sleep(1)
+    test_table()
+    sleep(4)
+    print('#' * 60)
+
+    print('Test of an Oneline object.')
+    sleep(1)
+    test_oneline()
+    sleep(4)
+    print('#' * 60)
+
+    print('Test of a Table object, configured to show errors.')
+    sleep(1)
+    test_table_show_errors()
+    sleep(4)
+    print('#' * 60)
+
+    print('Test of a Table object, configured to show errors.')
+    sleep(1)
+    test_table_show_errors()
+    sleep(4)
+    print('#' * 60)
+
+    print('Test of a Table object, customized to show how the parameters works.')
+    sleep(1)
+    test_customized_table()
+    sleep(4)
+    print('#' * 60)
+
+    print('Test of a table object, to show how works width without automatical assignement deactivated.')
+    sleep(1)
+    test_table_width_false()
+    sleep(4)
+    print('#' * 60)
+
+
 def create_motors():
     # It creates the object that render Tables.
     global motor 
@@ -41,13 +80,13 @@ def test_oneline():
     print('>>> recordset =', recordset)
     print('>>> for x in range(10):')
     print('>>>     sleep(1)')
-    print(">>>     print('#' * 60")
+    print(">>>     print('=' * 60")
     print('>>>     print(motor_oneline.render(recordset[x]))')
     sleep(2)
     create_motors()
     for x in range(10):
         sleep(1)
-        print('#' * 60)
+        print('=' * 60)
         print(motor_oneline.render(recordset[x]))
 
 # Test of a Table object, configured to show errors.
