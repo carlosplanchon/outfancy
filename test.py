@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import outfancy
-
+import sys
 from time import sleep
 
 # Function that show all tests.
@@ -146,3 +146,7 @@ def test_table_width_false():
     print(motor.render(recordset, width=False))
     sleep(2)
     print(' --- TEST NOTE: With width=False, Outfancy will asign the same width to all columns.')
+
+if __name__ == '__main__':
+    all_tests()
+    sys.exit(0)
