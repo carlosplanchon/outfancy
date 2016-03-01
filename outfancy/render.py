@@ -516,7 +516,7 @@ class Table:
                         the_type = 'desc'
 
                     # The type found is assigned to corresponding element in data_type_list.
-                    #data_type_list[x] = the_type
+                    data_type_list[x] = the_type
 
             if len(to_rebuild) > 0:
                 errors.append('Table > Render > check_data_type_list_integrity: data_type_list was rebuilded of modified.')
