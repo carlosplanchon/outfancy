@@ -166,8 +166,6 @@ class Table:
         ###########################
         # --- PRE-RENDER AREA --- #
         ###########################
-
-
         # --- The screen measures are obtained --- #
         screen_x, screen_y = widgets.measure_screen()
         # --- The correction value is applied to screen_x --- #
@@ -241,26 +239,23 @@ class Table:
         if not isinstance(data, list):
             error = True
         else:
+            # Check if the list have elements, if not, error = True.
             if len(data) > 0:
-                # Is checked that, into the list, the elements type are tuples. 
+                # It checks that the elements type of the list are tuples. 
                 for the_tuple in data:
                     if not isinstance(the_tuple, tuple):
                         error = True
-                    # Is checked that the elements of tuples are not list or bool.
-                    try:
+                    if len(the_tuple) > 0:
+                        # Is checked that the elements of tuples are not list or bool.
                         for element in the_tuple:
                             if isinstance(element, (list, bool)):
                                 error = True
-                    except:
-                        error = True
 
-                if len(data) > 0:
-                    try:
-                        length_of_first_tuple = len(data[0])
-                        for the_tuple in data:
-                            if len(the_tuple) != length_of_first_tuple:
-                                error = True
-                    except:
+            if not error:
+                # If not errors was detected yet, it check if the tuple number of elements are all the same.
+                length_of_first_tuple = len(data[0])
+                for the_tuple in data:
+                    if len(the_tuple) != length_of_first_tuple:
                         error = True
             else:
                 error = True
@@ -303,7 +298,7 @@ class Table:
             # For each element in len(order).
             for x in range(len(order)):
                 # If element is numeric.
-                if widgets.check_isnumeric(order[x]):
+                if order[x].isdigit():
                     # If the number order[x] contain is greater than columns number of data or less than 0 this value is removed.
                     if order[x] >= len(data[0]) or order[x] < -1:
                         to_remove.append(order[x])
@@ -335,14 +330,14 @@ class Table:
                     new_tuple = []
                     # The rearranged tuple is generated.
                     for element in order:
-                        try:
+                        if widgets.index_is_in_list(element, the_tuple):
                             new_tuple.append(the_tuple[element])
-                        except:
+                        else:
                             errors.append('Table > Render > rearrange_data: Error when trying to rearrange data.')
                             return data
                     # The generated tuple is added to rearranged_data.
                     rearranged_data.append(new_tuple)
-
+            # The rearranged data is returned.
             return rearranged_data
 
 
@@ -436,23 +431,24 @@ class Table:
                         elif widgets.is_date(str(data[the_tuple][x])):
                             the_type = 'date'
                         # --- Chequea if the element is numeric --- #
-                        elif widgets.check_isnumeric(str(data[the_tuple][x])):
+                        elif str(data[the_tuple][x]).isdigit():
                             # Try to identify if the element is a value or an Id.
-                            try:
-                                if int(data[the_tuple + 1][x]) - int(data[the_tuple][x]) == 1:
-                                    the_type = 'id'
-                                else:
-                                    the_type = 'value'
-                            except:
-                                the_type = 'value'
-                            if the_tuple != 0:
-                                try:
-                                    if int(data[the_tuple][x]) - int(data[the_tuple - 1][x]) == 1:
+                            # If length of data is less than two is impossible to know if a value is an Id or not.
+                            if len(data) > 1:
+                                # It checks if elements are a continious series, i.e 1, 2, 3, 4.
+                                if widgets.index_is_in_list(the_tuple + 1, data):
+                                    if int(data[the_tuple + 1][x]) - int(data[the_tuple][x]) == 1:
                                         the_type = 'id'
                                     else:
                                         the_type = 'value'
-                                except:
-                                    pass
+                                else:
+                                    the_type = 'value'
+                                if the_tuple != 0:
+                                    if widgets.index_is_in_list(the_tuple - 1, data):
+                                        if int(data[the_tuple][x]) - int(data[the_tuple - 1][x]) == 1:
+                                            the_type = 'id'
+                                        else:
+                                            the_type = 'value'
                         # --- If is not numeric, it is assumed that is a text --- #
                         else:
                             if len(str(data[the_tuple][x])) > self.chk_dlti_num_letters_in_field:
@@ -540,12 +536,11 @@ class Table:
             rearranged_data_type_list = []
             # The rearranged tuple is generated.
             for element in order:
-                try:
+                if widgets.index_is_in_list(element, data_type_list):
                     rearranged_data_type_list.append(data_type_list[element])
-                except:
+                else:
                     errors.append('Table > Render > rearrange_data_type_list: Error when trying to rearrange data_type_list.')
                     return data_type_list
-
             # If rearrange process finish without errors, the rearranged data_type_list is returned.
             return rearranged_data_type_list
 
@@ -976,14 +971,14 @@ class Table:
 
         # Check if order is provided, if it is not, an error is emmited, else, the labels are rearranged.
         if not isinstance(order, list):
-            errors.append('Table > Render > check_label_list: Order was not prvided or it is invalid.')
+            errors.append('Table > Render > check_label_list: Order was not provided or it is invalid.')
             ordered_label_list = label_list
         else:
             ordered_label_list = []
             for element in order:
-                try:
+                if widgets.index_is_in_list(element, label_list):
                     ordered_label_list.append(label_list[element])
-                except:
+                else:
                     errors.append('Table > Render > check_label_list: Error when trying to rearrange the labels.')
 
         # If width is not provided, an error is emitted and label_list (integrated with separator) is returned.
@@ -1007,7 +1002,7 @@ class Table:
     def post_render(self, pre_table=None, label_list=None, len_separator=None):
         # If pre_table is not provided an error is emitted.
         if pre_table == None:
-            errors.append('Table > Render > post_render: No se proveyo pre_table, esto pasa si los datos no son validos.')
+            errors.append('Table > Render > post_render: pre_table was not provided, this can occur if the data is not valid.')
             pre_table = ''
 
         # If the length of separator is not provided, an error is emitted and the variable is assigned to 1.
