@@ -84,7 +84,7 @@ def is_date(text):
             return True    
         except ValueError:
             pass
-        return False
+    return False
 
 # This function check if the input is a valid hour.
 def is_complete_hour(text):
@@ -94,7 +94,7 @@ def is_complete_hour(text):
             return True    
         except ValueError:
             pass
-        return False
+    return False
 
 # This function return the actual date.
 def actual_date():
