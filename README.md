@@ -36,7 +36,10 @@ some_data = [(1, 'Foo'), (2, 'Bar')]
 print(motor.render(some_data))
 ```
 
-##to do (Colaboration is welcome)
+## To do (Colaboration is welcome)
 - Translate code to english. (Translated) (the translation need revision from a native english speaker (I speak spanish).
 - color option. (Added) (Can be improved used regex (see widgets.py))
 - Add basic charting functions (in the folder code_to_use i have some code found in internet that can be used to that functions).
+
+## Others
+- https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3 (Funny test with colors)
