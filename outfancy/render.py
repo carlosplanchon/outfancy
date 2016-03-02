@@ -189,7 +189,7 @@ class Table:
         # ---  RENDER AREA --- #
         ########################
         # --- Asign the width to show each column, if it is not provided, the system will try to rebuild it --- #
-        width, order = self.asign_column_width(width, priority_list, maximum, screen_x, len(separator), len(order))
+        width, order = self.asign_column_width(width, priority_list, maximum, screen_x, widgets.printed_length(separator), len(order))
         # --- For twice data_type_list is rearranged --- #
         rearranged_data_type_list = self.rearrange_data_type_list(data_type_list, order)
         # --- For twice data is rearranged --- #
@@ -204,7 +204,7 @@ class Table:
         # --- POST-RENDER AREA --- #
         ############################
         # --- It do the post_render, joining the pre_table with the other data (labels, errors) --- #
-        return self.post_render(pre_table, label_list, len(separator))
+        return self.post_render(pre_table, label_list, widgets.printed_length(separator))
 
 
     # Demonstration function.
@@ -269,7 +269,7 @@ class Table:
     def check_separator(self, separator=None, screen_x=80):
         if not isinstance(separator, str):
             return ' '
-        elif len(separator) > screen_x:
+        elif widgets.printed_length(separator) > screen_x:
             errors.append('Table > Render > check_separator: The provided separator is invalid.')
             return ' '
         else:
@@ -356,8 +356,9 @@ class Table:
             # Measure the table elements and assing the maximum of each column in each element of maximums list.
             for tupla in range(len(rearranged_data)):
                 for element in range(len(rearranged_data[0])):
-                    if len(str(rearranged_data[tupla][element])) > maximum[element]:
-                        maximum[element] = len(str(rearranged_data[tupla][element]))
+                    field_printed_length = widgets.printed_length(str(rearranged_data[tupla][element]))
+                    if field_printed_length > maximum[element]:
+                        maximum[element] = field_printed_length
             return maximum
         else:
             errors.append('Table > Render > check_maximums: Error when trying to check maximums.')
@@ -455,14 +456,14 @@ class Table:
                                 the_type = 'value'
                         # --- If is not numeric, it is assumed that is a text --- #
                         else:
-                            if len(field) > self.chk_dlti_num_letters_in_field:
+                            if widgets.printed_length(field) > self.chk_dlti_num_letters_in_field:
                                 num_letters = 0
                                 # The number of letters in the element is counted.
                                 for letter in field:
                                     if letter in letters:
                                         num_letters += 1
                                 # If the field have 90% or more of letters its assumed that it is a name.
-                                if (num_letters * 100 / len(field)) > self.chk_dlti_pecentage_letters_in_field:
+                                if (num_letters * 100 / widgets.printed_length(field)) > self.chk_dlti_pecentage_letters_in_field:
                                     the_type = 'name'
                                 else:
                                     the_type = 'desc'
@@ -841,16 +842,16 @@ class Table:
                 # --- While frame´s length is greater than column width, it is cutted --- #
                 if width[column] > 0:
                     # If width[column] is equal or less than 0, it will be cutted infinitely.
-                    while len(field_to_process) > width[column]:
+                    while widgets.printed_length(field_to_process) > width[column]:
                         frame.append(field_to_process[0:after])
                         field_to_process = field_to_process[after:]
                 # --- If field_to_process and width[column] are equals, the frame is appended without any process --- #
-                if len(field_to_process) == width[column]:
+                if widgets.printed_length(field_to_process) == width[column]:
                     frame.append(field_to_process)
                 # --- If the content of the frame to cut is lower than column width the required space is filed
                 #     of whitespaces --- #
-                if len(field_to_process) < width[column]:
-                    frame.append(field_to_process + ' ' * (width[column] - len(field_to_process)))
+                if widgets.printed_length(field_to_process) < width[column]:
+                    frame.append(field_to_process + ' ' * (width[column] - widgets.printed_length(field_to_process)))
                 # --- The generated frame is cutted in function of max_heigth_of_a_frame_threshold (maximum heigth) --- #
                 if len(frame) > self.max_heigth_of_a_frame_threshold:
                     frame = frame[0:self.max_heigth_of_a_frame_threshold]
@@ -858,7 +859,7 @@ class Table:
                 # --- Each frame is inserted in the field that is being generated --- #
                 frame_to_insert.append(frame)
 
-            # --- Maximum space (y axis) for each frame is checkd --- #
+            # --- Maximum space (y axis) for each frame is checked --- #
             maximum = 0
             for frame in frame_to_insert:
                 if len(frame) > maximum:
@@ -993,11 +994,11 @@ class Table:
         # For each element in length of width list.
         for x in range(len(width)):
             # If length of label is greater than column width, the label is shortened.
-            if len(ordered_label_list[x]) > width[x]:
+            if widgets.printed_length(ordered_label_list[x]) > width[x]:
                 ordered_label_list[x] = ordered_label_list[x][0:width[x]]
             # Else, the missing space is filled with white spaces.
-            elif len(ordered_label_list[x]) < width[x]:
-                ordered_label_list[x] = ordered_label_list[x] + ' ' * (width[x] - len(ordered_label_list[x]))
+            elif widgets.printed_length(ordered_label_list[x]) < width[x]:
+                ordered_label_list[x] = ordered_label_list[x] + ' ' * (width[x] - widgets.printed_length(ordered_label_list[x]))
 
         # Ordered label list (integrated with separator) is returned.
         return separator + separator.join(ordered_label_list)
