@@ -6,8 +6,8 @@ import sys
 from time import sleep
 
 # Function that show all tests.
-def all_tests():
-    print('--- DOING ALL TESTS ---')
+def demo():
+    print('--- STARTING THE DEMO ---')
     sleep(2)
 
     print('Test table printing (only providing recordset).')
@@ -168,5 +168,5 @@ def test_table_width_false():
     print(' --- TEST NOTE: With width=False, Outfancy will asign the same width to all columns.')
 
 if __name__ == '__main__':
-    all_tests()
+    demo()
     sys.exit(0)
