@@ -25,6 +25,8 @@ class Table:
         self.analyze_threshold = 10
         # The minimum width that a column need to be showed in screen.
         self.show_width_threshold = 5
+        # Separator before table allow to deactivate the row_separator before table.
+        self.row_separator_before_table = True
 
         '''Measures'''
         # The maximum number of rows that a table can have (-1 = unlimited).
@@ -90,6 +92,9 @@ class Table:
     def set_maximum_number_of_rows(self, x=-1):
         self.maximum_number_of_rows = x
 
+    def set_row_separator_before_table(self, x=True):
+        self.row_separator_before_table = x
+
 
     def show_check_data(self):
         print(self.check_data)
@@ -121,8 +126,11 @@ class Table:
     def show_maximum_number_of_rows(self):
         print(self.maximum_number_of_rows)
 
+    def show_row_separator_before_table(self):
+        print(self.row_separator_before_table)
 
-    def render(self, data=None, separator=None, label_list=None, order=None, data_type_list=None, priority_list=None, width=None):
+
+    def render(self, data=None, separator=None, label_list=None, order=None, data_type_list=None, priority_list=None, width=None, row_separator=None):
         """Render receive six (6) parameters, and is responsible for the rendering of data
         in a table in an organized way.
 
@@ -142,6 +150,7 @@ class Table:
         width: Allow to specify width to columns.
             If it is False, same width will be asigned to each column.
             If it is not provided, the program will asign width automatically based in priority_list.
+        row_separator: It allow to specify a separator between rows.
         """
 
         # Set the internal error logging to an empty list.
@@ -173,6 +182,8 @@ class Table:
         screen_x += self.corrector
         # --- The separator is checked --- #
         separator = self.check_separator(separator, screen_x)
+        # --- The row_separator is checked --- #
+        row_separator = self.check_row_separator(row_separator, screen_x)
         # --- The validity of provided order is checked --- #
         order = self.check_order(data, order)
         # --- The data is rearranged --- #
@@ -197,7 +208,7 @@ class Table:
         # --- The fields that contains the data are generated --- #
         frame_lines = self.generate_table_frames(rearranged_data, width, maximum, screen_y)
         # --- Generates the table area that contains the data. --- #
-        pre_table = self.generate_pre_table(frame_lines, separator)
+        pre_table = self.generate_pre_table(frame_lines, separator, row_separator)
         # --- Label list is checked. --- #
         label_list = self.check_label_list(label_list, data_type_list, width, order, separator)
         ############################
@@ -267,13 +278,29 @@ class Table:
 
 
     def check_separator(self, separator=None, screen_x=80):
+        # --- It checks if separator is a string, if not, return the default separator --- #
         if not isinstance(separator, str):
             return ' '
+        # It checks if the length of the separator is greater than screen width, if it is, the separator is shortened.
         elif widgets.printed_length(separator) > screen_x:
             errors.append('Table > Render > check_separator: The provided separator is invalid.')
             return ' '
         else:
             return separator
+
+
+    def check_row_separator(self, row_separator=None, screen_x=80):
+        # --- It checks if separator is a string, if not, the row_separator is returned as None --- #
+        if not isinstance(row_separator, str):
+            return None
+        # It checks if the length of the row_separator is less than screen width, if it is, the row_separator is corrected.
+        if widgets.printed_length(row_separator) < screen_x:
+            row_separator = row_separator + (widgets.remove_colors(row_separator) * (int(screen_x / widgets.printed_length(row_separator))))
+        # It checks if the length of the row_separator is greater than screen width, if it is, the separator is shortened.
+        if widgets.printed_length(row_separator) > screen_x:
+            row_separator = row_separator[:screen_x] + '\x1b[0;39m'
+
+        return row_separator
 
 
     def check_order(self, data=None, order=None):
@@ -878,7 +905,7 @@ class Table:
 
 
     # This function join the fields and separator, creating the data area of the table.
-    def generate_pre_table(self, frame_lines=None, separator=None):
+    def generate_pre_table(self, frame_lines=None, separator=None, row_separator=None):
         # Check if frame_lines is provided, if it is not, return an error.
         if frame_lines == None:
             return 'Table > Render > generate_pre_table: frame_lines was not provided.'
@@ -901,6 +928,18 @@ class Table:
                         pre_table += separator + field[line]
 
                     pre_table += '\n'
+
+                # --- If row_separator is provided --- #
+                if row_separator != None:
+                    # The row_separator is added to pre_table.
+                    pre_table += row_separator + '\n'
+
+        # --- If row_separator is provided --- #
+        if row_separator != None:
+            # If in config separator before table is activated.
+            if self.row_separator_before_table:
+                # The row_separator is added before the table.
+                pre_table = row_separator + '\n' + pre_table
 
         # If pre_table ends with \n (ENTER), this last ENTER is removed.
         if len(pre_table) > 0:
@@ -1063,6 +1102,7 @@ class Oneline:
         self.motor.set_show_errors(False)
         self.motor.set_check_dimensiones(True)
         self.motor.set_maximum_number_of_rows(1)
+        self.motor.set_row_separator_before_table(False)
 
     def set_check_data(self, x=True):
         self.motor.check_data = x
@@ -1085,6 +1125,9 @@ class Oneline:
     def set_maximum_number_of_rows(self, x=1):
         self.motor.maximum_number_of_rows = x
 
+    def set_row_separator_before_table(self, x=True):
+        self.motor.row_separator_before_table = x
+
 
     def show_check_data(self):
         print(self.motor.check_data)
@@ -1106,6 +1149,9 @@ class Oneline:
 
     def show_maximum_number_of_rows(self):
         print(self.motor.maximum_number_of_rows)
+
+    def show_row_separator_before_table(self,):
+        print(self.motor.row_separator_before_table)
 
 
     def render(self, data=None, width=None, separator=None, order=None, priority_list=None):
