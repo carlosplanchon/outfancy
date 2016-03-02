@@ -23,6 +23,7 @@
 #    measure_screen()                     - Measures characters that can fit on the screen.         #
 #    compress_list(list_to_compress)      - Compress a list, I.e: [1,6,4] is converted in [0,2,1].  #
 #    index_is_in_list(index, the_list)    - Check if an index is in the specified list.             #
+#    printed_length(string)               - Measure the length of a printed string.                 #
 #                                                                                                   #
 #####################################################################################################
 
@@ -69,10 +70,10 @@ def write_log(text):
 
 # This function normalize text, is useful to normalize dates.
 def normalise_text(text):
-    text = text.replace('/','-')
-    text = text.replace(':','-')
-    text = text.replace('.','-')
-    text = text.replace('@','-')
+    text = text.replace('/', '-')
+    text = text.replace(':', '-')
+    text = text.replace('.', '-')
+    text = text.replace('@', '-')
     return text
 
 # This function check if the input is a valid date.
@@ -159,3 +160,29 @@ def index_is_in_list(index, the_list):
         return True
     else:
         return False
+
+# This function measure the length of a printed string.
+def printed_length(string):
+    color_list = ['\x1b[0;30m', '\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m', '\x1b[0;34m', '\x1b[0;35m', '\x1b[0;36m', '\x1b[0;37m', '\x1b[0;39m', '\x1b[0;40m', '\x1b[0;41m', '\x1b[0;42m', '\x1b[0;43m', '\x1b[0;44m', '\x1b[0;45m', '\x1b[0;46m', '\x1b[0;47m', '\x1b[0;49m', '\x1b[0;90m', '\x1b[0;91m', '\x1b[0;92m', '\x1b[0;93m', '\x1b[0;94m', '\x1b[0;95m', '\x1b[0;96m', '\x1b[0;97m', '\x1b[0;99m', '\x1b[0;100m', '\x1b[0;101m', '\x1b[0;102m', '\x1b[0;103m', '\x1b[0;104m', '\x1b[0;105m', '\x1b[0;106m', '\x1b[0;107m', '\x1b[0;109m', '\x1b[1;30m', '\x1b[1;31m', '\x1b[1;32m', '\x1b[1;33m', '\x1b[1;34m', '\x1b[1;35m', '\x1b[1;36m', '\x1b[1;37m', '\x1b[1;39m', '\x1b[1;40m', '\x1b[1;41m', '\x1b[1;42m', '\x1b[1;43m', '\x1b[1;44m', '\x1b[1;45m', '\x1b[1;46m', '\x1b[1;47m', '\x1b[1;49m', '\x1b[1;90m', '\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m', '\x1b[1;95m', '\x1b[1;96m', '\x1b[1;97m', '\x1b[1;99m', '\x1b[1;100m', '\x1b[1;101m', '\x1b[1;102m', '\x1b[1;103m', '\x1b[1;104m', '\x1b[1;105m', '\x1b[1;106m', '\x1b[1;107m', '\x1b[1;109m']
+    for x in color_list:
+        string = string.replace(x, '')
+    # It returns the length of the printed string
+    return len(string)
+
+"""
+--- IF ANYBODY CAN DEVELOP THIS FUNCTION USING REGEX, WELCOME IS ---
+
+import re
+# This function measure the length of a printed string.
+def printed_length(string):
+    # strip_ANSI_pat remove the invisible characters using regular expresions.
+    strip_ANSI_pat = re.compile(r'''
+        \x1b     # literal ESC
+        \[       # literal [
+        [;\d]*   # zero or more digits or semicolons
+        [A-Za-z] # a letter
+        ''', re.VERBOSE).sub
+
+    # It returns the length of the printed string
+    return len(strip_ANSI_pat('', string))
+"""
