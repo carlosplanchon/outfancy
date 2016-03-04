@@ -40,45 +40,52 @@ from datetime import datetime
 outfancy_temp_files = '/tmp/outfancy/'
 log_file = 'log.log'
 
-# This function do the start checking.
+
 def start_check():
+    """This function do the start checking."""
     if not os.path.exists(outfancy_temp_files):
         os.mkdir(outfancy_temp_files)
     if not os.path.exists(outfancy_temp_files + log_file):
         os.system('touch ' + outfancy_temp_files + log_file)
 
-# This function join a list using spaces.
+
 def list_join(the_list):
+    """This function join a list using spaces."""
     return ' '.join(the_list)
 
-# This function write a file
+
 def write_file(name_file, string):
+    """This function write a file."""
     file = open(name_file, 'w')
     file.write(string)
     file.close()
 
-# This function read a file.
+
 def read_file(name_file):
+    """This function read a file."""
     file = open(name_file, 'r')
     content = file.read()
     file.close()
     return content
 
-# This function writes the log.
+
 def write_log(text):
+    """This function writes the log."""
     log = read_file(log_file)
     write_file(log_file, log + '\n' + text)
 
-# This function normalize text, is useful to normalize dates.
+
 def normalise_text(text):
+    """This function normalize text, is useful to normalize dates."""
     text = text.replace('/', '-')
     text = text.replace(':', '-')
     text = text.replace('.', '-')
     text = text.replace('@', '-')
     return text
 
-# This function check if the input is a valid date.
+
 def is_date(text):
+    """This function check if the input is a valid date."""
     text = normalise_text(text)
     for fmt in ['%d-%m-%Y', '%d-%m-%y', '%d-%m-%Y %H-%M-%S', '%d-%m-%y %H-%M-%S']:
         try:
@@ -88,8 +95,9 @@ def is_date(text):
             pass
     return False
 
-# This function check if the input is a valid hour.
+
 def is_complete_hour(text):
+    """This function check if the input is a valid hour."""
     for fmt in ['%H:%M:%S', '%H:%M']:
         try:
             strptime(text, fmt)
@@ -98,18 +106,21 @@ def is_complete_hour(text):
             pass
     return False
 
-# This function return the actual date.
+
 def actual_date():
+    """This function return the actual date."""
     actual_date = datetime.now()
     return str(actual_date.day) + '-' + str(actual_date.month) + '-' + str(actual_date.year)
 
-# This function return the actual hour.
+
 def actual_hour():
+    """This function return the actual hour."""
     actual_hour = datetime.now()
     return str(actual_hour.hour) + ':' + str(actual_hour.minute) + ':' + str(actual_hour.second)
 
-# Measure the screen dimensions (in characters), returning two values, X and Y.
+
 def measure_screen():
+    """Measure the screen dimensions (in characters), returning two values, X and Y."""
     env = os.environ
     def ioctl_GWINSZ(fd):
         try:
@@ -131,8 +142,9 @@ def measure_screen():
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
     return int(cr[1]), int(cr[0])
 
-# This function compress a list, I.e: [1,6,4] is converted in [0,2,1].
+
 def compress_list(list_to_compress):
+    """This function compress a list, I.e: [1,6,4] is converted in [0,2,1]."""
     # If list_to_compress is empty the same list is returned, becose is imposible to compress.
     if list_to_compress == []:
         return list_to_compress
@@ -155,30 +167,35 @@ def compress_list(list_to_compress):
 
     return compressed_list
 
-# This function check if an index is in the specified list.
+
 def index_is_in_list(index, the_list):
+    """This function check if an index is in the specified list."""
     if index < len(the_list) and index >= 0:
         return True
     else:
         return False
 
-# This function remove the color codes of a string.
+
 def remove_colors(string):
+    """This function remove the color codes of a string."""
     color_list = ['\x1b[0;30m', '\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m', '\x1b[0;34m', '\x1b[0;35m', '\x1b[0;36m', '\x1b[0;37m', '\x1b[0;39m', '\x1b[0;40m', '\x1b[0;41m', '\x1b[0;42m', '\x1b[0;43m', '\x1b[0;44m', '\x1b[0;45m', '\x1b[0;46m', '\x1b[0;47m', '\x1b[0;49m', '\x1b[0;90m', '\x1b[0;91m', '\x1b[0;92m', '\x1b[0;93m', '\x1b[0;94m', '\x1b[0;95m', '\x1b[0;96m', '\x1b[0;97m', '\x1b[0;99m', '\x1b[0;100m', '\x1b[0;101m', '\x1b[0;102m', '\x1b[0;103m', '\x1b[0;104m', '\x1b[0;105m', '\x1b[0;106m', '\x1b[0;107m', '\x1b[0;109m', '\x1b[1;30m', '\x1b[1;31m', '\x1b[1;32m', '\x1b[1;33m', '\x1b[1;34m', '\x1b[1;35m', '\x1b[1;36m', '\x1b[1;37m', '\x1b[1;39m', '\x1b[1;40m', '\x1b[1;41m', '\x1b[1;42m', '\x1b[1;43m', '\x1b[1;44m', '\x1b[1;45m', '\x1b[1;46m', '\x1b[1;47m', '\x1b[1;49m', '\x1b[1;90m', '\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m', '\x1b[1;95m', '\x1b[1;96m', '\x1b[1;97m', '\x1b[1;99m', '\x1b[1;100m', '\x1b[1;101m', '\x1b[1;102m', '\x1b[1;103m', '\x1b[1;104m', '\x1b[1;105m', '\x1b[1;106m', '\x1b[1;107m', '\x1b[1;109m']
     [for x in color_list: string = string.replace(x, '')]
 
-# This function measure the length of a printed string.
+
 def printed_length(string):
+    """This function measure the length of a printed string."""
     # It returns the length of the printed string
     return len(remove_colors(string))
+
 
 """
 --- IF ANYBODY CAN DEVELOP THIS FUNCTION USING REGEX, WELCOME IS ---
 
 import re
 
-# This function remove the color codes of a string.
+
 def remove_colors(string):
+    '''This function remove the color codes of a string.'''
     # strip_ANSI_pat remove the invisible characters using regular expresions.
     strip_ANSI_pat = re.compile(r'''
         \x1b     # literal ESC
