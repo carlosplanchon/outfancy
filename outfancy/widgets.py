@@ -165,22 +165,20 @@ def index_is_in_list(index, the_list):
 # This function remove the color codes of a string.
 def remove_colors(string):
     color_list = ['\x1b[0;30m', '\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m', '\x1b[0;34m', '\x1b[0;35m', '\x1b[0;36m', '\x1b[0;37m', '\x1b[0;39m', '\x1b[0;40m', '\x1b[0;41m', '\x1b[0;42m', '\x1b[0;43m', '\x1b[0;44m', '\x1b[0;45m', '\x1b[0;46m', '\x1b[0;47m', '\x1b[0;49m', '\x1b[0;90m', '\x1b[0;91m', '\x1b[0;92m', '\x1b[0;93m', '\x1b[0;94m', '\x1b[0;95m', '\x1b[0;96m', '\x1b[0;97m', '\x1b[0;99m', '\x1b[0;100m', '\x1b[0;101m', '\x1b[0;102m', '\x1b[0;103m', '\x1b[0;104m', '\x1b[0;105m', '\x1b[0;106m', '\x1b[0;107m', '\x1b[0;109m', '\x1b[1;30m', '\x1b[1;31m', '\x1b[1;32m', '\x1b[1;33m', '\x1b[1;34m', '\x1b[1;35m', '\x1b[1;36m', '\x1b[1;37m', '\x1b[1;39m', '\x1b[1;40m', '\x1b[1;41m', '\x1b[1;42m', '\x1b[1;43m', '\x1b[1;44m', '\x1b[1;45m', '\x1b[1;46m', '\x1b[1;47m', '\x1b[1;49m', '\x1b[1;90m', '\x1b[1;91m', '\x1b[1;92m', '\x1b[1;93m', '\x1b[1;94m', '\x1b[1;95m', '\x1b[1;96m', '\x1b[1;97m', '\x1b[1;99m', '\x1b[1;100m', '\x1b[1;101m', '\x1b[1;102m', '\x1b[1;103m', '\x1b[1;104m', '\x1b[1;105m', '\x1b[1;106m', '\x1b[1;107m', '\x1b[1;109m']
-    for x in color_list:
-        string = string.replace(x, '')
-    return string
+    [for x in color_list: string = string.replace(x, '')]
 
 # This function measure the length of a printed string.
 def printed_length(string):
-    string = remove_colors(string)
     # It returns the length of the printed string
-    return len(string)
+    return len(remove_colors(string))
 
 """
 --- IF ANYBODY CAN DEVELOP THIS FUNCTION USING REGEX, WELCOME IS ---
 
 import re
-# This function measure the length of a printed string.
-def printed_length(string):
+
+# This function remove the color codes of a string.
+def remove_colors(string):
     # strip_ANSI_pat remove the invisible characters using regular expresions.
     strip_ANSI_pat = re.compile(r'''
         \x1b     # literal ESC
@@ -189,6 +187,6 @@ def printed_length(string):
         [A-Za-z] # a letter
         ''', re.VERBOSE).sub
 
-    # It returns the length of the printed string
-    return len(strip_ANSI_pat('', string))
+    # It returns the string without special characters.
+    return strip_ANSI_pat('', string)
 """
