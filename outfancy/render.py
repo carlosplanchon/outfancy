@@ -45,7 +45,7 @@ class Table:
         # The string used for the separator intersection.
         #self.intersection_separator = None
         # The style used in the table.
-        self.style = None
+        #self.style = None
         """
         The style have to be applied with a method like.
         self.set_style('grid')
