@@ -1028,7 +1028,6 @@ class Table:
         if label_list == False:
             return label_list
 
-        data_type_list = None
         # If data_type_list is None, an empty string will be returned.
         if data_type_list == None:
             return ''
