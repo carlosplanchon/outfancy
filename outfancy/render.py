@@ -1244,7 +1244,7 @@ class Oneline:
         print('--- IN DEVELOPMENT ---')
 
 
-
+'''
 class Plot:
     """
     Features in development.
@@ -1255,15 +1255,19 @@ class Plot:
         self.max_width_margin_left = 10 
 
     def area(self, table, x_labels):
+        """Area plot."""
         pass
 
     def bar(self, table):
+        """Bar plot."""
         pass
 
     def column(self, table):
+        """Column plot."""
         pass
 
     def line(self, table=None, x_labels=None):
+        """Line plot."""
         # The data is checked.
         if not self.check_data_integrity(table):
             return '--- Plot > Line > The input data is invalid. ---'
@@ -1282,10 +1286,8 @@ class Plot:
         print('screen_x, screen_y', screen_x, screen_y)
         print('minimum', minimum, 'maximum', maximum, 'range', the_range)
         print('assigned_letters', assigned_letters)
-
-
         
-        '''
+        """
             Render.
             How?
 
@@ -1296,15 +1298,18 @@ class Plot:
             - The curve of the chart is determined.
             - Pre_chart is renderized.
             - Chart is renderized.
-        '''
+        """
 
     def pie(self, table):
+        """Pie plot."""
         pass
 
     def ring(self, table):
+        """Ring plot."""
         pass
 
     def candlestick(self, table):
+        """Candlestick plot."""
         pass
 
 
@@ -1386,7 +1391,7 @@ class Plot:
 
         return label_list_y
 
-'''
+
 ###  PLANNING AND DEVELOPMENT  ###
 
         Pseudo:
