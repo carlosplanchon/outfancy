@@ -992,8 +992,13 @@ class Table:
         if label_list == False:
             return label_list
 
-        # List of elemnts that have to be rebuilded #
-        # If label_list is invalid, it will be rebuilded.
+        data_type_list = None
+        # If data_type_list is None, an empty string will be returned.
+        if data_type_list == None:
+            return ''
+
+        # --- If label_list is invalid, it will be rebuilded --- #
+        # List of elements that have to be rebuilded.
         to_rebuild = []
         if not isinstance(label_list, list):
             errors.append('Table > Render > check_label_list: label_list was not provided or it is invalid.')
@@ -1028,23 +1033,12 @@ class Table:
         # For each element of label_list that need to be rebuild.
         for x in to_rebuild:
             # It try to rebuild each element.
-            if data_type_list[x] == 'id':
-                label = 'Id'
-            elif data_type_list[x] == 'name':
-                label = 'Name'
-            elif data_type_list[x] == 'date':
-                label = 'Date'
-            elif data_type_list[x] == 'time':
-                label = 'Hour'
-            elif data_type_list[x] == 'value':
-                label = 'Value'
-            elif data_type_list[x] == 'desc':
-                label = 'Description'
+            translate_data_type_to_label = {'id': 'Id', 'name': 'Name', 'date': 'Date', 'time': 'Hour', 'value': 'Value', 'desc': 'Description'}
+            if data_type_list[x] in translate_data_type_to_label.keys():
+                # The label obtained is assigned to label_list.
+                label_list[x] = translate_data_type_to_label[data_type_list[x]]
             else:
-                label = 'Col.' + str(x)
-
-            # The label obtained is assigned to label_list.
-            label_list[x] = label
+                label_list[x] = 'Col.' + str(x)
 
         if len(to_rebuild) > 0:
             errors.append('Table > Render > check_label_list: label_list was rebuilt.')
