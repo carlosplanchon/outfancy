@@ -29,8 +29,44 @@ class Table:
         self.analyze_threshold = 10
         # The minimum width that a column need to be showed in screen.
         self.show_width_threshold = 5
-        # Separator before table allow to deactivate the row_separator before table.
+        # row_separator_before_table allow to deactivate the row_separator before table.
         self.row_separator_before_table = True
+
+
+        ##########################
+        # -v- IN DEVELOPMENT -v- #
+        #                        #
+        # row_separator_before_labels allow to enable the row_separator before labels.
+        #self.row_separator_before_labels = False
+        # separator_before_table allow to enable the separator before table.
+        #self.separator_before_table = False
+        # separator_after_table allow to enable the separator after table.
+        #self.separator_after_table = False
+        # The string used for the separator intersection.
+        #self.intersection_separator = None
+        # The style used in the table.
+        self.style = None
+        """
+        The style have to be applied with a method like.
+        self.set_style('grid')
+
+        The parameters of the table have to be configurated according with the style selected.
+
+        I want to find better ideas at the moment of application of the separators.
+        The variables:  row_separator_before_labels,
+                        self.row_separator_before_labels,
+                        self.separator_before_table,
+                        self.separator_after_table
+            are really stupid variables, another way to apply the separators maybe will be a list like
+            row_separator_apply = [False, True, True, True, True, True, False]
+            row_separator_apply[0] == False, then separator IS NOT applied before labels.
+            row_separator_apply[1] == True, then separator IS applied after labels.
+            The same idea can be applied for the separators (between columns).
+            This allow to do grids easily.
+        """
+        #                        #
+        # -^- IN DEVELOPMENT -^- #
+        ##########################
 
         ####################
         # --- Measures --- #
