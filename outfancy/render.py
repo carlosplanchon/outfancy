@@ -9,18 +9,22 @@ lower_letters = 'abcdefghijklmnñopqrstuvwxyz'
 # Start check.
 widgets.start_check()
 
+
+
 class Table:
     """Table allow to render a table with nice format, the data input have to acomplish the format [(1, 'foo'), (2, 'bar')]"""
     def __init__(self):
-        '''Rendering parameters.'''
+        #################################
+        # --- Rendering parameters. --- #
+        #################################
         # Check_data specify if the input data have to be checked or not.
-        self.check_data = True
+        self.check_data = False
         # Check_data_size specify if the size of table data have to be checked or not.
-        self.check_data_size = False
+        self.check_table_size = False
         # Corrector = Indicates the correction value to be applied to the x axis (margin of spaces at right of the screen).
         self.corrector = -2
         # Maximum heigth that a tuple can have in screen.
-        self.max_heigth_of_a_frame_threshold = 20
+        self.max_heigth_of_a_tuple = 20
         # Analysis threshold (in rows) at the moment of analyze data_type_list.
         self.analyze_threshold = 10
         # The minimum width that a column need to be showed in screen.
@@ -28,11 +32,15 @@ class Table:
         # Separator before table allow to deactivate the row_separator before table.
         self.row_separator_before_table = True
 
-        '''Measures'''
+        ####################
+        # --- Measures --- #
+        ####################
         # The maximum number of rows that a table can have (-1 = unlimited).
         self.maximum_number_of_rows = -1
 
-        '''Options'''
+        ###################
+        # --- Options --- #
+        ###################
         # This option toggle the error screen showing.
         self.show_errors = False
         # This option toggle the error logging.
@@ -40,8 +48,10 @@ class Table:
         # Toggle the label showing above the table.
         self.show_labels = True
 
-        ''' Check_lista_tipo_datos_integrity data type recognizer configuration. '''
-        # The values by default works well, is not recommended his modification.
+        ################################################################################
+        # --- check_data_type_list_integrity > data type recognizer configuration. --- #
+        ################################################################################
+        # The values by default works well, is not recommended its modification.
 
         # Number of letters required to be considered desc (below this value is assumed that the type is a name).
         self.chk_dlti_num_letters_in_field = 15
@@ -62,71 +72,93 @@ class Table:
         self.chk_dlti_desc = 60
 
 
-    def set_check_data(self, x=True):
+    def set_check_data(self, x=False):
+        """If check_data == True the dataset input will be checked. If you don't trust the data source, enable the data checking."""
         self.check_data = x
 
-    def set_check_dimensiones(self, x=True):
-        self.check_data_size = x
+    def set_check_table_size(self, x=False):
+        """If check_table_size == True, the measures of the table will be checked. If you don't trust the data source, enable the data measuring."""
+        self.check_table_size = x
 
     def set_corrector(self, x=-2):
+        """The corrector is a value that will be added to screen_x length, is -2 by default."""
         self.corrector = x
 
-    def set_max_heigth_of_a_frame_threshold(self, x=20):
-        self.max_heigth_of_a_frame_threshold = x
+    def set_max_heigth_of_a_tuple(self, x=20):
+        """This allow to modify the max heigth that a tuple can have."""
+        self.max_heigth_of_a_tuple = x
 
     def set_analyze_threshold(self, x=10):
+        """The analyze threshold is the number of tuples that will be analyzed in check_data_type_list_integrity."""
         self.analyze_threshold = x
 
-    def set_show_ancho_threshold(self, x=True):
+    def set_show_width_threshold(self, x=True):
+        """This function show the width threshold, below the width thresold, a column will not be showed."""
         self.show_width_threshold = x
 
     def set_show_errors(self, x=True):
+        """This function enable the error showing."""
         self.show_errors = x
 
     def set_log_errors(self, x=True):
+        """This function enable the error logging."""
         self.log_errors = x
 
     def set_show_labels(self, x=True):
+        """This function enable the labels showing."""
         self.show_labels = x
 
     def set_maximum_number_of_rows(self, x=-1):
+        """This function allow to modify the maximum number of rows that outfancy can show, by default is infinite (-1)."""
         self.maximum_number_of_rows = x
 
     def set_row_separator_before_table(self, x=True):
+        """Row_separator_before_table allow to enable o disable the separator before the table."""
         self.row_separator_before_table = x
 
 
     def show_check_data(self):
+        """It shows the value of the variable check_data."""
         print(self.check_data)
 
-    def show_check_data_size(self):
-        print(self.check_data_size)
+    def show_check_table_size(self):
+        """It shows the value of the variable check_table_size."""
+        print(self.check_table_size)
 
     def show_corrector(self):
+        """It shows the value of the corrector."""
         print(self.corrector)
 
-    def show_max_heigth_of_a_frame_threshold(self):
-        print(self.max_heigth_of_a_frame_threshold)
+    def show_max_heigth_of_a_tuple(self):
+        """It shows the value of the variable max_heigth_of_a_tuple."""
+        print(self.max_heigth_of_a_tuple)
 
     def show_analyze_threshold(self):
+        """It shows the value of the variable analyze_threshold."""
         print(self.analyze_threshold)
 
     def show_show_width_threshold(self):
+        """It shows the value of the variable show_width_threshold."""
         print(self.show_width_threshold)
 
     def show_show_errors(self):
+        """It shows the value of the variable show_errors."""
         print(self.show_errors)
 
     def show_log_errors(self):
+        """It shows the value of the variable log_errors."""
         print(self.log_errors)
 
     def show_show_labels(self):
+        """It shows the value of the variable show_labels."""
         print(self.show_labels)
 
     def show_maximum_number_of_rows(self):
+        """It shows the value of the variable maximum_number_of_rows."""
         print(self.maximum_number_of_rows)
 
     def show_row_separator_before_table(self):
+        """It shows the value of the variable row_separator_before_table."""
         print(self.row_separator_before_table)
 
 
@@ -169,8 +201,8 @@ class Table:
                 return '--- Table > Render > check_data_integrity: Corrupt or invalid data. ---'
 
         # --- If it is specified in configuration, the data size is checked --- #
-        if self.check_data_size:
-            if self.check_correct_data_size(data):
+        if self.check_table_size:
+            if self.check_correct_table_size(data):
                 return '--- Table > Render: The data dimensions are incongruent. --- '
 
         ###########################
@@ -218,8 +250,8 @@ class Table:
         return self.post_render(pre_table, label_list, widgets.printed_length(separator))
 
 
-    # Demonstration function.
     def test(self):
+        """Demonstration function."""
         recordset = [(1, 'Feisbuk', '18-10-2015', '21:57:17', '18-10-2015', '21:57:17', 1234, 'Social network bla bla bla used by people bla bla.'), (2, 'Gugle', '18-10-2015', '21:57:44', '18-10-2015', '21:57:44', 12323, 'Search engine that categorize results using an algorithm that bla bla bla.'), (3, 'Opera', '18-10-2015', '21:58:39', '18-10-2015', '21:58:39', 4324, 'Navegador de internerd, también es una disciplina musical, que, valga la redundancia, requiere de una brutal disciplina por parte de los interpretes.'), (4, 'Audi', '18-10-2015', '21:59:51', '18-10-2015', '21:59:51', 0, 'OOOO <-- Fabricante alemán de vehiculos de alta gama.'), (5, 'The Simpsons', '18-10-2015', '22:0:44', '18-10-2015', '22:0:44', 0, 'Una sitcom que lleva veintipico de temporadas, si no la viste, se puede presumir que vivís bajo una piedra.'), (6, 'BMW', '18-10-2015', '22:1:18', '18-10-2015', '22:1:18', 98765, 'Fabricante alemán de autos de lujo.'), (7, 'Yahoo', '18-10-2015', '22:1:56', '18-10-2015', '22:1:56', 53430, 'Expresión de alegría, o compañía gringolandesa.'), (8, 'Coca Cola', '18-10-2015', '22:3:19', '18-10-2015', '22:3:19', 200, 'Compañía que fabrica bebidas, y que no nos paga por ponerla en py-test :c.'), (9, 'Pepsi', '18-10-2015', '22:3:40', '18-10-2015', '22:3:40', 340, 'Competidora de la anterior compañía mencionada, y que tampoco nos paga :c.'), (10, 'GitHub', '18-10-2015', '22:4:42', '18-10-2015', '22:4:42', 563423, 'Plataforma de gestión de co0o0o0ó0digo.'), (11, 'Johnny Walker', '18-10-2015', '22:5:34', '18-10-2015', '22:5:34', 4252, 'Whisky escocés.'), (12, 'Mercury', '18-10-2015', '22:5:51', '18-10-2015', '22:5:51', 23423, 'Fabricante de motores fuera de borda.'), (13, 'Rolls Royce', '18-10-2015', '22:6:7', '18-10-2015', '22:6:7', 75832, 'Fabricante de motores para aviones, y autos de alta gama.')]
         input('--- Press ENTER to see the recordset as is ---')
         print(recordset)
@@ -227,11 +259,11 @@ class Table:
         print(self.render(recordset))
 
 
-    # This function check the data integrity.
-    def check_correct_data_size(self, data=None):
+    def check_correct_table_size(self, data=None):
+        """This function check the table size."""
         # Is checked if data was provided.
         if data == None:
-            return 'Table > Render > check_correct_data_size: Data have not provided.'
+            return 'Table > Render > check_correct_table_size: Data have not provided.'
 
         # Is checked if the data have more rows than allowed.
         if len(data) > self.maximum_number_of_rows and self.maximum_number_of_rows > -1:
@@ -240,8 +272,8 @@ class Table:
             return False
 
 
-    # This function check the data integrity.
     def check_data_integrity(self, data=None):
+        """This function check the data integrity."""
         # Is checked if data is provided.
         if data == None:
             return 'Table > Render > check_data_integrity: Data was not provided.'
@@ -278,6 +310,7 @@ class Table:
 
 
     def check_separator(self, separator=None, screen_x=80):
+        """This function checks if the separator is valid, and try to correct it."""
         # --- It checks if separator is a string, if not, return the default separator --- #
         if not isinstance(separator, str):
             return ' '
@@ -290,6 +323,7 @@ class Table:
 
 
     def check_row_separator(self, row_separator=None, screen_x=80):
+        """This function checks if the separator is valid. and try to correct it."""
         # --- It checks if separator is a string, if not, the row_separator is returned as None --- #
         if not isinstance(row_separator, str):
             return None
@@ -304,6 +338,7 @@ class Table:
 
 
     def check_order(self, data=None, order=None):
+        """This function checks if the order is valid, if is not, it will try to rebuild it."""
         if data == None:
             errors.append('Table > Render > check_order: Data was not provided.')
             return []
@@ -342,8 +377,8 @@ class Table:
         return order
 
 
-    # This function rearrange columns based in the data and the order provided.
     def rearrange_data(self, data=None, order=None):
+        """This function rearrange columns based in the data and the order provided."""
         # Is checked if data was provided.
         if data == None:
             return 'Table > Render > rearrange_data: Data was not provided.'
@@ -369,8 +404,8 @@ class Table:
             return rearranged_data
 
 
-    # Check the maximum length of a field in each column, and asing this length to maximum[x].
     def check_maximums(self, rearranged_data=None):
+        """Check the maximum length of a field in each column, and asing this length to maximum[x]."""
         # Is checked if data is provided.
         if rearranged_data == None:
             return 'Table > Render > check_maximums: Rearranged data was not provided.'
@@ -391,8 +426,8 @@ class Table:
             errors.append('Table > Render > check_maximums: Error when trying to check maximums.')
 
 
-    # This function check the integrity of data_type_list.
     def check_data_type_list_integrity(self, label_list=False, priority_list=None, data=None, data_type_list=None):
+        """This function check the integrity of data_type_list."""
         # If label_list and priority_list are False, data_type_list is not checked becose is irrelevant in this use-case.
         if label_list == False and priority_list == False:
             return False
@@ -554,8 +589,8 @@ class Table:
             return data_type_list
 
 
-    # This function rearrange data_type_list based on provided order.
     def rearrange_data_type_list(self, data_type_list=None, order=None):
+        """This function rearrange data_type_list based on provided order."""
         # Is checked if data_type_list was provided.
         if data_type_list == None:
             raise Exception('Table > Render > rearrange_data_type_list: data_type_list was not provided.')
@@ -577,8 +612,8 @@ class Table:
             return rearranged_data_type_list
 
 
-    # This function checks the integrity of the priority_list, in case or be defficient (or ausent), try to rebuild it.
     def check_priority_list(self, rearranged_data_type_list=None, priority_list=None, silent=False):
+        """This function checks the integrity of the priority_list, in case or be defficient (or ausent), try to rebuild it."""
         # If label_list is False, it will be returned it, becose this value is valid in other parts of the program.
         if priority_list == False:
             return priority_list
@@ -669,8 +704,9 @@ class Table:
 
         return priority_list
 
-    # Asign the width to each column.
+
     def asign_column_width(self, width=None, ordered_priority_list=False, maximums=None, screen_x=None, len_separator=None, len_order=None):
+        """Asign the width to each column."""
         # If len_separator is not provided or is less than 0, it will be asigned to 1 and an error will be emitted.
         if not isinstance(len_separator, int) or len_separator < 0:
             len_separator = 1
@@ -692,15 +728,15 @@ class Table:
         if len_order == None and isinstance(maximums, list):
             len_order = len(maximums)
 
-        # Get the medium width based on remaining_space.
         def get_medium_width(remaining_space, len_order):
+            """Get the medium width based on remaining_space."""
             if len_order == 0:
                 return 0
             else:
                 return int(remaining_space / len_order)
 
-        # Calculate the space on screen removing the length of the separators to screen_x.
         def get_screen_x_axis_space():
+            """Calculate the space on screen removing the length of the separators to screen_x."""
             return screen_x - len_separator * len_order     
 
         # The order that asign_column_width take as basis at hour of communicate the changse maded in the general variables.
@@ -741,7 +777,7 @@ class Table:
         # If show_width_threshold is not provided or is less than 1, it is assigned to 5 and an error is emitted.
         if not isinstance(self.show_width_threshold, int) or self.show_width_threshold < 1:
             self.show_width_threshold = 5
-            errors.append('Table > Render > asign_column_width: show_ancho_threshold was not provided or it is invalid.')
+            errors.append('Table > Render > asign_column_width: show_width_threshold was not provided or it is invalid.')
 
         # If ordered_priority_list == False, it is asigned the same width to same columns based in len(order).
         # If maximums was not provided or it is invalid an error is emitted and maximum is rebuilded.
@@ -839,8 +875,8 @@ class Table:
         return width, order
 
 
-    # Generate the table frames, where the text is contained.
     def generate_table_frames(self, rearranged_data=None, width=None, maximum=None, screen_y=None):
+        """Generate the table frames, where the text is contained."""
         # --- If data is not provided, an empty list is returned --- #
         if rearranged_data == None:
             errors.append('Table > Render > generate_table_frames: rearranged_data was not provided.')
@@ -879,9 +915,9 @@ class Table:
                 #     of whitespaces --- #
                 if widgets.printed_length(field_to_process) < width[column]:
                     frame.append(field_to_process + ' ' * (width[column] - widgets.printed_length(field_to_process)))
-                # --- The generated frame is cutted in function of max_heigth_of_a_frame_threshold (maximum heigth) --- #
-                if len(frame) > self.max_heigth_of_a_frame_threshold:
-                    frame = frame[0:self.max_heigth_of_a_frame_threshold]
+                # --- The generated frame is cutted in function of max_heigth_of_a_tuple (maximum heigth) --- #
+                if len(frame) > self.max_heigth_of_a_tuple:
+                    frame = frame[0:self.max_heigth_of_a_tuple]
 
                 # --- Each frame is inserted in the field that is being generated --- #
                 frame_to_insert.append(frame)
@@ -904,8 +940,8 @@ class Table:
         return frame_lines
 
 
-    # This function join the fields and separator, creating the data area of the table.
     def generate_pre_table(self, frame_lines=None, separator=None, row_separator=None):
+        """This function join the fields and separator, creating the data area of the table."""
         # Check if frame_lines is provided, if it is not, return an error.
         if frame_lines == None:
             return 'Table > Render > generate_pre_table: frame_lines was not provided.'
@@ -950,8 +986,8 @@ class Table:
         return pre_table
 
 
-    # This function check the label_list, if it do not exist or it is invalid, it will try to rebuild it.
     def check_label_list(self, label_list=None, data_type_list=None, width=None, order=None, separator=None):
+        """This function check the label_list, if it do not exist or it is invalid, it will try to rebuild it."""
         # If label_list is False, this value is retorned, becose it have validity in other parts of the program.
         if label_list == False:
             return label_list
@@ -1044,6 +1080,7 @@ class Table:
 
 
     def post_render(self, pre_table=None, label_list=None, len_separator=None):
+        """This function join the table, the labels and the errors (depending of the configuration)."""
         # If pre_table is not provided an error is emitted.
         if pre_table == None:
             errors.append('Table > Render > post_render: pre_table was not provided, this can occur if the data is not valid.')
@@ -1100,57 +1137,81 @@ class Oneline:
         self.motor = Table()
         self.motor.set_log_errors(False)
         self.motor.set_show_errors(False)
-        self.motor.set_check_dimensiones(True)
         self.motor.set_maximum_number_of_rows(1)
         self.motor.set_row_separator_before_table(False)
 
-    def set_check_data(self, x=True):
+
+    def set_check_data(self, x=False):
+        """If check_data == True the dataset input will be checked. If you don't trust the data source, enable the data checking."""
         self.motor.check_data = x
 
+    def set_check_table_size(self, x=False):
+        """If check_table_size == True, the measures of the table will be checked. If you don't trust the data source, enable the data measuring."""
+        self.motor.check_table_size = x
+
     def set_corrector(self, x=-2):
+        """The corrector is a value that will be added to screen_x length, is -2 by default."""
         self.motor.corrector = x
 
-    def set_max_heigth_of_a_frame_threshold(self, x=20):
-        self.motor.max_heigth_of_a_frame_threshold = x
+    def set_max_heigth_of_a_tuple(self, x=20):
+        """The analyze threshold is the number of tuples that will be analyzed in check_data_type_list_integrity."""
+        self.motor.max_heigth_of_a_tuple = x
 
-    def set_show_ancho_threshold(self, x=True):
-        self.motor.show_ancho_threshold = x
+    def set_show_width_threshold(self, x=True):
+        """This function show the width threshold, below the width thresold, a column will not be showed."""
+        self.motor.show_width_threshold = x
 
     def set_show_errors(self, x=True):
+        """This function enable the error showing."""
         self.motor.show_errors = x
 
     def set_log_errors(self, x=True):
+        """This function enable the labels showing."""
         self.motor.log_errors = x
 
     def set_maximum_number_of_rows(self, x=1):
+        """This function allow to modify the maximum number of rows that outfancy can show, by default is infinite (-1)."""
         self.motor.maximum_number_of_rows = x
 
     def set_row_separator_before_table(self, x=True):
+        """Row_separator_before_table allow to enable o disable the separator before the table."""
         self.motor.row_separator_before_table = x
 
 
     def show_check_data(self):
+        """It shows the value of the variable check_data."""
         print(self.motor.check_data)
 
+    def show_check_table_size(self):
+        """It shows the value of the variable check_table_size."""
+        print(self.motor.check_table_size)
+
     def show_corrector(self):
+        """It shows the value of the corrector."""
         print(self.motor.corrector)
 
-    def show_max_heigth_of_a_frame_threshold(self):
-        print(self.motor.max_heigth_of_a_frame_threshold)
+    def show_max_heigth_of_a_tuple(self):
+        """It shows the value of the variable max_heigth_of_a_tuple."""
+        print(self.motor.max_heigth_of_a_tuple)
 
     def show_show_width_threshold(self):
-        print(self.motor.show_ancho_threshold)
+        """It shows the value of the variable show_width_threshold."""
+        print(self.motor.show_width_threshold)
 
     def show_show_errors(self):
+        """It shows the value of the variable show_errors."""
         print(self.motor.show_errors)
 
     def show_log_errors(self):
+        """It shows the value of the variable log_errors."""
         print(self.motor.log_errors)
 
     def show_maximum_number_of_rows(self):
+        """It shows the value of the variable maximum_number_of_rows."""
         print(self.motor.maximum_number_of_rows)
 
-    def show_row_separator_before_table(self,):
+    def show_row_separator_before_table(self):
+        """It shows the value of the variable row_separator_before_table."""
         print(self.motor.row_separator_before_table)
 
 
@@ -1178,8 +1239,8 @@ class Oneline:
             return self.motor.render(new_data, separator, False, order, None, priority_list, width)
 
 
-    # Demonstration function.
     def test():
+        """Demonstration function."""
         print('--- IN DEVELOPMENT ---')
 
 
@@ -1246,8 +1307,9 @@ class Plot:
     def candlestick(self, table):
         pass
 
-    # Demonstration function.
+
     def test(self):
+        """Demonstration function."""
         table = [(100, 200, 150), (200, 160, 300), (230, 170, 280)]
         input('--- Press ENTER to see the table as is ---')
         print(table)
@@ -1257,6 +1319,7 @@ class Plot:
 
 
     def check_data_integrity(self, table):
+        """This function check the data integrity."""
         error = False
         # The table data is checked.
         if isinstance(table, list):
@@ -1281,6 +1344,7 @@ class Plot:
 
 
     def get_range(self, table):
+        """This function gets the range of numbers that will be represented in y axis."""
         # The maximum value in the table is obtained.
         maximum = max(max(table))
         # The minimum value in the table is obtained.
@@ -1292,6 +1356,7 @@ class Plot:
 
 
     def asign_letters(self, table):
+        """For each entity represented in the table, it asigns a element."""
         assigned_letters = []
         # If the table have elements.
         if len(table) > 0:
