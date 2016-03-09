@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 '''
 Plotting terminal based scatterplots
@@ -7,7 +6,7 @@ Plotting terminal based scatterplots
 
 import csv
 import sys
-import optparse
+import argparse
 from helpers import *
 from commandhelp import scatter 
 
@@ -79,15 +78,15 @@ def plot_scatter(f, xs, ys, size, pch, colour, title):
 
 def main():
 
-    parser = optparse.OptionParser(usage=scatter['usage'])
+    parser = argparse.ArgumentParser(usage=hist['usage'])
 
-    parser.add_option('-f', '--file', help='a csv w/ x and y coordinates', default=None, dest='f')
-    parser.add_option('-t', '--title', help='title for the chart', default='', dest='t')
-    parser.add_option('-x', help='x coordinates', default=None, dest='x')
-    parser.add_option('-y', help='y coordinates', default=None, dest='y')
-    parser.add_option('-s', '--size',help='y coordinates', default=20, dest='size', type='int')
-    parser.add_option('-p', '--pch',help='shape of point', default='x', dest='pch') 
-    parser.add_option('-c', '--colour', help='colour of the plot (%s)' % colour_help, default='default', dest='colour')
+    parser.add_argument('-f', '--file', help='a csv w/ x and y coordinates', default=None, dest='f')
+    parser.add_argument('-t', '--title', help='title for the chart', default='', dest='t')
+    parser.add_argument('-x', help='x coordinates', default=None, dest='x')
+    parser.add_argument('-y', help='y coordinates', default=None, dest='y')
+    parser.add_argument('-s', '--size',help='y coordinates', default=20, dest='size', type='int')
+    parser.add_argument('-p', '--pch',help='shape of point', default='x', dest='pch') 
+    parser.add_argument('-c', '--colour', help='colour of the plot (%s)' % colour_help, default='default', dest='colour')
 
     opts, args = parser.parse_args()
 
