@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 '''
 Plotting terminal based histograms
@@ -8,7 +7,7 @@ Plotting terminal based histograms
 import os
 import sys
 import math
-import optparse
+import argparse
 from os.path import dirname
 from helpers import *
 from commandhelp import hist
@@ -201,19 +200,19 @@ def plot_hist(f, height=20.0, bincount=None, binwidth=None, pch='o', colour='def
 
 def main():
 
-    parser = optparse.OptionParser(usage=hist['usage'])
+    parser = argparse.ArgumentParser(usage=hist['usage'])
 
-    parser.add_option('-f', '--file', help='a file containing a column of numbers', default=None, dest='f')
-    parser.add_option('-t', '--title', help='title for the chart', default='', dest='t')
-    parser.add_option('-b', '--bins', help='number of bins in the histogram', type='int', default=None, dest='b')
-    parser.add_option('-w', '--binwidth', help='width of bins in the histogram', type='float', default=None, dest='binwidth')
-    parser.add_option('-s', '--height', help='height of the histogram (in lines)', type='int', default=None, dest='h')
-    parser.add_option('-p', '--pch', help='shape of each bar', default='o', dest='p')
-    parser.add_option('-x', '--xlab', help='label bins on x-axis', default=None, action='store_true', dest='x')
-    parser.add_option('-c', '--colour', help='colour of the plot (%s)' % colour_help, default='default', dest='colour')
-    parser.add_option('-d', '--demo', help='run demos', action='store_true', dest='demo')
-    parser.add_option('-n', '--nosummary', help='hide summary', action='store_false', dest='showSummary', default=True)
-    parser.add_option('-r', '--regular',
+    parser.add_argument('-f', '--file', help='a file containing a column of numbers', default=None, dest='f')
+    parser.add_argument('-t', '--title', help='title for the chart', default='', dest='t')
+    parser.add_argument('-b', '--bins', help='number of bins in the histogram', type='int', default=None, dest='b')
+    parser.add_argument('-w', '--binwidth', help='width of bins in the histogram', type='float', default=None, dest='binwidth')
+    parser.add_argument('-s', '--height', help='height of the histogram (in lines)', type='int', default=None, dest='h')
+    parser.add_argument('-p', '--pch', help='shape of each bar', default='o', dest='p')
+    parser.add_argument('-x', '--xlab', help='label bins on x-axis', default=None, action='store_true', dest='x')
+    parser.add_argument('-c', '--colour', help='colour of the plot (%s)' % colour_help, default='default', dest='colour')
+    parser.add_argument('-d', '--demo', help='run demos', action='store_true', dest='demo')
+    parser.add_argument('-n', '--nosummary', help='hide summary', action='store_false', dest='showSummary', default=True)
+    parser.add_argument('-r', '--regular',
                       help='use regular y-scale (0 - maximum y value), instead of truncated y-scale (minimum y-value - maximum y-value)',
                       default=False, action='store_true', dest='regular')
 
