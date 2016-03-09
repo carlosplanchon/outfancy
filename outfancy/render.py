@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 from . import widgets
 
@@ -1268,7 +1267,7 @@ class Oneline:
             return self.motor.render(new_data, separator, False, order, None, priority_list, width)
 
 
-    def test():
+    def test(self):
         """Demonstration function."""
         print('--- IN DEVELOPMENT ---')
 
