@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 normal_grey = '\x1b[0;30m'
 normal_red = '\x1b[0;31m'
