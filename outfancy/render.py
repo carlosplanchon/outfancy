@@ -230,6 +230,10 @@ class Table:
         if data == None:
             return '--- Table > Render: Data to print was not received ---'
 
+        # --- Handling for empty data --- #
+        if data == []:
+            return '--- EMPTY ---'
+
         # --- If it is specified in configuration, the data integrity is checked --- #
         if self.check_data:
             if self.check_data_integrity(data):
@@ -1140,7 +1144,7 @@ class Table:
                 post_rendering += ' ' * len_separator + errors[x] + '\n'
 
             # If post_rendering ends with \n (ENTER), this last ENTER is removed.
-            if post_rendering[len(post_rendering) - 1] == '\n':
+            if post_rendering.endswith('\n'):
                 post_rendering = post_rendering[0:len(post_rendering) - 1]
 
             post_rendering += '\x1b[0;99m'
