@@ -1,4 +1,6 @@
 # outfancy
+
+[![Join the chat at https://gitter.im/carlosplanchon/outfancy](https://badges.gitter.im/carlosplanchon/outfancy.svg)](https://gitter.im/carlosplanchon/outfancy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 *Table printing in Terminal*
 
 <img src='examples/chart_auto.png'>
