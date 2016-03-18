@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 #####################################################################################################
 #                                                                                                   #
@@ -15,7 +14,7 @@
 #    write_file(name_file, cadena)        - Write a text in a file.                                 #
 #    read_file(name_file)                 - Read a file.                                            #
 #    write_log(text)                      - This function writes the log.                           #
-#    normalise_text(text)                 - This function normalise dates.                          #
+#    normalise_date(text)                 - This function normalise dates.                          #
 #    is_date(text)                        - Check if the input is a valid date.                     #
 #    is_complete_hour(text)               - Check if the input is a valid hour.                     #
 #    actual_date()                        - Returns the actual date.                                #
@@ -56,26 +55,22 @@ def list_join(the_list):
 
 def write_file(name_file, string):
     """This function write a file."""
-    file = open(name_file, 'w')
-    file.write(string)
-    file.close()
+    with open(name_file, 'w') as file:
+        file.write(string)
 
 
 def read_file(name_file):
     """This function read a file."""
-    file = open(name_file, 'r')
-    content = file.read()
-    file.close()
-    return content
+    with open(name_file, 'r') as file:
+        return file.read()
 
 
 def write_log(text):
     """This function writes the log."""
-    log = read_file(log_file)
-    write_file(log_file, log + '\n' + text)
+    write_file(read_file(log_file), log + '\n' + text)
 
 
-def normalise_text(text):
+def normalise_date(text):
     """This function normalize text, is useful to normalize dates."""
     text = text.replace('/', '-')
     text = text.replace(':', '-')
@@ -85,8 +80,11 @@ def normalise_text(text):
 
 
 def is_date(text):
-    """This function check if the input is a valid date."""
-    text = normalise_text(text)
+    """This function check if the input is a valid date, format:
+        format: "dd-mm-yyyy, dd-mm-yy, dd-mm-yyyy hh-mm-ss, dd-mm-yy hh-mm-ss"
+        and: "d-m-yy, d-m-yyyy, h-m-s"
+    """
+    text = normalise_date(text)
     for fmt in ['%d-%m-%Y', '%d-%m-%y', '%d-%m-%Y %H-%M-%S', '%d-%m-%y %H-%M-%S']:
         try:
             strptime(text, fmt)
@@ -97,7 +95,7 @@ def is_date(text):
 
 
 def is_complete_hour(text):
-    """This function check if the input is a valid hour."""
+    """This function check if the input is a valid complete hour."""
     for fmt in ['%H:%M:%S', '%H:%M']:
         try:
             strptime(text, fmt)
