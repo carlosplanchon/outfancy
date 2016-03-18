@@ -20,7 +20,7 @@ class Table:
         self.check_data = False
         # Check_data_size specify if the size of table data have to be checked or not.
         self.check_table_size = False
-        # Corrector = Indicates the correction value to be applied to the x axis (margin of spaces at right of the screen).
+        # Corrector = Indicates the correction value to be applied to the x axis (margin of whitespaces at right of the screen).
         self.corrector = -2
         # Maximum heigth that a tuple can have in screen.
         self.max_heigth_of_a_tuple = 20
@@ -228,7 +228,7 @@ class Table:
         #######################################
         # --- The existence of data is checked --- #
         if data == None:
-            return '--- Table > Render: Data to print was not received ---'
+            return '--- Table > Render: Data to print was not provided. ---'
 
         # --- Handling for empty data --- #
         if data == []:
@@ -267,21 +267,21 @@ class Table:
         rearranged_data_type_list = self.rearrange_data_type_list(data_type_list, order)
         # --- The integrity of priority_list is checked, if not exist or ir have defects, the program will try to rebuild it --- #
         priority_list = self.check_priority_list(rearranged_data_type_list, priority_list)
-        ########################
-        # ---  RENDER AREA --- #
-        ########################
         # --- Asign the width to show each column, if it is not provided, the system will try to rebuild it --- #
         width, order = self.asign_column_width(width, priority_list, maximum, screen_x, widgets.printed_length(separator), len(order))
         # --- For twice data_type_list is rearranged --- #
         rearranged_data_type_list = self.rearrange_data_type_list(data_type_list, order)
         # --- For twice data is rearranged --- #
         rearranged_data = self.rearrange_data(data, order)
+        # --- Label list is checked. --- #
+        label_list = self.check_label_list(label_list, data_type_list, width, order, separator)
+        #######################
+        # --- RENDER AREA --- #
+        #######################
         # --- The fields that contains the data are generated --- #
         frame_lines = self.generate_table_frames(rearranged_data, width, maximum, screen_y)
         # --- Generates the table area that contains the data. --- #
         pre_table = self.generate_pre_table(frame_lines, separator, row_separator)
-        # --- Label list is checked. --- #
-        label_list = self.check_label_list(label_list, data_type_list, width, order, separator)
         ############################
         # --- POST-RENDER AREA --- #
         ############################
@@ -289,7 +289,7 @@ class Table:
         return self.post_render(pre_table, label_list, widgets.printed_length(separator))
 
 
-    def test(self):
+    def demo(self):
         """Demonstration function."""
         recordset = [(1, 'Feisbuk', '18-10-2015', '21:57:17', '18-10-2015', '21:57:17', 1234, 'Social network bla bla bla used by people bla bla.'), (2, 'Gugle', '18-10-2015', '21:57:44', '18-10-2015', '21:57:44', 12323, 'Search engine that categorize results using an algorithm that bla bla bla.'), (3, 'Opera', '18-10-2015', '21:58:39', '18-10-2015', '21:58:39', 4324, 'Navegador de internerd, también es una disciplina musical, que, valga la redundancia, requiere de una brutal disciplina por parte de los interpretes.'), (4, 'Audi', '18-10-2015', '21:59:51', '18-10-2015', '21:59:51', 0, 'OOOO <-- Fabricante alemán de vehiculos de alta gama.'), (5, 'The Simpsons', '18-10-2015', '22:0:44', '18-10-2015', '22:0:44', 0, 'Una sitcom que lleva veintipico de temporadas, si no la viste, se puede presumir que vivís bajo una piedra.'), (6, 'BMW', '18-10-2015', '22:1:18', '18-10-2015', '22:1:18', 98765, 'Fabricante alemán de autos de lujo.'), (7, 'Yahoo', '18-10-2015', '22:1:56', '18-10-2015', '22:1:56', 53430, 'Expresión de alegría, o compañía gringolandesa.'), (8, 'Coca Cola', '18-10-2015', '22:3:19', '18-10-2015', '22:3:19', 200, 'Compañía que fabrica bebidas, y que no nos paga por ponerla en py-test :c.'), (9, 'Pepsi', '18-10-2015', '22:3:40', '18-10-2015', '22:3:40', 340, 'Competidora de la anterior compañía mencionada, y que tampoco nos paga :c.'), (10, 'GitHub', '18-10-2015', '22:4:42', '18-10-2015', '22:4:42', 563423, 'Plataforma de gestión de co0o0o0ó0digo.'), (11, 'Johnny Walker', '18-10-2015', '22:5:34', '18-10-2015', '22:5:34', 4252, 'Whisky escocés.'), (12, 'Mercury', '18-10-2015', '22:5:51', '18-10-2015', '22:5:51', 23423, 'Fabricante de motores fuera de borda.'), (13, 'Rolls Royce', '18-10-2015', '22:6:7', '18-10-2015', '22:6:7', 75832, 'Fabricante de motores para aviones, y autos de alta gama.')]
         input('--- Press ENTER to see the recordset as is ---')
@@ -421,26 +421,27 @@ class Table:
         # Is checked if data was provided.
         if data == None:
             return 'Table > Render > rearrange_data: Data was not provided.'
-        else:
-            # Is checked if the order input to rearrange_data is valid.
-            if not isinstance(order, list):
-                # If it is not valid, the data is returned without rearrange.
-                return data
-            else:
-                rearranged_data = []
-                for the_tuple in data:
-                    new_tuple = []
-                    # The rearranged tuple is generated.
-                    for element in order:
-                        if widgets.index_is_in_list(element, the_tuple):
-                            new_tuple.append(the_tuple[element])
-                        else:
-                            errors.append('Table > Render > rearrange_data: Error when trying to rearrange data.')
-                            return data
-                    # The generated tuple is added to rearranged_data.
-                    rearranged_data.append(new_tuple)
-            # The rearranged data is returned.
-            return rearranged_data
+
+        # Is checked if the order input to rearrange_data is valid.
+        if not isinstance(order, list):
+            # If it is not valid, the data is returned without rearrange.
+            return data
+
+        rearranged_data = []
+        for the_tuple in data:
+            new_tuple = []
+            # The rearranged tuple is generated.
+            for element in order:
+                if widgets.index_is_in_list(element, the_tuple):
+                    new_tuple.append(the_tuple[element])
+                else:
+                    errors.append('Table > Render > rearrange_data: Error when trying to rearrange data.')
+                    return data
+            # The generated tuple is added to rearranged_data.
+            rearranged_data.append(new_tuple)
+
+        # The rearranged data is returned.
+        return rearranged_data
 
 
     def check_maximums(self, rearranged_data=None):
@@ -955,7 +956,7 @@ class Table:
                 if widgets.printed_length(field_to_process) < width[column]:
                     frame.append(field_to_process + ' ' * (width[column] - widgets.printed_length(field_to_process)))
                 # --- The generated frame is cutted in function of max_heigth_of_a_tuple (maximum heigth) --- #
-                if len(frame) > self.max_heigth_of_a_tuple:
+                if len(frame) > self.max_heigth_of_a_tuple and self.max_heigth_of_a_tuple >= 0:
                     frame = frame[0:self.max_heigth_of_a_tuple]
 
                 # --- Each frame is inserted in the field that is being generated --- #
@@ -1271,9 +1272,301 @@ class Oneline:
             return self.motor.render(new_data, separator, False, order, None, priority_list, width)
 
 
-    def test(self):
+    def demo(self):
         """Demonstration function."""
         print('--- IN DEVELOPMENT ---')
+
+
+
+class LargeTable:
+    """LargeTable is a class prepared to print large tables (thousands of rows or more).
+    - It do the render and PRINT the table.
+    - LargeTable creates an instance of Table, using it internal functions in pre-render tasks.
+    - The parameters that can be assigned to render function are the same as Table class.
+    """
+    def __init__(self):
+        # The motor object is generated. (as instance of Table)
+        self.motor = Table()
+        self.motor.set_log_errors(False)
+        self.motor.set_show_errors(False)
+        self.motor.set_maximum_number_of_rows(1)
+        self.motor.set_row_separator_before_table(False)
+
+        # Numbers of rows to process before the table printing.
+        self.rows_to_analyze = 100
+
+
+    def set_check_data(self, x=False):
+        """If check_data == True the dataset input will be checked. If you don't trust the data source, enable the data checking."""
+        self.motor.check_data = x
+
+    def set_check_table_size(self, x=False):
+        """If check_table_size == True, the measures of the table will be checked. If you don't trust the data source, enable the data measuring."""
+        self.motor.check_table_size = x
+
+    def set_corrector(self, x=-2):
+        """The corrector is a value that will be added to screen_x length, is -2 by default."""
+        self.motor.corrector = x
+
+    def set_max_heigth_of_a_tuple(self, x=20):
+        """The analyze threshold is the number of tuples that will be analyzed in check_data_type_list_integrity."""
+        self.motor.max_heigth_of_a_tuple = x
+
+    def set_show_width_threshold(self, x=True):
+        """This function show the width threshold, below the width thresold, a column will not be showed."""
+        self.motor.show_width_threshold = x
+
+    def set_show_errors(self, x=True):
+        """This function enable the error showing."""
+        self.motor.show_errors = x
+
+    def set_log_errors(self, x=True):
+        """This function enable the labels showing."""
+        self.motor.log_errors = x
+
+    def set_maximum_number_of_rows(self, x=1):
+        """This function allow to modify the maximum number of rows that outfancy can show, by default is infinite (-1)."""
+        self.motor.maximum_number_of_rows = x
+
+    def set_row_separator_before_table(self, x=True):
+        """Row_separator_before_table allow to enable o disable the separator before the table."""
+        self.motor.row_separator_before_table = x
+
+
+    def show_check_data(self):
+        """It shows the value of the variable check_data."""
+        print(self.motor.check_data)
+
+    def show_check_table_size(self):
+        """It shows the value of the variable check_table_size."""
+        print(self.motor.check_table_size)
+
+    def show_corrector(self):
+        """It shows the value of the corrector."""
+        print(self.motor.corrector)
+
+    def show_max_heigth_of_a_tuple(self):
+        """It shows the value of the variable max_heigth_of_a_tuple."""
+        print(self.motor.max_heigth_of_a_tuple)
+
+    def show_show_width_threshold(self):
+        """It shows the value of the variable show_width_threshold."""
+        print(self.motor.show_width_threshold)
+
+    def show_show_errors(self):
+        """It shows the value of the variable show_errors."""
+        print(self.motor.show_errors)
+
+    def show_log_errors(self):
+        """It shows the value of the variable log_errors."""
+        print(self.motor.log_errors)
+
+    def show_maximum_number_of_rows(self):
+        """It shows the value of the variable maximum_number_of_rows."""
+        print(self.motor.maximum_number_of_rows)
+
+    def show_row_separator_before_table(self):
+        """It shows the value of the variable row_separator_before_table."""
+        print(self.motor.row_separator_before_table)
+
+
+    def render(self, data=None, separator=None, label_list=None, order=None, data_type_list=None, priority_list=None, width=None, row_separator=None):
+        """Render receive six (6) parameters, and is responsible for the rendering of data
+        in a table in an organized way.
+
+        Parameters:
+        data: It have to be specified in the next format: [(1, 'Amelia', 'Lawyer'), (2, 'Camille', 'Chef')].
+        separator: It allow to modify the string that separate the columns, by default is a white space " ".
+        label_list: Allows to modify the label list that is showed above renderized table.
+            If it is not provided, the program will try to find out what label will have each column.
+            If label_list == False, it will not showed.
+        order: Allow to modify the order in what columns are showed, allowing to supress column too.
+        data_type_list: Allow to modify the data_type that render system asign to a column.
+            If it is not provided, the program will try to find out what data type have each column.
+        priority_list: Allow to modify the priority that is assigned to each column, if it is not provided,
+            the program will asign priorities based on data_type_list.
+        If the space to show columns is not sufficient, the program will start to supress columns
+        (starting with lowest priority column).
+        width: Allow to specify width to columns.
+            If it is False, same width will be asigned to each column.
+            If it is not provided, the program will asign width automatically based in priority_list.
+        row_separator: It allow to specify a separator between rows.
+        """
+
+        # Set the internal error logging to an empty list.
+        global errors
+        errors = []
+        #######################################
+        # --- INTEGRITY CHECK IN THE DATA --- #
+        #######################################
+        # --- The existence of data is checked --- #
+        if data == None:
+            return '--- Table > Render: Data to print was not provided. ---'
+
+        # --- Handling for empty data --- #
+        if data == []:
+            return '--- EMPTY ---'
+
+        # It create a table with data to analyze.
+        if len(data) > self.rows_to_analyze:
+            data_to_analyze = data[:self.rows_to_analyze]
+        else:
+            data_to_analyze = data
+
+        # --- If it is specified in configuration, the data integrity is checked --- #
+        if self.motor.check_data:
+            if self.motor.check_data_integrity(data_to_analyze):
+                return '--- Table > Render > check_data_integrity: Corrupt or invalid data. ---'
+
+        # --- If it is specified in configuration, the data size is checked --- #
+        if self.motor.check_table_size:
+            if self.motor.check_correct_table_size(data_to_analyze):
+                return '--- Table > Render: The data dimensions are incongruent. --- '
+
+        print(data_to_analyze)
+
+        ###########################
+        # --- PRE-RENDER AREA --- #
+        ###########################
+        # --- The screen measures are obtained --- #
+        screen_x, screen_y = widgets.measure_screen()
+        # --- The correction value is applied to screen_x --- #
+        screen_x += self.motor.corrector
+        # --- The separator is checked --- #
+        separator = self.motor.check_separator(separator, screen_x)
+        # --- The row_separator is checked --- #
+        row_separator = self.motor.check_row_separator(row_separator, screen_x)
+        # --- The validity of provided order is checked --- #
+        order = self.motor.check_order(data_to_analyze, order)
+        # --- The data is rearranged --- #
+        rearranged_data = self.motor.rearrange_data(data_to_analyze, order)
+        # --- Check the maximum length required to show each field of rearranged_data --- #
+        maximum = self.motor.check_maximums(rearranged_data)
+        # --- The integrity of data_type_list is checked --- #
+        data_type_list = self.motor.check_data_type_list_integrity(label_list, priority_list, data_to_analyze, data_type_list)
+        # --- data_type_list is rearranged --- #
+        rearranged_data_type_list = self.motor.rearrange_data_type_list(data_type_list, order)
+        # --- The integrity of priority_list is checked, if not exist or ir have defects, the program will try to rebuild it --- #
+        priority_list = self.motor.check_priority_list(rearranged_data_type_list, priority_list)
+        # --- Asign the width to show each column, if it is not provided, the system will try to rebuild it --- #
+        width, order_2 = self.motor.asign_column_width(width, priority_list, maximum, screen_x, widgets.printed_length(separator), len(order))
+        # --- For twice data_type_list is rearranged --- #
+        rearranged_data_type_list = self.motor.rearrange_data_type_list(data_type_list, order_2)
+        # --- Label list is checked. --- #
+        label_list = self.motor.check_label_list(label_list, data_type_list, width, order, separator)
+        # --- . --- #
+        order = self.get_final_order_list([order, order_2], data_to_analyze)
+        ############################
+        # --- POST-RENDER AREA --- #
+        ############################
+        # --- The label_list is printed --- #
+        print('\x1b[1;33m' + label_list + '\x1b[0;99m')
+        # --- Each row is processed and printed --- #
+        for x_row in range(len(data)):
+            #                         #
+            # --- PRE-RENDER AREA --- #
+            #                         #
+            # It generates the row that will be rendered.
+            row = []
+            # --- The row is rearranged --- #
+            rearranged_row = self.rearrange_row(data[x_row], order)
+            #                     #
+            # --- RENDER AREA --- #
+            #                     #
+            # --- The fields that contains the data are generated --- #
+            row.append(rearranged_row)
+            frame_lines = self.motor.generate_table_frames(row, width, maximum, screen_y)
+            # --- Generates the table area that contains rendered_row. --- #
+            pre_table = self.motor.generate_pre_table(frame_lines, separator, row_separator)
+            #                          #
+            # --- POST-RENDER AREA --- #
+            #                          #
+            print(pre_table)
+
+        ############################
+        # --- POST-RENDER AREA --- #
+        ############################
+        # --- It do the post_render, showing and logging errors if it is needed. --- #
+        post_rendering = ''
+        # If the configuration specify that errors have to be showed.
+        if self.motor.show_errors and len(motor.errors) > 0:
+            post_rendering += '\n' * 2 + ' ' + ' ' * (len_separator - 1) + '\x1b[1;36mTable > Render > Errors > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + '\x1b[0;91m\n'
+            for x in range(len(motor.errors)): 
+                post_rendering += ' ' * len_separator + motor.errors[x] + '\n'
+
+            # If post_rendering ends with \n (ENTER), this last ENTER is removed.
+            if post_rendering.endswith('\n'):
+                post_rendering = post_rendering[0:len(post_rendering) - 1]
+
+            print(post_rendering + '\x1b[0;99m')
+
+        # If the configuration specify that errors have to be registered.
+        if self.motor.log_errors:
+            widgets.write_log('Table > Render > Errors > ' + widgets.actual_date() + ' ' + widgets.actual_hour() + ' -\n' + '\n'.join(motor.errors))
+
+
+    def demo(self):
+        """Demonstration function."""
+        recordset = [(1, 'Feisbuk', '18-10-2015', '21:57:17', '18-10-2015', '21:57:17', 1234, 'Social network bla bla bla used by people bla bla.'), (2, 'Gugle', '18-10-2015', '21:57:44', '18-10-2015', '21:57:44', 12323, 'Search engine that categorize results using an algorithm that bla bla bla.'), (3, 'Opera', '18-10-2015', '21:58:39', '18-10-2015', '21:58:39', 4324, 'Navegador de internerd, también es una disciplina musical, que, valga la redundancia, requiere de una brutal disciplina por parte de los interpretes.'), (4, 'Audi', '18-10-2015', '21:59:51', '18-10-2015', '21:59:51', 0, 'OOOO <-- Fabricante alemán de vehiculos de alta gama.'), (5, 'The Simpsons', '18-10-2015', '22:0:44', '18-10-2015', '22:0:44', 0, 'Una sitcom que lleva veintipico de temporadas, si no la viste, se puede presumir que vivís bajo una piedra.'), (6, 'BMW', '18-10-2015', '22:1:18', '18-10-2015', '22:1:18', 98765, 'Fabricante alemán de autos de lujo.'), (7, 'Yahoo', '18-10-2015', '22:1:56', '18-10-2015', '22:1:56', 53430, 'Expresión de alegría, o compañía gringolandesa.'), (8, 'Coca Cola', '18-10-2015', '22:3:19', '18-10-2015', '22:3:19', 200, 'Compañía que fabrica bebidas, y que no nos paga por ponerla en py-test :c.'), (9, 'Pepsi', '18-10-2015', '22:3:40', '18-10-2015', '22:3:40', 340, 'Competidora de la anterior compañía mencionada, y que tampoco nos paga :c.'), (10, 'GitHub', '18-10-2015', '22:4:42', '18-10-2015', '22:4:42', 563423, 'Plataforma de gestión de co0o0o0ó0digo.'), (11, 'Johnny Walker', '18-10-2015', '22:5:34', '18-10-2015', '22:5:34', 4252, 'Whisky escocés.'), (12, 'Mercury', '18-10-2015', '22:5:51', '18-10-2015', '22:5:51', 23423, 'Fabricante de motores fuera de borda.'), (13, 'Rolls Royce', '18-10-2015', '22:6:7', '18-10-2015', '22:6:7', 75832, 'Fabricante de motores para aviones, y autos de alta gama.')]
+        input('--- Press ENTER to see the recordset as is ---')
+        print(recordset)
+        input('--- Now press ENTER to see a recordset reapeated 1000 times renderized by Outfancy ---')
+        print(self.render(1000 * recordset))
+
+
+    def get_final_order_list(self, order_list=None, data=None):
+        """
+        It takes the original order and get the final order list, data will be rearranged
+        taking as parameter only this final order_list. (This avoid multiple rearranging).
+        """
+        # Check if order_list was provided, if not, return an error.
+        if not isinstance(order_list, list):
+            return '--- LargeTable > get_final_order_list: order_list was not received or it is not valid. ---'
+
+        # Check if data was provided, if not, return an error.
+        if data == None:
+            return '--- LargeTable > get_final_order_list: data was not received. ---'
+
+        # If data have no rows, empty order will be returned.
+        if len(data) < 1:
+            return []
+
+        # It generates the base_list with a len of data.
+        base_list = []
+        for x in range(len(data[0])):
+            base_list.append(x)
+
+        # It rearrange values in base_list based in values of order_list.
+        for element in order_list:
+            # It generates the new_list.
+            new_list = []
+            for x in element:
+                if widgets.index_is_in_list(x, base_list):
+                    new_list.append(base_list[x])
+            # base_list is now the finished new_list.
+            base_list = new_list
+
+
+    def rearrange_row(self, row=None, order=None):
+        """
+        It rearranges a row based on provided order.
+        """
+        # Check if row was provided, if not, return an error.
+        if row == None:
+            return '--- LargeTable > get_final_order_list: data_to_analyze was not received. ---'
+
+        # If order was not provided or if is not a list, row will be returned without rearrange.
+        if not isinstance(order, list):
+            return row
+
+        rearranged_row = []
+        for element in order:
+            if widgets.index_is_in_list(element, row):
+                rearranged_row.append(row[element])
+
+        # The rearranged row is returned.
+        return row
+
 
 
 '''
@@ -1345,7 +1638,7 @@ class Plot:
         pass
 
 
-    def test(self):
+    def demo(self):
         """Demonstration function."""
         table = [(100, 200, 150), (200, 160, 300), (230, 170, 280)]
         input('--- Press ENTER to see the table as is ---')
@@ -1476,7 +1769,7 @@ class Plot:
 
             In the nearest value in the value list.
 
-            From the sample it follows that value list is - Ordee 1: [1, 2, 5] - Order 2: [1, 2, 5]
+            From the sample it follows that value list is - Order 1: [1, 2, 5] - Order 2: [1, 2, 5]
 
             It should shows:
             1200, 1205, 1210 ..., 1235.
