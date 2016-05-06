@@ -45,4 +45,4 @@ print(motor.render(some_data))
 - Add basic charting functions (in the folder code_to_use i have some code found in internet that can be used to that functions).
 
 ## Others
-- https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3 (Funny test with colors)
+- https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3 (Funny demo with colors)
