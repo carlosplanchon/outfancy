@@ -529,34 +529,42 @@ class Table:
                     for the_tuple in range(analyze):
                         # data[the_tuple][x], is an element of column.
                         field = str(data[the_tuple][x])
-                        # --- Check if the element correspond to an hour --- #
-                        if widgets.is_complete_hour(field):
-                            the_type = 'time'
-                        # --- Check if the element correspond to a date --- #
-                        elif widgets.is_date(field):
-                            the_type = 'date'
                         # --- Check if the element is numeric --- #
-                        elif str(field).isdigit():
+                        if field.isdigit():
                             # Try to identify if the element is a value or an Id.
                             # If length of data is less than two is impossible to know if a value is an Id or not.
                             if len(data) > 1:
                                 # It checks if elements are a continious series, i.e 1, 2, 3, 4.
                                 if widgets.index_is_in_list(the_tuple + 1, data):
-                                    if int(data[the_tuple + 1][x]) - int(data[the_tuple][x]) == 1:
-                                        the_type = 'id'
+                                    next_field = str(data[the_tuple + 1][x])
+                                    if next_field.isdigit():
+                                        if int(next_field) - int(field) == 1:
+                                            the_type = 'id'
+                                        else:
+                                            the_type = 'value'
                                     else:
-                                        the_type = 'value'
+                                        the_type = 'desc'
                                 else:
                                     the_type = 'value'
                                 if the_tuple != 0:
                                     if widgets.index_is_in_list(the_tuple - 1, data):
-                                        if int(data[the_tuple][x]) - int(data[the_tuple - 1][x]) == 1:
-                                            the_type = 'id'
+                                        previous_field = str(data[the_tuple - 1][x])
+                                        if previous_field.isdigit():
+                                            if int(field) - int(previous_field) == 1:
+                                                the_type = 'id'
+                                            else:
+                                                the_type = 'value'
                                         else:
-                                            the_type = 'value'
+                                            the_type = 'desc'
                             else:
                                 the_type = 'value'
-                        # --- If is not numeric, it is assumed that is a text --- #
+                        # --- Check if the element correspond to an hour --- #
+                        elif widgets.is_complete_hour(field):
+                            the_type = 'time'
+                        # --- Check if the element correspond to a date --- #
+                        elif widgets.is_date(field):
+                            the_type = 'date'
+                        # --- If is not numeric, time, or date, it is assumed that is a text --- #
                         else:
                             if widgets.printed_length(field) > self.chk_dlti_num_letters_in_field:
                                 num_letters = 0
