@@ -197,7 +197,7 @@ class Table:
         print(self.row_separator_before_table)
 
 
-    def render(self, data=None, separator=None, label_list=None, order=None, data_type_list=None, priority_list=None, width=None, row_separator=None):
+    def render(self, data=None, separator=None, label_list=None, order=None, data_type_list=None, priority_list=None, width=None, row_separator=None, page=None, screen_x=None, screen_y=None):
         """Render receive six (6) parameters, and is responsible for the rendering of data
         in a table in an organized way.
 
@@ -218,6 +218,7 @@ class Table:
             If it is False, same width will be asigned to each column.
             If it is not provided, the program will asign width automatically based in priority_list.
         row_separator: It allow to specify a separator between rows.
+        page: Allow to specify a page of the record (useful if your screen dont allow to view all the render).
         """
 
         # Set the internal error logging to an empty list.
@@ -248,13 +249,15 @@ class Table:
         # --- PRE-RENDER AREA --- #
         ###########################
         # --- The screen measures are obtained --- #
-        screen_x, screen_y = widgets.measure_screen()
+        screen_x, screen_y = widgets.measure_screen(screen_x, screen_y)
         # --- The correction value is applied to screen_x --- #
         screen_x += self.corrector
         # --- The separator is checked --- #
         separator = self.check_separator(separator, screen_x)
         # --- The row_separator is checked --- #
         row_separator = self.check_row_separator(row_separator, screen_x)
+        # --- Page value is checked --- #
+        page, page_heigth = self.check_page_value(page, label_list, screen_y)
         # --- The validity of provided order is checked --- #
         order = self.check_order(data, order)
         # --- The data is rearranged --- #
@@ -286,7 +289,7 @@ class Table:
         # --- POST-RENDER AREA --- #
         ############################
         # --- It do the post_render, joining the pre_table with the other data (labels, errors) --- #
-        return self.post_render(pre_table, label_list, widgets.printed_length(separator))
+        return self.post_render(pre_table, label_list, widgets.printed_length(separator), page, page_heigth)
 
 
     def demo(self):
@@ -362,7 +365,7 @@ class Table:
 
 
     def check_row_separator(self, row_separator=None, screen_x=80):
-        """This function checks if the separator is valid. and try to correct it."""
+        """This function check if the separator is valid. and try to correct it."""
         # --- It checks if separator is a string, if not, the row_separator is returned as None --- #
         if not isinstance(row_separator, str):
             return None
@@ -374,6 +377,22 @@ class Table:
             row_separator = row_separator[:screen_x] + '\x1b[0;39m'
 
         return row_separator
+
+
+    def check_page_value(self, page, label_list, screen_y):
+        """This function check the page value and set the page heigth."""
+        if page == None:
+            page_heigth = None
+            return page, page_heigth
+
+        if label_list == False:
+            value_to_rest = 0
+        else:
+            value_to_rest = 1
+
+        page_heigth = screen_y - value_to_rest
+
+        return page, page_heigth
 
 
     def check_order(self, data=None, order=None):
@@ -1120,7 +1139,7 @@ class Table:
         return separator + separator.join(ordered_label_list)
 
 
-    def post_render(self, pre_table=None, label_list=None, len_separator=None):
+    def post_render(self, pre_table=None, label_list=None, len_separator=None, page=None, page_heigth=None):
         """This function join the table, the labels and the errors (depending of the configuration)."""
         # If pre_table is not provided an error is emitted.
         if pre_table == None:
@@ -1136,6 +1155,23 @@ class Table:
         if label_list == None:
             errors.append('Table > Render > post_render: label_list was not provided.')
             label_list = False
+
+        # If page is provided.
+        if page != None:
+            # Values to cut the table are calculated.
+            first_row = page * page_heigth
+            last_row = first_row + page_heigth
+
+            if first_row < 0 or first_row > len(pre_table):
+                first_row = len(pre_table)
+
+            if last_row < 0 or last_row > len(pre_table):
+                last_row = len(pre_table)
+
+            # pre_table is cutted to show the desired page.
+            pre_table = pre_table.split('\n')
+            pre_table = pre_table[first_row: last_row]
+            pre_table = str.join('\n', pre_table)
 
         # Variable that store the render.
         post_rendering = ''
@@ -1256,7 +1292,7 @@ class Oneline:
         print(self.motor.row_separator_before_table)
 
 
-    def render(self, data=None, width=None, separator=None, order=None, priority_list=None):
+    def render(self, data=None, width=None, separator=None, order=None, priority_list=None, screen_x=None, screen_y=None):
         """Function that prints a line in each execution, based in provided data and configuration.
         The variables that this function have are the same as Table.
         """
@@ -1277,7 +1313,7 @@ class Oneline:
                     new_data = data
 
             # The normalized data is renderized. (Remember that Table will apply his own checks).
-            return self.motor.render(new_data, separator, False, order, None, priority_list, width)
+            return self.motor.render(new_data, separator, False, order, None, priority_list, width, screen_x, screen_y)
 
 
     def demo(self):
