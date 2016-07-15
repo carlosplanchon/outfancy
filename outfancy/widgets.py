@@ -117,7 +117,7 @@ def actual_hour():
     return str(actual_hour.hour) + ':' + str(actual_hour.minute) + ':' + str(actual_hour.second)
 
 
-def measure_screen():
+def measure_screen(screen_x=None, screen_y=None):
     """Measure the screen dimensions (in characters), returning two values, X and Y."""
     env = os.environ
     def ioctl_GWINSZ(fd):
@@ -138,7 +138,14 @@ def measure_screen():
 
     if not cr:
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
-    return int(cr[1]), int(cr[0])
+
+    if screen_x == None:
+        screen_x = int(cr[1])
+
+    if screen_y == None:
+        screen_y = int(cr[0])
+
+    return screen_x, screen_y
 
 
 def compress_list(list_to_compress):
