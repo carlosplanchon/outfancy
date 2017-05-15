@@ -472,12 +472,12 @@ class Table:
         if len(rearranged_data) > 0:
             maximum = []
             # Fill of zeros the maximum values of each element.
-            for columna in rearranged_data[0]:
+            for column in rearranged_data[0]:
                 maximum.append(0)
             # Measure the table elements and assing the maximum of each column in each element of maximums list.
-            for tupla in range(len(rearranged_data)):
+            for the_tuple in range(len(rearranged_data)):
                 for element in range(len(rearranged_data[0])):
-                    field_printed_length = widgets.printed_length(str(rearranged_data[tupla][element]))
+                    field_printed_length = widgets.printed_length(str(rearranged_data[the_tuple][element]))
                     if field_printed_length > maximum[element]:
                         maximum[element] = field_printed_length
             return maximum
@@ -487,7 +487,7 @@ class Table:
 
     def check_data_type_list_integrity(self, label_list=False, priority_list=None, data=None, data_type_list=None):
         """This function check the integrity of data_type_list."""
-        # If label_list and priority_list are False, data_type_list is not checked becose is irrelevant in this use-case.
+        # If label_list and priority_list are False, data_type_list is not checked because is irrelevant in this use-case.
         if label_list == False and priority_list == False:
             return False
 
@@ -541,7 +541,7 @@ class Table:
             if len(to_rebuild) > 0:
                 # --- The missing or invalid elements of the list are rebuilded --- #
                 for x in to_rebuild:
-                    # --- Each element of column is analyzed, trying to determine what type belongs --- #
+                    # --- Each element of column is analyzed, trying to determine what type belongs to --- #
                     # list_of_types store the detected types.
                     list_of_types = []
                     # --- For each element in the range of tuple to analyze --- #
@@ -602,7 +602,7 @@ class Table:
                         # The type is added to the generated list_of_types.
                         list_of_types.append(the_type)
 
-                    # --- The obtained data are analyzed (belonging to a column) --- #
+                    # --- The obtained data is analyzed (belonging to a column) --- #
                     date_type = 0
                     time_type = 0
                     id_type = 0
@@ -681,7 +681,7 @@ class Table:
 
     def check_priority_list(self, rearranged_data_type_list=None, priority_list=None, silent=False):
         """This function checks the integrity of the priority_list, in case or be defficient (or ausent), try to rebuild it."""
-        # If label_list is False, it will be returned it, becose this value is valid in other parts of the program.
+        # If label_list is False, it will be returned it, because this value is valid in other parts of the program.
         if priority_list == False:
             return priority_list
 
@@ -816,7 +816,7 @@ class Table:
         total_length_of_elements = 0
         # If the element is a list.
         if isinstance(width, list):
-            # Is checked that each element are numeric, and his sum not is greater than remaining_space.
+            # Is checked that each element are numeric, and his sum is not greater than remaining_space.
             for element in width:
                 if isinstance(element, int):
                     if element > 0:
@@ -868,7 +868,7 @@ class Table:
                     medium_width = 0
                     checking = False
 
-            # The maximums for each column are equals to the medium_width obtained in function of screen width.
+            # The maximums for each column are equals to the medium_width obtained in screen width function.
             for x in range(len_order):
                 maximums.append(medium_width)
 
@@ -876,7 +876,7 @@ class Table:
         if isinstance(ordered_priority_list, bool) or ordered_priority_list == None:
             ordered_priority_list = []
             for x in range(len_order):
-                ordered_priority_list.append(x)       
+                ordered_priority_list.append(x)
 
         not_finished = True
         while not_finished:
@@ -908,7 +908,7 @@ class Table:
 
                 # remaining_space is recalculated.
                 remaining_space -= width[column]
-                # A column is removed (from len_order) (becose the space of a column is now assigned).
+                # A column is removed (from len_order) (because the space of a column is now assigned).
                 len_order -= 1
 
             # The assignement process is marked as finished, but the posterior checking can assign True to not_finished.
@@ -978,7 +978,7 @@ class Table:
                 # --- If field_to_process and width[column] are equals, the frame is appended without any process --- #
                 if widgets.printed_length(field_to_process) == width[column]:
                     frame.append(field_to_process)
-                # --- If the content of the frame to cut is lower than column width the required space is filed
+                # --- If the content of the frame to cut is lower than column width the required space is filled
                 #     of whitespaces --- #
                 if widgets.printed_length(field_to_process) < width[column]:
                     frame.append(field_to_process + ' ' * (width[column] - widgets.printed_length(field_to_process)))
@@ -1055,7 +1055,7 @@ class Table:
 
     def check_label_list(self, label_list=None, data_type_list=None, width=None, order=None, separator=None):
         """This function check the label_list, if it do not exist or it is invalid, it will try to rebuild it."""
-        # If label_list is False, this value is retorned, becose it have validity in other parts of the program.
+        # If label_list is False, this value is retorned, because it have validity in other parts of the program.
         if label_list == False:
             return label_list
 
@@ -1613,8 +1613,7 @@ class LargeTable:
 
 
 
-'''
-class Plot:
+class Chart:
     """
     Features in development.
     Take inspiration on plots of Gnumeric(design) and code style of Matplotlib.
@@ -1623,17 +1622,6 @@ class Plot:
         self.max_heigth_margin_down = 5
         self.max_width_margin_left = 10 
 
-    def area(self, table, x_labels):
-        """Area plot."""
-        pass
-
-    def bar(self, table):
-        """Bar plot."""
-        pass
-
-    def column(self, table):
-        """Column plot."""
-        pass
 
     def line(self, table=None, x_labels=None):
         """Line plot."""
@@ -1646,50 +1634,87 @@ class Plot:
         ###########################
         # --- The screen measures are obtained --- #
         screen_x, screen_y = widgets.measure_screen()
-        # --- The range of operation of the table is obtained --- #
-        self.minumum, self.maximum, self.the_range = self.get_range(table)
-        # --- Letters are assigned for each element of the chart --- #
-        self.assigned_letters = self.asign_letras(table)
+
+        x_values, y_values = self.get_list_of_elements(table)
+
+        # --- The dimensions of the table are calculated. --- #
+        x_max = max(x_values)
+        x_min = min(x_values)
+        x_range = x_max - x_min
+
+        y_max = max(y_values)
+        y_min = min(y_values)
+        y_range = y_max - y_min
+
+        x_chart = screen_x
+        y_chart = screen_y
+
+        if x_range < x_chart:
+            x_chart = x_max
+
+        if y_range < y_chart:
+            y_chart = y_max
+
+
+        pre_x_chart_values = [x - x_min for x in x_values]
+        pre_y_chart_values = [y - y_min for y in y_values]
+
+        chart_values = []
+
+        x_range_proportion = x_range / x_chart
+
+        def get_ordered_pair(x):
+            if x_chart > screen_x:
+                x_coordinate = int(pre_x_chart_values[x] / (x_range / screen_x))
+            else:
+                x_coordinate = pre_x_chart_values[x]
+
+            if y_chart > screen_y:
+                y_coordinate = int(pre_y_chart_values[x] / (y_range / screen_y))
+            else:
+                y_coordinate = pre_y_chart_values[x]
+            print(x_coordinate, y_coordinate)
+            return [x_coordinate, y_coordinate]
+
+
+        for x in range(len(pre_x_chart_values)):
+            value = pre_x_chart_values[x] % x_chart
+            if value < x_range_proportion / 2:
+                if value not in chart_values:
+                    chart_values.append(get_ordered_pair(x))
+            else:
+                chart_values.append(get_ordered_pair(x))
+
+
+        chart_pre_render = [[[] for x in range(x_chart + 1)] for y in range(y_chart + 1)]
+
+        for ordered_pair in chart_values:
+            x = ordered_pair[0]
+            y = y_chart - ordered_pair[1]
+            chart_pre_render[y][x].append('#')
+
+
+        chart_render = ''
+
+
+        for x in chart_pre_render:
+            for y in x:
+                if y == []:
+                    chart_render += ' '
+                else:
+                    chart_render += y[0]
+            if x != x_chart:
+                chart_render += '\n'
+
+        print(chart_render)
 
         print('--- DEVELOPMENT ---')
         print('screen_x, screen_y', screen_x, screen_y)
-        print('minimum', minimum, 'maximum', maximum, 'range', the_range)
-        print('assigned_letters', assigned_letters)
-        
-        """
-            Render.
-            How?
-
-            - The data is analyzed to obtain the numeric range of operation.
-                How? (Getting the maximum and minimum number among ALL elements of the table).
-            - Letters are assigned for each element.
-            - Margin and spaces needed to represent the elements and labels are determinated.
-            - The curve of the chart is determined.
-            - Pre_chart is renderized.
-            - Chart is renderized.
-        """
-
-    def pie(self, table):
-        """Pie plot."""
-        pass
-
-    def ring(self, table):
-        """Ring plot."""
-        pass
-
-    def candlestick(self, table):
-        """Candlestick plot."""
-        pass
 
 
-    def demo(self):
-        """Demonstration function."""
-        table = [(100, 200, 150), (200, 160, 300), (230, 170, 280)]
-        input('--- Press ENTER to see the table as is ---')
-        print(table)
-        input('--- Now press ENTER to see the table renderized by Outfancy ---')
-        print('--- LINE CHART ---')
-        print(self.line(table))
+    def get_list_of_elements(self, table):
+        # It return a list of x and a list of y values.
+        return [x[0] for x in table], [x[1] for x in table]
 
 
     def check_data_integrity(self, table):
@@ -1716,17 +1741,40 @@ class Plot:
 
         return error
 
+'''
+    def area(self, table, x_labels):
+        """Area plot."""
+        pass
 
-    def get_range(self, table):
-        """This function gets the range of numbers that will be represented in y axis."""
-        # The maximum value in the table is obtained.
-        maximum = max(max(table))
-        # The minimum value in the table is obtained.
-        minimum = min(min(table))
-        # The range of values ​​of the table is calculated.
-        the_range = maximum - minimum
+    def bar(self, table):
+        """Bar plot."""
+        pass
 
-        return minimum, maximum, the_range
+    def column(self, table):
+        """Column plot."""
+        pass
+
+    def pie(self, table):
+        """Pie plot."""
+        pass
+
+    def ring(self, table):
+        """Ring plot."""
+        pass
+
+    def candlestick(self, table):
+        """Candlestick plot."""
+        pass
+
+
+    def demo(self):
+        """Demonstration function."""
+        table = [(100, 200, 150), (200, 160, 300), (230, 170, 280)]
+        input('--- Press ENTER to see the table as is ---')
+        print(table)
+        input('--- Now press ENTER to see the table renderized by Outfancy ---')
+        print('--- LINE CHART ---')
+        print(self.line(table))
 
 
     def asign_letters(self, table):
@@ -1755,82 +1803,11 @@ class Plot:
         label_list_y = []
         for x in range(0, self.the_range):
             # The labels are added to label_list.
-            label_list_y.append(self.minumum + (x * units_per_interval))
+            label_list_y.append(self.minimum + (x * units_per_interval))
         # The interval will be defined by NUMBER * ORDER_MULTIPLICATOR.
 
         return label_list_y
 
-
-###  PLANNING AND DEVELOPMENT  ###
-
-        Pseudo:
-            Suppose:
-            maximum = 1234
-            minimum = 1200
-
-            screen_y = 25
-            -= max_heigth_margin_down = 5
-            range = 34 / 20
-            labels_per_pixel = 1.7
-
-            the_range = 34
-
-            From y to y2 the resolution is of amount of numbers per label.
-
-            For mental calculation follow that
-
-            0 - 20 res. 1pp ORDER 1
-
-            20 - 40 res. 2pp
-
-            40 - 100 res. 5pp
-
-            100 - 200 res. 10pp ORDER 2
-
-            200 - 400 res. 20pp
-
-            400 - 1000 res. 50pp
-
-            1000 - 2000 res. 100pp ORDER 3
-
-            2000 - 4000 res. 200pp
-
-            4000 - 10000 res. 500pp
-
-            10000 - 20000 res. 1000pp ORDER 4
-
-            20000 - 40000 res. 2000pp
-
-            40000 - 100000 res. 5000pp
-
-            100000 - 200000 res. 10000pp ORDER 5
-
-            200000 - 400000 res. 20000pp
-
-            labels_per_pixel are calculated.
-
-            labels_per_pixel are rounded to the low value.
-
-            In the nearest value in the value list.
-
-            From the sample it follows that value list is - Order 1: [1, 2, 5] - Order 2: [1, 2, 5]
-
-            It should shows:
-            1200, 1205, 1210 ..., 1235.
-
-#######################################
-
-        Algorithm pseudocode.
-            1 - Label_list is generated and a possible shortening is evaluated.
-                - How?
-                    - Divide the range by the size of the screen.
-                    - See if all elements are divisible by a million.
-                    - If not, see if all elements are divisible by thousand.
-                    - If not, and if the value is greater than 1000, see if the elements are divisible by 100.
-                    - If not, the value is not changed.
-            2 - If it can shorten, it is shortened.
-            3 - The size of label_list_y is obtained.
-            4 - The calculated width for the left margin and the label list is returned.
 
 #######################################
 
