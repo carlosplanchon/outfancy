@@ -24,6 +24,7 @@
 #    index_is_in_list(index, the_list)    - Check if an index is in the specified list.             #
 #    remove_colors(string)                - This function remove the color codes of a string.       #
 #    printed_length(string)               - Measure the length of a printed string.                 #
+#    create_matrix(x, y, fill):           - Create a 2d matrix based on it dimensions.              #
 #                                                                                                   #
 #####################################################################################################
 
@@ -193,6 +194,11 @@ def printed_length(string):
     """This function measure the length of a printed string."""
     # It returns the length of the printed string
     return len(remove_colors(string))
+
+
+def create_matrix(x, y, fill=''):
+    """This function create a 2d matrix based on it dimensions."""
+    return [[fill for p in range(x)] for p in range(y)]
 
 
 """
