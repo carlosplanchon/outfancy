@@ -1619,11 +1619,10 @@ class Chart:
     Take inspiration on plots of Gnumeric(design) and code style of Matplotlib.
     """
     def __init__(self):
-        self.max_heigth_margin_down = 5
-        self.max_width_margin_left = 10 
+        pass
 
 
-    def line(self, table=None, x_labels=None):
+    def line(self, table=None, plot_name='', left_margin_width=8, margin_down_height=8, margin_top_heigth=3):
         """Line plot."""
         # The data is checked.
         if not self.check_data_integrity(table):
@@ -1646,23 +1645,28 @@ class Chart:
         y_min = min(y_values)
         y_range = y_max - y_min
 
-        x_chart = screen_x
-        y_chart = screen_y
+        x_chart = screen_x - left_margin_width
+        y_chart = screen_y - margin_down_height - margin_top_heigth
 
-        if x_range < x_chart:
-            x_chart = x_max
-
-        if y_range < y_chart:
-            y_chart = y_max
-
-
+        # Points between 0 and the beginning of the chart are removed.
         pre_x_chart_values = [x - x_min for x in x_values]
         pre_y_chart_values = [y - y_min for y in y_values]
+        """
+        if x_range < x_chart:
+            x_chart = x_range
 
+        if y_range < y_chart:
+            y_chart = y_range
+        """
+        # An empty matrix is created.
+        #chart_pre_render = [[['·'] for x in range(x_chart + 1)] for y in range(y_chart + 1)]
+        chart_pre_render = self.create_matrix(x_chart, y_chart, '·')
+        """
         chart_values = []
 
         x_range_proportion = x_range / x_chart
 
+        # Given a value of the chart.
         def get_ordered_pair(x):
             if x_chart > screen_x:
                 x_coordinate = int(pre_x_chart_values[x] / (x_range / screen_x))
@@ -1673,7 +1677,7 @@ class Chart:
                 y_coordinate = int(pre_y_chart_values[x] / (y_range / screen_y))
             else:
                 y_coordinate = pre_y_chart_values[x]
-            print(x_coordinate, y_coordinate)
+            #print(x_coordinate, y_coordinate)
             return [x_coordinate, y_coordinate]
 
 
@@ -1685,36 +1689,167 @@ class Chart:
             else:
                 chart_values.append(get_ordered_pair(x))
 
+        print('ALTO DE LA PANTALLA (SCREEN_Y)', screen_y)
+        print('ANCHO DE LA PANTALLA (SCREEN X)', screen_x)
 
-        chart_pre_render = [[[] for x in range(x_chart + 1)] for y in range(y_chart + 1)]
+        print('ALTO DEL PRERENDER (Y_CHART+1)', y_chart + 1)
+        print('ANCHO DEL PRERENDER (X_CHARY+1)', x_chart + 1)
+
+        print('Y_MIN', y_min)
+        print('Y_MAX', y_max)
+        print('Y_RANGE', y_range)
 
         for ordered_pair in chart_values:
+            print(ordered_pair)
             x = ordered_pair[0]
             y = y_chart - ordered_pair[1]
-            chart_pre_render[y][x].append('#')
+            chart_pre_render[y][x] = ['#']
+        """
+        # Margins are created.
+        left_margin_height = screen_y - margin_top_heigth - margin_down_height
+
+        top_margin = self.create_top_margin(margin_top_heigth, screen_x, plot_name)
+
+        left_margin = self.create_left_margin(left_margin_height, left_margin_width, y_min, y_max)
+
+        down_margin_width = screen_x - left_margin_width
+        down_margin = self.create_down_margin(margin_down_height, down_margin_width, x_min, x_max)
 
 
+        # COMPOSE WINDOW.
+        window = self.create_matrix(screen_x, screen_y, '-')
+
+
+        """
+        tm = ''
+        for x in top_margin:
+            for y in x:
+                tm += y
+            tm += '\n'
+
+        window += tm
+
+        # The chart is rendered.
         chart_render = ''
-
-
         for x in chart_pre_render:
             for y in x:
-                if y == []:
-                    chart_render += ' '
-                else:
-                    chart_render += y[0]
+                chart_render += y[0]
             if x != x_chart:
                 chart_render += '\n'
 
         print(chart_render)
 
-        print('--- DEVELOPMENT ---')
-        print('screen_x, screen_y', screen_x, screen_y)
+        print('LEFT MARGIN')
+        lm = ''
+        for x in left_margin:
+            for y in x:
+                lm += y
+            lm += '\n'
+
+        print(lm)
+
+        print('TOP MARGIN')
+        tm = ''
+        for x in top_margin:
+            for y in x:
+                tm += y
+            tm += '\n'
+
+        print(tm)
+
+        print('DOWN MARGIN')
+        dm = ''
+        for x in down_margin:
+            for y in x:
+                dm += y
+            dm += '\n'
+
+        print(dm)
+        """
+        rendered_window = ''
+        for x in window:
+            for y in x:
+                rendered_window += y
+            rendered_window += '\n'
+        print(rendered_window)
+
+
+    def create_left_margin(self, heigth, width, min_value, max_value):
+        # A matrix is created.
+        left_margin = self.create_matrix(width, heigth, ' ')
+
+        # This value is created to register remaining space.
+        free_width = width
+
+        # The separator is inserted in each line.
+        for y in range(heigth): left_margin[y][free_width - 1] = '┼'
+        free_width -= 2
+
+        # Each value is inserted in each line.
+        values = [str(((max_value - min_value) / heigth) * y + min_value) for y in range(heigth)]
+
+        values.reverse()
+        for y in range(heigth):
+            if len(values[y]) > free_width:
+                values[y] = values[y][0:free_width]
+            else:
+                values[y] = values[y] + ' ' * (free_width - len(values[y]))
+
+            for x in range(0, free_width):
+                left_margin[y][x] = values[y][x]
+
+        return left_margin
+
+
+    def create_top_margin(self, heigth, width, tag=''):
+        # A matrix is created.
+        fill = '·'
+        if heigth > 1:
+            top_margin = [fill * width for line in range(heigth)]
+
+            if len(tag) < width:
+                line_tag = tag.center(width, fill)
+            else:
+                line_tag = tag[0:width]
+
+            top_margin[int(heigth / 2)] = line_tag
+
+        return top_margin
+
+
+    def create_down_margin(self, heigth, width, min_value, max_value):
+        # A matrix is created.
+        down_margin = self.create_matrix(width, heigth, '·')
+
+        # This value is created to register remaining space.
+        free_heigth = heigth
+
+        down_margin[0] = [('┼' if x % 2 == 0 else '–') for x in range(width)]
+        free_heigth -= 1
+
+        values = [str(((max_value - min_value) / width) * x + min_value) for x in range(width)]
+
+        for x in range(width):
+            if len(values[x]) > free_heigth:
+                values[x] = values[x][0:free_heigth]
+            else:
+                values[x] = values[x] + '0' * (free_heigth - len(values[x]))
+
+            values[x] = values[x].replace('.', '·')
+            for y in range(heigth - free_heigth, heigth):
+                new_y = y - (heigth - free_heigth)
+                down_margin[y][x] = (values[x][new_y] if x % 2 == 0 else ' ')
+
+        return down_margin
 
 
     def get_list_of_elements(self, table):
         # It return a list of x and a list of y values.
         return [x[0] for x in table], [x[1] for x in table]
+
+
+    def create_matrix(self, x, y, fill=''):
+        return [[fill for p in range(x)] for p in range(y)]
 
 
     def check_data_integrity(self, table):
@@ -1740,6 +1875,13 @@ class Chart:
             error = True
 
         return error
+
+
+
+class Window():
+    """It creates a Window Object."""
+    def __init__(self):
+        pass
 
 '''
     def area(self, table, x_labels):
