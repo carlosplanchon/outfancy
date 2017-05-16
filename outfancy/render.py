@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from statistics import mean
+
 from . import widgets
 
 letters = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ'
@@ -1614,10 +1616,7 @@ class LargeTable:
 
 
 class Chart:
-    """
-    Features in development.
-    Take inspiration on plots of Gnumeric(design) and code style of Matplotlib.
-    """
+    """Charts in terminal."""
     def __init__(self):
         pass
 
@@ -1651,60 +1650,42 @@ class Chart:
         # Points between 0 and the beginning of the chart are removed.
         pre_x_chart_values = [x - x_min for x in x_values]
         pre_y_chart_values = [y - y_min for y in y_values]
-        """
-        if x_range < x_chart:
-            x_chart = x_range
 
-        if y_range < y_chart:
-            y_chart = y_range
-        """
         # An empty matrix is created.
-        #chart_pre_render = [[['·'] for x in range(x_chart + 1)] for y in range(y_chart + 1)]
-        chart_pre_render = self.create_matrix(x_chart, y_chart, '·')
-        """
-        chart_values = []
+        table_window = Window(x_chart, y_chart, '·')
 
-        x_range_proportion = x_range / x_chart
+        def add_point(value, x, y):
+            table_window.insert(value, x, y_chart - y - 1)
 
-        # Given a value of the chart.
-        def get_ordered_pair(x):
-            if x_chart > screen_x:
-                x_coordinate = int(pre_x_chart_values[x] / (x_range / screen_x))
+        x_chart_values = [((x_max - x_min) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
+
+        # Points are added to table_window.
+        for x in range(x_chart):
+            if x == 0:
+                y = int(y_chart / y_range * y_values[0])
+                add_point('x', 0, y)
+            elif x == x_chart - 1:
+                y = int(y_chart / y_range * y_values[-1])
+                add_point('x', x_chart - 1, y - 1)
             else:
-                x_coordinate = pre_x_chart_values[x]
+                below = x_chart_values[x - 1]
+                above = x_chart_values[x + 1]
 
-            if y_chart > screen_y:
-                y_coordinate = int(pre_y_chart_values[x] / (y_range / screen_y))
-            else:
-                y_coordinate = pre_y_chart_values[x]
-            #print(x_coordinate, y_coordinate)
-            return [x_coordinate, y_coordinate]
+                coincidences = []
+                for element in range(x_range):
+                    if below < x_values[element] < above:
+                        coincidences.append(element)
 
+                if len(coincidences) > 1:
+                    coincident_elements = [y_values[element] for element in coincidences]
+                    y_value = y_values[int(mean(coincident_elements))]
+                    y = int(y_chart / y_range * y_value)
+                    add_point('x', x, y - 1)
+                elif len(coincidences) > 0:
+                    y_value = y_values[int(coincidences[0])]
+                    y = int(y_chart / y_range * y_value)
+                    add_point('x', x, y - 1)
 
-        for x in range(len(pre_x_chart_values)):
-            value = pre_x_chart_values[x] % x_chart
-            if value < x_range_proportion / 2:
-                if value not in chart_values:
-                    chart_values.append(get_ordered_pair(x))
-            else:
-                chart_values.append(get_ordered_pair(x))
-
-        print('ALTO DE LA PANTALLA (SCREEN_Y)', screen_y)
-        print('ANCHO DE LA PANTALLA (SCREEN X)', screen_x)
-
-        print('ALTO DEL PRERENDER (Y_CHART+1)', y_chart + 1)
-        print('ANCHO DEL PRERENDER (X_CHARY+1)', x_chart + 1)
-
-        print('Y_MIN', y_min)
-        print('Y_MAX', y_max)
-        print('Y_RANGE', y_range)
-
-        for ordered_pair in chart_values:
-            print(ordered_pair)
-            x = ordered_pair[0]
-            y = y_chart - ordered_pair[1]
-            chart_pre_render[y][x] = ['#']
-        """
         # Margins are created.
         left_margin_height = screen_y - margin_top_heigth - margin_down_height
 
@@ -1712,71 +1693,23 @@ class Chart:
 
         left_margin = self.create_left_margin(left_margin_height, left_margin_width, y_min, y_max)
 
-        down_margin_width = screen_x - left_margin_width
-        down_margin = self.create_down_margin(margin_down_height, down_margin_width, x_min, x_max)
+        margin_down_width = screen_x - left_margin_width
+        down_margin = self.create_down_margin(margin_down_height, margin_down_width, x_min, x_max)
 
+        # Window is composed.
+        window = Window(screen_x, screen_y, ' ')
+        window.insert(top_margin, 0, 0)
+        window.insert(left_margin, 0, margin_top_heigth)
+        window.insert(down_margin, 0 + left_margin_width, screen_y - margin_down_height)
+        window.insert(['└'], left_margin_width - 1, screen_y - margin_down_height)
+        window.insert(table_window.content, left_margin_width, margin_top_heigth)
 
-        # COMPOSE WINDOW.
-        window = self.create_matrix(screen_x, screen_y, '-')
-
-
-        """
-        tm = ''
-        for x in top_margin:
-            for y in x:
-                tm += y
-            tm += '\n'
-
-        window += tm
-
-        # The chart is rendered.
-        chart_render = ''
-        for x in chart_pre_render:
-            for y in x:
-                chart_render += y[0]
-            if x != x_chart:
-                chart_render += '\n'
-
-        print(chart_render)
-
-        print('LEFT MARGIN')
-        lm = ''
-        for x in left_margin:
-            for y in x:
-                lm += y
-            lm += '\n'
-
-        print(lm)
-
-        print('TOP MARGIN')
-        tm = ''
-        for x in top_margin:
-            for y in x:
-                tm += y
-            tm += '\n'
-
-        print(tm)
-
-        print('DOWN MARGIN')
-        dm = ''
-        for x in down_margin:
-            for y in x:
-                dm += y
-            dm += '\n'
-
-        print(dm)
-        """
-        rendered_window = ''
-        for x in window:
-            for y in x:
-                rendered_window += y
-            rendered_window += '\n'
-        print(rendered_window)
+        print(window.render())
 
 
     def create_left_margin(self, heigth, width, min_value, max_value):
         # A matrix is created.
-        left_margin = self.create_matrix(width, heigth, ' ')
+        left_margin = widgets.create_matrix(width, heigth, ' ')
 
         # This value is created to register remaining space.
         free_width = width
@@ -1786,7 +1719,7 @@ class Chart:
         free_width -= 2
 
         # Each value is inserted in each line.
-        values = [str(((max_value - min_value) / heigth) * y + min_value) for y in range(heigth)]
+        values = [str(((max_value - min_value) / (heigth - 1)) * y + min_value) for y in range(heigth)]
 
         values.reverse()
         for y in range(heigth):
@@ -1803,7 +1736,7 @@ class Chart:
 
     def create_top_margin(self, heigth, width, tag=''):
         # A matrix is created.
-        fill = '·'
+        fill = ' '
         if heigth > 1:
             top_margin = [fill * width for line in range(heigth)]
 
@@ -1819,7 +1752,7 @@ class Chart:
 
     def create_down_margin(self, heigth, width, min_value, max_value):
         # A matrix is created.
-        down_margin = self.create_matrix(width, heigth, '·')
+        down_margin = widgets.create_matrix(width, heigth, '·')
 
         # This value is created to register remaining space.
         free_heigth = heigth
@@ -1827,7 +1760,7 @@ class Chart:
         down_margin[0] = [('┼' if x % 2 == 0 else '–') for x in range(width)]
         free_heigth -= 1
 
-        values = [str(((max_value - min_value) / width) * x + min_value) for x in range(width)]
+        values = [str(((max_value - min_value) / (width - 1)) * x + min_value) for x in range(width)]
 
         for x in range(width):
             if len(values[x]) > free_heigth:
@@ -1846,10 +1779,6 @@ class Chart:
     def get_list_of_elements(self, table):
         # It return a list of x and a list of y values.
         return [x[0] for x in table], [x[1] for x in table]
-
-
-    def create_matrix(self, x, y, fill=''):
-        return [[fill for p in range(x)] for p in range(y)]
 
 
     def check_data_integrity(self, table):
@@ -1876,39 +1805,60 @@ class Chart:
 
         return error
 
+    '''
+        def area(self, table, x_labels):
+            """Area plot."""
+            pass
+
+        def bar(self, table):
+            """Bar plot."""
+            pass
+
+        def column(self, table):
+            """Column plot."""
+            pass
+
+        def pie(self, table):
+            """Pie plot."""
+            pass
+
+        def ring(self, table):
+            """Ring plot."""
+            pass
+
+        def candlestick(self, table):
+            """Candlestick plot."""
+            pass
+    '''
 
 
-class Window():
+
+class Window:
     """It creates a Window Object."""
-    def __init__(self):
-        pass
+    def __init__(self, width, heigth, fill=' '):
+        self.content = widgets.create_matrix(width, heigth, fill)
+
+
+    def insert(self, matrix, x_vertex, y_vertex):
+        """Each element of the matrix is inserted in the window."""
+        for y in range(len(matrix)):
+            if len(matrix) >= 0:
+                for x in range(len(matrix[0])):
+                    x_to_insert = x + x_vertex
+                    y_to_insert = y + y_vertex
+                    if y_to_insert < len(self.content) and x_to_insert < len(self.content[0]):
+                        self.content[y_to_insert][x_to_insert] = matrix[y][x]
+
+
+    def render(self):
+        rendered_window = ''
+        for x in self.content:
+            for y in x:
+                rendered_window += y
+            rendered_window += '\n'
+        return rendered_window.rstrip('\n')
 
 '''
-    def area(self, table, x_labels):
-        """Area plot."""
-        pass
-
-    def bar(self, table):
-        """Bar plot."""
-        pass
-
-    def column(self, table):
-        """Column plot."""
-        pass
-
-    def pie(self, table):
-        """Pie plot."""
-        pass
-
-    def ring(self, table):
-        """Ring plot."""
-        pass
-
-    def candlestick(self, table):
-        """Candlestick plot."""
-        pass
-
-
 To do:
     - Check system on width.
     - Option to cancel the automatical check of width.
