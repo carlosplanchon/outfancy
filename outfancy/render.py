@@ -1621,11 +1621,12 @@ class Chart:
         pass
 
 
-    def line(self, table=None, plot_name='', left_margin_width=8, margin_down_height=8, margin_top_heigth=3):
+    def line(self, dataset=None, plot_name='', left_margin_width=8, margin_down_height=8, margin_top_heigth=3):
         """Line plot."""
         # The data is checked.
-        if not self.check_data_integrity(table):
-            return '--- Plot > Line > The input data is invalid. ---'
+        integrity, reason = self.check_data_integrity(dataset)
+        if not integrity:
+            return '--- Plot > Line > The input data is invalid. ---\n Reason: {}'.format(reason)
 
         ###########################
         # --- PRE-RENDER AREA --- #
@@ -1633,9 +1634,9 @@ class Chart:
         # --- The screen measures are obtained --- #
         screen_x, screen_y = widgets.measure_screen()
 
-        x_values, y_values = self.get_list_of_elements(table)
+        x_values, y_values = self.get_list_of_elements(dataset)
 
-        # --- The dimensions of the table are calculated. --- #
+        # --- The dimensions of the dataset are calculated. --- #
         x_max = max(x_values)
         x_min = min(x_values)
         x_range = x_max - x_min
@@ -1657,34 +1658,41 @@ class Chart:
         def add_point(value, x, y):
             table_window.insert(value, x, y_chart - y - 1)
 
-        x_chart_values = [((x_max - x_min) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
+        x_chart_values = [((x_max - x_min) / (x_chart)) * x + x_min for x in range(x_chart)]
 
+        print('X CHART VALUES', x_chart_values)
         # Points are added to table_window.
         for x in range(x_chart):
+            #if x == 0:
+            #    y = int(y_chart / y_range * y_values[0])
+            #    add_point('x', 0, y)
+            #elif x == x_chart - 1:
+            #    y = int(y_chart / y_range * y_values[-1])
+            #    add_point('x', x_chart - 1, y - 1)
             if x == 0:
-                y = int(y_chart / y_range * y_values[0])
-                add_point('x', 0, y)
-            elif x == x_chart - 1:
-                y = int(y_chart / y_range * y_values[-1])
-                add_point('x', x_chart - 1, y - 1)
+                below = 0
             else:
                 below = x_chart_values[x - 1]
+
+            if x == x_chart - 1:
+                above = x_chart_values[-1]
+            else:
                 above = x_chart_values[x + 1]
 
-                coincidences = []
-                for element in range(x_range):
-                    if below < x_values[element] < above:
-                        coincidences.append(element)
+            coincidences = []
+            for element in range(x_range):
+                if below <= x_values[element] <= above:
+                    coincidences.append(element)
 
-                if len(coincidences) > 1:
-                    coincident_elements = [y_values[element] for element in coincidences]
-                    y_value = y_values[int(mean(coincident_elements))]
-                    y = int(y_chart / y_range * y_value)
-                    add_point('x', x, y - 1)
-                elif len(coincidences) > 0:
-                    y_value = y_values[int(coincidences[0])]
-                    y = int(y_chart / y_range * y_value)
-                    add_point('x', x, y - 1)
+            if len(coincidences) > 1:
+                coincident_elements = [y_values[element] for element in coincidences]
+                y_value = y_values[int(mean(coincident_elements))]
+                y = int(y_chart / y_range * y_value)
+                add_point('x', x, y + 1)
+            elif len(coincidences) > 0:
+                y_value = y_values[int(coincidences[0])]
+                y = int(y_chart / y_range * y_value)
+                add_point('x', x, y + 1)
 
         # Margins are created.
         left_margin_height = screen_y - margin_top_heigth - margin_down_height
@@ -1704,7 +1712,7 @@ class Chart:
         window.insert(['└'], left_margin_width - 1, screen_y - margin_down_height)
         window.insert(table_window.content, left_margin_width, margin_top_heigth)
 
-        print(window.render())
+        return window.render()
 
 
     def create_left_margin(self, heigth, width, min_value, max_value):
@@ -1719,7 +1727,7 @@ class Chart:
         free_width -= 2
 
         # Each value is inserted in each line.
-        values = [str(((max_value - min_value) / (heigth - 1)) * y + min_value) for y in range(heigth)]
+        values = [str(((max_value - min_value) / (heigth)) * y + min_value) for y in range(heigth)]
 
         values.reverse()
         for y in range(heigth):
@@ -1781,29 +1789,39 @@ class Chart:
         return [x[0] for x in table], [x[1] for x in table]
 
 
-    def check_data_integrity(self, table):
+    def check_data_integrity(self, dataset):
         """This function check the data integrity."""
-        error = False
+        integrity = True
+        reason = None
         # The table data is checked.
-        if isinstance(table, list):
-            len_of_row = len(table[0])
-            # The rows of table are checked.
-            for row in table:
-                if isinstance(row, tuple):
-                    # If the length of row is different from the initially measured length.
-                    if len(row) != len_of_row:
-                        error = True
-                    # For each element of row.
-                    for element in row:
-                        # The element is valid if his type is an int or None.
-                        if not isinstance(element, int) or element != None:
-                            error = True
-                else:
-                    error = True
+        if isinstance(dataset, list):
+            if len(dataset) == 0:
+                integrity = False
+                reason = 'The dataset have not elements.'
+            else:
+                # The rows of table are checked.
+                for ordered_pair in dataset:
+                    if isinstance(ordered_pair, tuple) or isinstance(ordered_pair, list):
+                        if 1 < len(ordered_pair) < 3:
+                            # For each variable of ordered_pair.
+                            for ordered_pair in ordered_pair:
+                                # The ordered_pair is valid if his type is an int or None.
+                                integrity = False
+                                reason = 'An element of an ordered_pair is not int or None.'
+                                if isinstance(ordered_pair, int) or  isinstance(ordered_pair, float) or ordered_pair == None:
+                                    integrity = True
+                                    reason = None
+                        else:
+                            integrity = False
+                            reason = 'An element is not an ordered pair.'
+                    else:
+                        integrity = False
+                        reason = 'An element is not an ordered pair.'
         else:
-            error = True
+            integrity = False
+            reason = 'The input is not a list.'
 
-        return error
+        return integrity, reason
 
     '''
         def area(self, table, x_labels):
