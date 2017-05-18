@@ -453,7 +453,7 @@ class Table:
             new_tuple = []
             # The rearranged tuple is generated.
             for element in order:
-                if widgets.index_is_in_list(element, the_tuple):
+                if widgets.index_is_in_list(the_tuple, element):
                     new_tuple.append(the_tuple[element])
                 else:
                     errors.append('Table > Render > rearrange_data: Error when trying to rearrange data.')
@@ -556,7 +556,7 @@ class Table:
                             # If length of data is less than two is impossible to know if a value is an Id or not.
                             if len(data) > 1:
                                 # It checks if elements are a continious series, i.e 1, 2, 3, 4.
-                                if widgets.index_is_in_list(the_tuple + 1, data):
+                                if widgets.index_is_in_list(data, the_tuple + 1):
                                     next_field = str(data[the_tuple + 1][x])
                                     if next_field.isdigit():
                                         if int(next_field) - int(field) == 1:
@@ -568,7 +568,7 @@ class Table:
                                 else:
                                     the_type = 'value'
                                 if the_tuple != 0:
-                                    if widgets.index_is_in_list(the_tuple - 1, data):
+                                    if widgets.index_is_in_list(data, the_tuple - 1):
                                         previous_field = str(data[the_tuple - 1][x])
                                         if previous_field.isdigit():
                                             if int(field) - int(previous_field) == 1:
@@ -672,7 +672,7 @@ class Table:
             rearranged_data_type_list = []
             # The rearranged tuple is generated.
             for element in order:
-                if widgets.index_is_in_list(element, data_type_list):
+                if widgets.index_is_in_list(data_type_list, element):
                     rearranged_data_type_list.append(data_type_list[element])
                 else:
                     errors.append('Table > Render > rearrange_data_type_list: Error when trying to rearrange data_type_list.')
@@ -1118,7 +1118,7 @@ class Table:
         else:
             ordered_label_list = []
             for element in order:
-                if widgets.index_is_in_list(element, label_list):
+                if widgets.index_is_in_list(label_list, element):
                     ordered_label_list.append(label_list[element])
                 else:
                     errors.append('Table > Render > check_label_list: Error when trying to rearrange the labels.')
@@ -1587,7 +1587,7 @@ class LargeTable:
             # It generates the new_list.
             new_list = []
             for x in element:
-                if widgets.index_is_in_list(x, base_list):
+                if widgets.index_is_in_list(base_list, x):
                     new_list.append(base_list[x])
             # base_list is now the finished new_list.
             base_list = new_list
@@ -1607,7 +1607,7 @@ class LargeTable:
 
         rearranged_row = []
         for element in order:
-            if widgets.index_is_in_list(element, row):
+            if widgets.index_is_in_list(row, element):
                 rearranged_row.append(row[element])
 
         # The rearranged row is returned.
@@ -1621,7 +1621,7 @@ class Chart:
         pass
 
 
-    def line(self, dataset=None, plot_name='', left_margin_width=8, margin_down_height=8, margin_top_heigth=3):
+    def line(self, dataset=None, plot_name='', point='x', left_margin_width=8, margin_down_height=8, margin_top_heigth=3):
         """Line plot."""
         # The data is checked.
         integrity, reason = self.check_data_integrity(dataset)
@@ -1658,42 +1658,75 @@ class Chart:
         def add_point(value, x, y):
             table_window.insert(value, x, y_chart - y - 1)
 
-        x_chart_values = [((x_max - x_min) / (x_chart)) * x + x_min for x in range(x_chart)]
+        # CHECKED
+        # The x values showed on the table are generated.
+        x_chart_values = [((x_range) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
 
-        print('X CHART VALUES', x_chart_values)
+        #points = []
+        #print('X CHART VALUES', x_chart_values)
         # Points are added to table_window.
         for x in range(x_chart):
-            #if x == 0:
-            #    y = int(y_chart / y_range * y_values[0])
-            #    add_point('x', 0, y)
-            #elif x == x_chart - 1:
-            #    y = int(y_chart / y_range * y_values[-1])
-            #    add_point('x', x_chart - 1, y - 1)
             if x == 0:
-                below = 0
+                below = -1
             else:
-                below = x_chart_values[x - 1]
+                below = x_chart_values[x]
 
             if x == x_chart - 1:
-                above = x_chart_values[-1]
+                above = x_chart_values[-1] + 1
             else:
                 above = x_chart_values[x + 1]
 
             coincidences = []
-            for element in range(x_range):
-                if below <= x_values[element] <= above:
+            for element in range(len(pre_x_chart_values)):
+                #print('element', element)
+                if below < pre_x_chart_values[element] < above:
                     coincidences.append(element)
+                    #print('COINCIDENCE')
+
 
             if len(coincidences) > 1:
-                coincident_elements = [y_values[element] for element in coincidences]
-                y_value = y_values[int(mean(coincident_elements))]
+                coincident_elements = [pre_y_chart_values[element] for element in coincidences]
+                y_value = pre_y_chart_values[int(mean(coincident_elements))]
                 y = int(y_chart / y_range * y_value)
-                add_point('x', x, y + 1)
+                add_point(point, x, y)
+                #points.append([x, y])
             elif len(coincidences) > 0:
-                y_value = y_values[int(coincidences[0])]
+                y_value = pre_y_chart_values[round(coincidences[0])]
                 y = int(y_chart / y_range * y_value)
-                add_point('x', x, y + 1)
+                add_point(point, x, y)
+                #points.append([x, y])
 
+        #x_values_points, y_values_points = self.get_list_of_elements(points)
+        #print(points)
+        #print(x_values_points)
+        #print(y_values_points)
+
+        # Linear interpolation.
+        """
+        for n in range(len(x_values_points)):
+            print('N', n)
+            slope = 0
+            if x_values_points[n] == 0:
+                if widgets.index_is_in_list(x_values_points, n + 1):
+                    slope = y_values_points[n + 1] / x_values_points[n + 1]
+            #elif n == len(x_values_points):
+            #    if widgets.index_is_in_list(x_values_points, n - 1):
+            #        slope = y_values_points[n - 1] / x_values_points[n - 1]
+            else:
+                slope = y_values_points[n] / x_values_points[n]
+            
+
+            print('SLOPE', slope)
+            if widgets.index_is_in_list(x_values_points, n + 1):
+                for i in range(x_values_points[n], x_values_points[n + 1]):
+                    print('I', i)
+                    x_point = i
+                    y_point = round(i * slope)
+                    add_point(point, x_point, y_point)
+                    print('X POINT', x_point, 'Y_POINT', y_point)
+        """
+
+        # CHECKED
         # Margins are created.
         left_margin_height = screen_y - margin_top_heigth - margin_down_height
 
