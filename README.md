@@ -46,3 +46,6 @@ print(motor.render(some_data))
 
 ## Others
 - https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3 (Funny demo with colors)
+
+## Experimental (Line plot)
+- http://showterm.io/80074a1806e78205339d6
