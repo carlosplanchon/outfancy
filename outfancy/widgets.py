@@ -21,7 +21,7 @@
 #    actual_hour()                        - Returns the actual hour.                                #
 #    measure_screen()                     - Measures characters that can fit on the screen.         #
 #    compress_list(list_to_compress)      - Compress a list, I.e: [1,6,4] is converted in [0,2,1].  #
-#    index_is_in_list(index, the_list)    - Check if an index is in the specified list.             #
+#    index_is_in_list(the_list, index)    - Check if an index is in the specified list.             #
 #    remove_colors(string)                - This function remove the color codes of a string.       #
 #    printed_length(string)               - Measure the length of a printed string.                 #
 #    create_matrix(x, y, fill):           - Create a 2d matrix based on it dimensions.              #
@@ -174,12 +174,10 @@ def compress_list(list_to_compress):
     return compressed_list
 
 
-def index_is_in_list(index, the_list):
+def index_is_in_list(the_list, index):
     """This function check if an index is in the specified list."""
-    if index < len(the_list) and index >= 0:
-        return True
-    else:
-        return False
+    return bool(0 <= index < len(the_list))
+
 
 
 def remove_colors(string):
