@@ -1621,7 +1621,7 @@ class Chart:
         pass
 
 
-    def line(self, dataset=None, plot_name='', point='x', left_margin_width=8, margin_down_height=8, margin_top_heigth=3):
+    def line(self, dataset=None, plot_name='', point='x', left_margin_width=8, margin_down_height=8, margin_top_heigth=3, color=False, background_point='·'):
         """Line plot."""
         # The data is checked.
         integrity, reason = self.check_data_integrity(dataset)
@@ -1653,10 +1653,14 @@ class Chart:
         pre_y_chart_values = [y - y_min for y in y_values]
 
         # An empty matrix is created.
-        table_window = Window(x_chart, y_chart, '·')
+        if color:
+            background_point = '\x1b[1;90m{}\x1b[0;99m'.format(background_point)
+            point = '\x1b[1;33m{}\x1b[0;99m'.format(point)
+
+        table_window = Window(x_chart, y_chart, background_point)
 
         def add_point(value, x, y):
-            table_window.insert(value, x, y_chart - y - 1)
+            table_window.insert_point(value, x, y_chart - y - 1)
 
         # The x values showed on the table are generated.
         x_chart_values = [((x_range) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
@@ -1709,7 +1713,7 @@ class Chart:
         return window.render()
 
 
-    def create_left_margin(self, heigth, width, min_value, max_value):
+    def create_left_margin(self, heigth, width, min_value, max_value, separator='┼'):
         # A matrix is created.
         left_margin = widgets.create_matrix(width, heigth, ' ')
 
@@ -1717,7 +1721,7 @@ class Chart:
         free_width = width
 
         # The separator is inserted in each line.
-        for y in range(heigth): left_margin[y][free_width - 1] = '┼'
+        for y in range(heigth): left_margin[y][free_width - 1] = separator
         free_width -= 2
 
         # Each value is inserted in each line.
@@ -1752,14 +1756,14 @@ class Chart:
         return top_margin
 
 
-    def create_down_margin(self, heigth, width, min_value, max_value):
+    def create_down_margin(self, heigth, width, min_value, max_value, separator1='┼', separator2='–'):
         # A matrix is created.
-        down_margin = widgets.create_matrix(width, heigth, '·')
+        down_margin = widgets.create_matrix(width, heigth)
 
         # This value is created to register remaining space.
         free_heigth = heigth
 
-        down_margin[0] = [('┼' if x % 2 == 0 else '–') for x in range(width)]
+        down_margin[0] = [(separator1 if x % 2 == 0 else separator2) for x in range(width)]
         free_heigth -= 1
 
         values = [str(((max_value - min_value) / (width - 1)) * x + min_value) for x in range(width)]
@@ -1860,6 +1864,11 @@ class Window:
                     y_to_insert = y + y_vertex
                     if y_to_insert < len(self.content) and x_to_insert < len(self.content[0]):
                         self.content[y_to_insert][x_to_insert] = matrix[y][x]
+
+
+    def insert_point(self, point, x_coord, y_coord):
+        """Each element of the matrix is inserted in the window."""
+        self.content[y_coord][x_coord] = point
 
 
     def render(self):
