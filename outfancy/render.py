@@ -1678,10 +1678,9 @@ class Chart:
                 if below < pre_x_chart_values[element] < above:
                     coincidences.append(element)
 
-
             if len(coincidences) > 1:
                 coincident_elements = [pre_y_chart_values[element] for element in coincidences]
-                y_value = pre_y_chart_values[int(mean(coincident_elements))]
+                y_value = pre_y_chart_values[round(mean(coincidences))]
                 y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
             elif len(coincidences) > 0:
