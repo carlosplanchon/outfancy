@@ -1653,6 +1653,8 @@ class Chart:
         pre_y_chart_values = [y - y_min for y in y_values]
 
         # An empty matrix is created.
+        #print('X_CHART', x_chart)
+        #print('Y_CHART', y_chart)
         table_window = Window(x_chart, y_chart, '·')
 
         def add_point(value, x, y):
@@ -1662,7 +1664,7 @@ class Chart:
         # The x values showed on the table are generated.
         x_chart_values = [((x_range) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
 
-        #points = []
+        points = []
         #print('X CHART VALUES', x_chart_values)
         # Points are added to table_window.
         for x in range(x_chart):
@@ -1687,46 +1689,35 @@ class Chart:
             if len(coincidences) > 1:
                 coincident_elements = [pre_y_chart_values[element] for element in coincidences]
                 y_value = pre_y_chart_values[int(mean(coincident_elements))]
-                y = int(y_chart / y_range * y_value)
+                y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
-                #points.append([x, y])
+                points.append([x, y])
             elif len(coincidences) > 0:
                 y_value = pre_y_chart_values[round(coincidences[0])]
-                y = int(y_chart / y_range * y_value)
+                y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
-                #points.append([x, y])
+                points.append([x, y])
 
-        #x_values_points, y_values_points = self.get_list_of_elements(points)
-        #print(points)
-        #print(x_values_points)
-        #print(y_values_points)
 
-        # Linear interpolation.
+        x_values_points, y_values_points = self.get_list_of_elements(points)
+        #print('POINTS', points)
+        #print('X_VALUES_POINTS', x_values_points)
+        #print('Y_VALUES_POINTS', y_values_points)
+        #print('LEN XVP', len(x_values_points))
         """
+        # Linear interpolation.
         for n in range(len(x_values_points)):
-            print('N', n)
             slope = 0
-            if x_values_points[n] == 0:
-                if widgets.index_is_in_list(x_values_points, n + 1):
-                    slope = y_values_points[n + 1] / x_values_points[n + 1]
-            #elif n == len(x_values_points):
-            #    if widgets.index_is_in_list(x_values_points, n - 1):
-            #        slope = y_values_points[n - 1] / x_values_points[n - 1]
+            if n == len(x_values_points) - 1:
+                if widgets.index_is_in_list(x_values_points, n - 1):
+                    slope = (y_values_points[n] - y_values_points[n - 1]) / (x_values_points[n] - x_values_points[n - 1])
             else:
-                slope = y_values_points[n] / x_values_points[n]
-            
+                slope = (y_values_points[n + 1] - y_values_points[n]) / (x_values_points[n + 1] - x_values_points[n])
 
-            print('SLOPE', slope)
             if widgets.index_is_in_list(x_values_points, n + 1):
                 for i in range(x_values_points[n], x_values_points[n + 1]):
-                    print('I', i)
-                    x_point = i
-                    y_point = round(i * slope)
-                    add_point(point, x_point, y_point)
-                    print('X POINT', x_point, 'Y_POINT', y_point)
+                    x, y = interpolate(x, y)
         """
-
-        # CHECKED
         # Margins are created.
         left_margin_height = screen_y - margin_top_heigth - margin_down_height
 
