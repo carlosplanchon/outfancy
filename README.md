@@ -48,4 +48,5 @@ print(motor.render(some_data))
 - https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3 (Funny demo with colors)
 
 ## Experimental (Line plot)
+<img src='examples/sin_little.png'>
 - http://showterm.io/80074a1806e78205339d6
