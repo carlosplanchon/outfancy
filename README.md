@@ -41,7 +41,7 @@ print(motor.render(some_data))
 
 ## To do (Colaboration is welcome)
 - Translate code to english. (Translated) (the translation need revision from a native english speaker (I speak spanish).
-- color option. (Added) (Can be improved used regex (see widgets.py))
+- color option. (Added) (Can be improved using regex (see widgets.py))
 - Add basic charting functions (in the folder code_to_use i have some code found in internet that can be used to that functions).
 
 ## Others
