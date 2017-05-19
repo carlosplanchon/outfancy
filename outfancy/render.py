@@ -1653,19 +1653,14 @@ class Chart:
         pre_y_chart_values = [y - y_min for y in y_values]
 
         # An empty matrix is created.
-        #print('X_CHART', x_chart)
-        #print('Y_CHART', y_chart)
         table_window = Window(x_chart, y_chart, '·')
 
         def add_point(value, x, y):
             table_window.insert(value, x, y_chart - y - 1)
 
-        # CHECKED
         # The x values showed on the table are generated.
         x_chart_values = [((x_range) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
 
-        points = []
-        #print('X CHART VALUES', x_chart_values)
         # Points are added to table_window.
         for x in range(x_chart):
             if x == 0:
@@ -1680,10 +1675,8 @@ class Chart:
 
             coincidences = []
             for element in range(len(pre_x_chart_values)):
-                #print('element', element)
                 if below < pre_x_chart_values[element] < above:
                     coincidences.append(element)
-                    #print('COINCIDENCE')
 
 
             if len(coincidences) > 1:
@@ -1691,42 +1684,20 @@ class Chart:
                 y_value = pre_y_chart_values[int(mean(coincident_elements))]
                 y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
-                points.append([x, y])
             elif len(coincidences) > 0:
                 y_value = pre_y_chart_values[round(coincidences[0])]
                 y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
-                points.append([x, y])
 
 
-        x_values_points, y_values_points = self.get_list_of_elements(points)
-        #print('POINTS', points)
-        #print('X_VALUES_POINTS', x_values_points)
-        #print('Y_VALUES_POINTS', y_values_points)
-        #print('LEN XVP', len(x_values_points))
-        """
-        # Linear interpolation.
-        for n in range(len(x_values_points)):
-            slope = 0
-            if n == len(x_values_points) - 1:
-                if widgets.index_is_in_list(x_values_points, n - 1):
-                    slope = (y_values_points[n] - y_values_points[n - 1]) / (x_values_points[n] - x_values_points[n - 1])
-            else:
-                slope = (y_values_points[n + 1] - y_values_points[n]) / (x_values_points[n + 1] - x_values_points[n])
-
-            if widgets.index_is_in_list(x_values_points, n + 1):
-                for i in range(x_values_points[n], x_values_points[n + 1]):
-                    x, y = interpolate(x, y)
-        """
         # Margins are created.
-        left_margin_height = screen_y - margin_top_heigth - margin_down_height
+        left_margin_height = y_chart
 
         top_margin = self.create_top_margin(margin_top_heigth, screen_x, plot_name)
 
         left_margin = self.create_left_margin(left_margin_height, left_margin_width, y_min, y_max)
 
-        margin_down_width = screen_x - left_margin_width
-        down_margin = self.create_down_margin(margin_down_height, margin_down_width, x_min, x_max)
+        down_margin = self.create_down_margin(margin_down_height, x_chart, x_min, x_max)
 
         # Window is composed.
         window = Window(screen_x, screen_y, ' ')
@@ -1751,17 +1722,17 @@ class Chart:
         free_width -= 2
 
         # Each value is inserted in each line.
-        values = [str(((max_value - min_value) / (heigth)) * y + min_value) for y in range(heigth)]
+        y_values = [str(((max_value - min_value) / (heigth - 1)) * y + min_value) for y in range(heigth)]
 
-        values.reverse()
+        y_values.reverse()
         for y in range(heigth):
-            if len(values[y]) > free_width:
-                values[y] = values[y][0:free_width]
+            if len(y_values[y]) > free_width:
+                y_values[y] = y_values[y][0:free_width]
             else:
-                values[y] = values[y] + ' ' * (free_width - len(values[y]))
+                y_values[y] = y_values[y] + ' ' * (free_width - len(y_values[y]))
 
             for x in range(0, free_width):
-                left_margin[y][x] = values[y][x]
+                left_margin[y][x] = y_values[y][x]
 
         return left_margin
 
