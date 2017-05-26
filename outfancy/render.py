@@ -1692,7 +1692,6 @@ class Chart:
                 y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
             elif len(coincidences) > 0:
-                print('COINCIDENCES', coincidences)
                 y_value = pre_y_chart_values[round(coincidences[0])]
                 y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
