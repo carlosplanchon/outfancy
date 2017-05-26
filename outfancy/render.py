@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+from subprocess import call
+from time import sleep
+
 
 from statistics import mean
 
@@ -1636,6 +1639,9 @@ class Chart:
 
         x_values, y_values = self.get_list_of_elements(dataset)
 
+        x_values.append(x_values[len(x_values) - 1] + (x_values[len(x_values) - 1] - x_values[len(x_values) - 2]))
+        y_values.append(y_values[len(y_values) - 1])
+
         # --- The dimensions of the dataset are calculated. --- #
         x_max = max(x_values)
         x_min = min(x_values)
@@ -1664,7 +1670,6 @@ class Chart:
 
         # The x values showed on the table are generated.
         x_chart_values = [((x_range) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
-
         # Points are added to table_window.
         for x in range(x_chart):
             if x == 0:
@@ -1679,27 +1684,22 @@ class Chart:
 
             coincidences = []
             for element in range(len(pre_x_chart_values)):
-                if below < pre_x_chart_values[element] < above:
+                if below < pre_x_chart_values[element] + x_min < above:
                     coincidences.append(element)
-
             if len(coincidences) > 1:
                 coincident_elements = [pre_y_chart_values[element] for element in coincidences]
                 y_value = pre_y_chart_values[round(mean(coincidences))]
                 y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
             elif len(coincidences) > 0:
+                print('COINCIDENCES', coincidences)
                 y_value = pre_y_chart_values[round(coincidences[0])]
                 y = int((y_chart - 1) / y_range * y_value)
                 add_point(point, x, y)
 
-
         # Margins are created.
-        left_margin_height = y_chart
-
         top_margin = self.create_top_margin(margin_top_heigth, screen_x, plot_name)
-
-        left_margin = self.create_left_margin(left_margin_height, left_margin_width, y_min, y_max)
-
+        left_margin = self.create_left_margin(y_chart, left_margin_width, y_min, y_max)
         down_margin = self.create_down_margin(margin_down_height, x_chart, x_min, x_max)
 
         # Window is composed.
@@ -1709,7 +1709,7 @@ class Chart:
         window.insert(down_margin, 0 + left_margin_width, screen_y - margin_down_height)
         window.insert(['└'], left_margin_width - 1, screen_y - margin_down_height)
         window.insert(table_window.content, left_margin_width, margin_top_heigth)
-
+        call('clear', shell=True)
         return window.render()
 
 
@@ -1876,7 +1876,9 @@ class Window:
         for x in self.content:
             for y in x:
                 rendered_window += y
+
             rendered_window += '\n'
+
         return rendered_window.rstrip('\n')
 
 '''
