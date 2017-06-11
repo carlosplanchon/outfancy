@@ -7,6 +7,10 @@ from statistics import mean
 
 from . import widgets
 
+#guille was here
+import re
+ansi_escape = re.compile(r'\x1b[^m]*m')
+
 letters = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ'
 lower_letters = 'abcdefghijklmnñopqrstuvwxyz'
 
@@ -1663,10 +1667,10 @@ class Chart:
             background_point = '\x1b[1;90m{}\x1b[0;99m'.format(background_point)
             point = '\x1b[1;33m{}\x1b[0;99m'.format(point)
 
-        table_window = Window(x_chart, y_chart, background_point)
+        table_window = Window(x_chart, y_chart, background_point, color_opt=True)
 
         def add_point(value, x, y):
-            table_window.insert_point(value, x, y_chart - y - 1)
+            table_window.insert_colored_point(value, x, y_chart - y - 1)
 
         # The x values showed on the table are generated.
         x_chart_values = [((x_range) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
@@ -1698,7 +1702,7 @@ class Chart:
 
         # Margins are created.
         top_margin = self.create_top_margin(margin_top_heigth, screen_x, plot_name)
-        left_margin = self.create_left_margin(y_chart, left_margin_width, y_min, y_max)
+        left_margin = self.create_left_margin(y_chart, left_margin_width, y_min, y_max, color_opt=True)
         down_margin = self.create_down_margin(margin_down_height, x_chart, x_min, x_max)
 
         # Window is composed.
@@ -1712,7 +1716,11 @@ class Chart:
         return window.render()
 
 
-    def create_left_margin(self, heigth, width, min_value, max_value, separator='┼'):
+    def create_left_margin(self, heigth, width, min_value, max_value, separator='┼', color_opt=False):
+        
+        if color_opt:
+            separator = '\x1b[1;99m{}\x1b[0;90m'.format(separator)
+
         # A matrix is created.
         left_margin = widgets.create_matrix(width, heigth, ' ')
 
@@ -1850,8 +1858,13 @@ class Chart:
 
 class Window:
     """It creates a Window Object."""
-    def __init__(self, width, heigth, fill=' '):
-        self.content = widgets.create_matrix(width, heigth, fill)
+    def __init__(self, width, heigth, fill=' ', color_opt=False):
+        self.w = width
+        self.h = heigth
+        if not color_opt:
+            self.content = widgets.create_matrix(width, heigth, fill)
+        else:
+            self.content = widgets.create_matrix_color_optimized(width, heigth, fill)
 
 
     def insert(self, matrix, x_vertex, y_vertex):
@@ -1868,6 +1881,26 @@ class Window:
     def insert_point(self, point, x_coord, y_coord):
         """Each element of the matrix is inserted in the window."""
         self.content[y_coord][x_coord] = point
+
+    def insert_colored_point(self, point, x_coord, y_coord):
+
+        def fidx(x,y):
+            return y * self.h + x
+
+        prev_color = ''
+
+        flat_content = [j for i in self.content for j in i]
+
+        index = fidx(x_coord,y_coord)
+
+        prev_str = flat_content[:index]
+        if len(prev_str) > 0:
+            prev_str = ''.join(prev_str)
+            found_colors = ansi_escape.findall(prev_str)
+            if len(found_colors) > 0:
+                prev_color = found_colors[-1]
+
+        self.content[y_coord][x_coord] = prev_color + point + prev_color
 
 
     def render(self):
