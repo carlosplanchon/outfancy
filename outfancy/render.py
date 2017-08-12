@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from time import sleep
 
-
+from random import choice
 from statistics import mean
 
 from . import widgets
@@ -1658,7 +1658,7 @@ class Chart:
         self.dataset_space.append([x_values, y_values])
 
 
-    def render(self, plot_name='', point_list=None, left_margin_width=8, margin_down_height=8, margin_top_heigth=3, color=False, background_point='·'):
+    def render(self, plot_name='', point_list=None, left_margin_width=8, margin_down_height=8, margin_top_heigth=3, color=False, background_point='·', color_number_list=None):
         ###########################
         # --- PRE-RENDER AREA --- #
         ###########################
@@ -1683,6 +1683,9 @@ class Chart:
         if not point_list:
             point_list = ['x', 'o', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
+        if not color_number_list:
+            color_number_list = [33, 91, 32, 31, 34, 35, 36, 37, 90, 92, 93, 94, 95, 96, 97]
+
         # An empty matrix is created.
         if color:
             background_point = '\x1b[1;90m{}\x1b[0;99m'.format(background_point)
@@ -1695,10 +1698,12 @@ class Chart:
         # If the dataset is not empty.
         if len(self.dataset_space) > 0:
             point_counter = 0
+            color_number_counter = 0
             for dataset in self.dataset_space:
                 # The point is selected.
+                color_number = color_number_list[color_number_counter]
                 if color:
-                    point = '\x1b[1;33m{}\x1b[0;99m'.format(point_list[point_counter])
+                    point = '\x1b[1;{}m{}\x1b[0;99m'.format(color_number, point_list[point_counter])
                 else:
                     point = point_list[point_counter]
 
@@ -1711,9 +1716,11 @@ class Chart:
                         add_point(point, x, y)
                         last_x = x
 
-                print('POINT COUNTER', point_counter)
-                print('LEN POINT LIST', len(point_list))
-                print('point', point_list[point_counter])
+                if color_number_counter != len(color_number_list) - 1:
+                    color_number_counter += 1
+                else:
+                    color_number_counter = 0
+
                 if point_counter != len(point_list) - 1:
                     point_counter += 1
                 else:
