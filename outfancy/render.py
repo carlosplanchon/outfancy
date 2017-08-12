@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from subprocess import call
 from time import sleep
 
 
@@ -1621,85 +1620,110 @@ class LargeTable:
 class Chart:
     """Charts in terminal."""
     def __init__(self):
-        pass
+        self.dataset_space = []
+        self.x_min = 0
+        self.x_max = 0
+        self.y_min = 0
+        self.y_max = 0
 
 
-    def line(self, dataset=None, plot_name='', point='x', left_margin_width=8, margin_down_height=8, margin_top_heigth=3, color=False, background_point='·'):
-        """Line plot."""
+    def get_list_of_elements(self, table):
+        # It return a list of x and a list of y values.
+        return [x[0] for x in table], [x[1] for x in table]
+
+
+    def clear(self):
+        self.dataset_space = []
+
+
+    def plot(self, dataset):
         # The data is checked.
         integrity, reason = self.check_data_integrity(dataset)
         if not integrity:
             return '--- Plot > Line > The input data is invalid. ---\n Reason: {}'.format(reason)
 
+        x_values, y_values = self.get_list_of_elements(dataset)
+
+        # The maximum and minimum values are calculated.
+        if min(x_values) < self.x_min:
+            self.x_min = min(x_values)        
+        if max(x_values) > self.x_max:
+            self.x_max = max(x_values)
+
+        if min(y_values) < self.y_min:
+            self.y_min = min(y_values)
+        if max(y_values) > self.y_max:
+            self.y_max = max(y_values)
+
+        self.dataset_space.append([x_values, y_values])
+
+
+    def render(self, plot_name='', point_list=None, left_margin_width=8, margin_down_height=8, margin_top_heigth=3, color=False, background_point='·'):
         ###########################
         # --- PRE-RENDER AREA --- #
         ###########################
         # --- The screen measures are obtained --- #
         screen_x, screen_y = widgets.measure_screen()
 
-        x_values, y_values = self.get_list_of_elements(dataset)
+        # --- Values of table_window are calculated. ---#
+        table_window_x = screen_x - left_margin_width
+        table_window_y = screen_y - margin_down_height - margin_top_heigth
 
-        x_values.append(x_values[len(x_values) - 1] + (x_values[len(x_values) - 1] - x_values[len(x_values) - 2]))
-        y_values.append(y_values[len(y_values) - 1])
+        table_window_x_range = abs(self.x_max - self.x_min)
+        table_window_y_range = abs(self.y_max - self.y_min)
 
-        # --- The dimensions of the dataset are calculated. --- #
-        x_max = max(x_values)
-        x_min = min(x_values)
-        x_range = x_max - x_min
+        x_points_per_x_pixel = table_window_x_range / (table_window_x - 1)
+        y_points_per_y_pixel = table_window_y_range / (table_window_y - 1)
 
-        y_max = max(y_values)
-        y_min = min(y_values)
-        y_range = y_max - y_min
 
-        x_chart = screen_x - left_margin_width
-        y_chart = screen_y - margin_down_height - margin_top_heigth
+        #######################
+        # --- RENDER AREA --- #
+        #######################
 
-        # Points between 0 and the beginning of the chart are removed.
-        pre_x_chart_values = [x - x_min for x in x_values]
-        pre_y_chart_values = [y - y_min for y in y_values]
+        if not point_list:
+            point_list = ['x', 'o', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
         # An empty matrix is created.
         if color:
             background_point = '\x1b[1;90m{}\x1b[0;99m'.format(background_point)
-            point = '\x1b[1;33m{}\x1b[0;99m'.format(point)
 
-        table_window = Window(x_chart, y_chart, background_point)
+        table_window = Window(table_window_x, table_window_y, background_point)
 
         def add_point(value, x, y):
-            table_window.insert_point(value, x, y_chart - y - 1)
+            table_window.insert_point(value, x, table_window_y - y - 1)
 
-        # The x values showed on the table are generated.
-        x_chart_values = [((x_range) / (x_chart - 1)) * x + x_min for x in range(x_chart)]
-        # Points are added to table_window.
-        for x in range(x_chart):
-            if x == 0:
-                below = -1
-            else:
-                below = x_chart_values[x]
+        # If the dataset is not empty.
+        if len(self.dataset_space) > 0:
+            point_counter = 0
+            for dataset in self.dataset_space:
+                # The point is selected.
+                if color:
+                    point = '\x1b[1;33m{}\x1b[0;99m'.format(point_list[point_counter])
+                else:
+                    point = point_list[point_counter]
 
-            if x == x_chart - 1:
-                above = x_chart_values[-1] + 1
-            else:
-                above = x_chart_values[x + 1]
+                last_x = None
+                for element in range(len(dataset[0])):
+                    x = round((dataset[0][element] - self.x_min) / x_points_per_x_pixel)
+                    if x != last_x:
+                        # x is scaled to the size of the table.
+                        y = round((dataset[1][element] - self.y_min) / y_points_per_y_pixel)
+                        add_point(point, x, y)
+                        last_x = x
 
-            coincidences = []
-            for element in range(len(pre_x_chart_values)):
-                if below < pre_x_chart_values[element] + x_min < above:
-                    coincidences.append(element)
-            if len(coincidences) > 1:
-                coincident_elements = [pre_y_chart_values[element] for element in coincidences]
-                y_value = pre_y_chart_values[round(mean(coincidences))]
-                y = int((y_chart - 1) / y_range * y_value)
-                add_point(point, x, y)
-            elif len(coincidences) > 0:
-                y_value = pre_y_chart_values[round(coincidences[0])]
-                y = int((y_chart - 1) / y_range * y_value)
-                add_point(point, x, y)
+                print('POINT COUNTER', point_counter)
+                print('LEN POINT LIST', len(point_list))
+                print('point', point_list[point_counter])
+                if point_counter != len(point_list) - 1:
+                    point_counter += 1
+                else:
+                    point_counter = 0
+
 
         # Margins are created.
         top_margin = self.create_top_margin(margin_top_heigth, screen_x, plot_name)
-        left_margin = self.create_left_margin(y_chart, left_margin_width, y_min, y_max)
-        down_margin = self.create_down_margin(margin_down_height, x_chart, x_min, x_max)
+        left_margin = self.create_left_margin(table_window_y, left_margin_width, self.y_min, self.y_max)
+        down_margin = self.create_down_margin(margin_down_height, table_window_x, self.x_min, self.x_max)
 
         # Window is composed.
         window = Window(screen_x, screen_y, ' ')
@@ -1708,7 +1732,6 @@ class Chart:
         window.insert(down_margin, 0 + left_margin_width, screen_y - margin_down_height)
         window.insert(['└'], left_margin_width - 1, screen_y - margin_down_height)
         window.insert(table_window.content, left_margin_width, margin_top_heigth)
-        call('clear', shell=True)
         return window.render()
 
 
@@ -1779,11 +1802,6 @@ class Chart:
                 down_margin[y][x] = (values[x][new_y] if x % 2 == 0 else ' ')
 
         return down_margin
-
-
-    def get_list_of_elements(self, table):
-        # It return a list of x and a list of y values.
-        return [x[0] for x in table], [x[1] for x in table]
 
 
     def check_data_integrity(self, dataset):
@@ -1882,6 +1900,7 @@ class Window:
 
 '''
 To do:
-    - Check system on width.
-    - Option to cancel the automatical check of width.
+    On class Table:
+        - Check system on width.
+        - Option to cancel the automatical check of width.
 '''
