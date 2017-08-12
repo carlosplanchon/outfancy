@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 from time import sleep
 
-from random import choice
-from statistics import mean
-
 from . import widgets
 
 letters = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ'
