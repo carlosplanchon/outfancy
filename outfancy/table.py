@@ -11,7 +11,7 @@ from string import ascii_letters
 
 logging.basicConfig(
     # filename='/tmp/outfancy/latest.log',
-    level=logging.DEBUG,
+    level=logging.CRITICAL,
     format='%(asctime)s:%(levelname)s: %(message)s'
     )
 
