@@ -64,7 +64,7 @@ class LineChart:
         return point_character
 
     def y_interpolate(self, interpolated_points, point_character):
-        """
+        """|
         i = 0
         while i < len(interpolated_points) - 1:
             actual_point = interpolated_points[i]
@@ -121,9 +121,18 @@ class LineChart:
         chart_window_x_range = abs(self.x_max - self.x_min)
         chart_window_y_range = abs(self.y_max - self.y_min)
 
-        x_points_per_x_pixel = chart_window_x_range / (chart_window_x - 1)
-        y_points_per_y_pixel = chart_window_y_range / (chart_window_y - 1)
+        if chart_window_x - 1 != 0:
+            x_points_per_x_pixel = chart_window_x_range / (chart_window_x - 1)
+        else:
+            x_points_per_x_pixel = 1
 
+        if chart_window_y - 1 != 0:
+            y_points_per_y_pixel = chart_window_y_range / (chart_window_y - 1)
+        else:
+            x_points_per_x_pixel = 1
+
+        print(x_points_per_x_pixel)
+        print(y_points_per_y_pixel)
         #######################
         # --- RENDER AREA --- #
         #######################
@@ -160,11 +169,12 @@ class LineChart:
             )
 
         def add_point(point_character, x, y):
-            chart_window.insert_point(
-                point_character=point_character,
-                x_coord=x,
-                y_coord=chart_window_y - y - 1
-                )
+            if chart_window_y - y - 1 > 0:
+                chart_window.insert_point(
+                    point_character=point_character,
+                    x_coord=x,
+                    y_coord=chart_window_y - y - 1
+                    )
 
         # If the dataset is not empty.
         if len(self.dataset_space) > 0:
@@ -188,12 +198,17 @@ class LineChart:
                         len(dataset[0]) / (screen_x - left_margin_width) / 2
                         )
 
-                    dataset[0] = [
-                        dataset[0][i] for i in range(0, len(dataset[0]), step)
-                        ]
-                    dataset[1] = [
-                        dataset[1][i] for i in range(0, len(dataset[1]), step)
-                        ]
+                    if step != 0:
+                        dataset[0] = [
+                            dataset[0][i] for i in range(
+                                0, len(dataset[0]), step
+                                )
+                            ]
+                        dataset[1] = [
+                            dataset[1][i] for i in range(
+                                0, len(dataset[1]), step
+                                )
+                            ]
 
                 last_x = None
                 chart_screen_points = []
@@ -349,6 +364,8 @@ class LineChart:
             max_value=self.x_max
             )
 
+        margin_down_y_vertex = screen_y - margin_down_height
+
         # --- Window is composed. ---
         window = Window(
             width=screen_x,
@@ -368,17 +385,19 @@ class LineChart:
             y_vertex=margin_top_height
             )
 
-        window.insert(
-            matrix=down_margin,
-            x_vertex=0 + left_margin_width,
-            y_vertex=screen_y - margin_down_height
-            )
+        if margin_down_y_vertex > 0:
+            window.insert(
+                matrix=down_margin,
+                x_vertex=left_margin_width,
+                y_vertex=margin_down_y_vertex
+                )
 
-        window.insert(
-            matrix=['└—'],
-            x_vertex=left_margin_width - 2,
-            y_vertex=screen_y - margin_down_height
-            )
+            if left_margin_width - 2 > 0:
+                window.insert(
+                    matrix=['└—'],
+                    x_vertex=left_margin_width - 2,
+                    y_vertex=margin_down_y_vertex
+                    )
 
         window.insert(
             matrix=chart_window.content,
