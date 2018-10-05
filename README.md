@@ -52,6 +52,7 @@ print(line_chart.render(color=True))
 ## To do (Colaboration is welcome)
 - Translate code to english. (Translated) (the translation need revision from a native english speaker (I speak spanish).
 - Improve y_interpolation function on outfancy.chart.LineChart
+  Maybe add more kinds of charts on outfancy.chart.
   Maybe on outfancy.table:
      - Checking system on width parameter.
      - Option to cancel the automatical checking of width parameter.
