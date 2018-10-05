@@ -64,54 +64,35 @@ class LineChart:
         return point_character
 
     def y_interpolate(self, interpolated_points, point_character):
-        print('--- Starting y interpolation. ---')
-        # To test.
-        # point_character = 'x'
-
-        if len(interpolated_points) > 1:
-            for i in range(len(interpolated_points) - 1):
-                actual_point = interpolated_points[i]
-                next_point = interpolated_points[i + 1]
-
+        """
+        i = 0
+        while i < len(interpolated_points) - 1:
+            actual_point = interpolated_points[i]
+            next_point = interpolated_points[i + 1]
+            # If y distance between
+            # actual and next point is greater than 1.
+            y_interpolated_points = []
+            c = 0
+            c1 = next_point[2] - actual_point[2] > 1
+            c2 = next_point[2] - actual_point[2] < -1
+            if c1 or c2:
+                if c1:
+                    c += 1
+                elif c2:
+                    c -= 1
                 x_actual = actual_point[1]
                 y_actual = actual_point[2]
-                # x_next = next_point[1]
-                y_next = next_point[2]
 
-                if y_next - y_actual > 1:
-                    print(
-                        f'Element:{i}, x:{x_actual} of '
-                        'interpolated_points is a hole'
-                        )
-                    y_interpolated_points = []
-                    # Here we gonna fill that holes.
-                    y = 0
-                    for y in range(y_next - y_actual - 1):
-                        print('y')
-                        #print(f'· Holed Y: {y + y_actual}')
-                        # Test.
-                        #print(' · CREATE A POINT')
-                        #new_point = ['x', 0, 0]
-                        """
-                        new_point_y = 0
-                        new_point_y = y_actual + y
-                        new_point = [
-                            point_character,
-                            i,
-                            new_point_y
-                            ]
-                        # print(
-                        #    f'x {x} New y: {y_actual + y} '
-                        #    f'x_actual {x_actual} \t- '
-                        #    f'new_point {new_point}'
-                        #    )
-                        """
-                        #y_interpolated_points.append(new_point)
-                    interpolated_points = interpolated_points[
-                        :i
-                        ] + y_interpolated_points\
-                          + interpolated_points[i:]
-            return interpolated_points
+                new_point = [point_character, x_actual, y_actual + c]
+                y_interpolated_points.append(new_point)
+
+                interpolated_points = interpolated_points[
+                    :i
+                    ] + y_interpolated_points\
+                    + interpolated_points[i:]
+            i += len(y_interpolated_points) + 1
+        """
+        return interpolated_points
 
     def render(
         self,
@@ -290,6 +271,14 @@ class LineChart:
                                       + chart_screen_points[point_index:]
 
                         point_index += len(interpolated_points) + 1
+
+                    """
+                    # We check for vertical characters.
+                    chart_screen_points = self.y_interpolate(
+                        interpolated_points=chart_screen_points,
+                        point_character=point_character
+                        )
+                    """
 
                 # Here we apply slope based characters.
                 if slope_based_characters and len(chart_screen_points) > 1:
