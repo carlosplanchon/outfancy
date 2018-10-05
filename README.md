@@ -2,8 +2,6 @@
 
 *Table printing and Line plotting in Terminal*
 
-[![Join the chat at https://gitter.im/carlosplanchon/outfancy](https://badges.gitter.im/carlosplanchon/outfancy.svg)](https://gitter.im/carlosplanchon/outfancy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 <img src='examples/chart_auto.png'>
 
 ##Demonstration
@@ -16,7 +14,7 @@ Outfancy is a Python3.6 library to print tables in Terminal. It's a quick way to
 ## installation
 ### install with pip
 ```
-$ pip install outfancy
+pip install outfancy
 ```
 
 ## features
@@ -53,11 +51,14 @@ print(line_chart.render(color=True))
 
 ## To do (Colaboration is welcome)
 - Translate code to english. (Translated) (the translation need revision from a native english speaker (I speak spanish).
-- Improve interpolation function on outfancy.chart.LineChart
+- Improve y_interpolation function on outfancy.chart.LineChart
+  Maybe on outfancy.table:
+     - Checking system on width parameter.
+     - Option to cancel the automatical checking of width parameter.
 
 ## Others
 - https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3 (Funny demo with colors)
 
-## Experimental (Line plot)
-<img src='examples/sin_little.png'>
+## Experimental (Line Chart)
+<img src='examples/sin_little_2.png'>
 - http://showterm.io/80074a1806e78205339d6
