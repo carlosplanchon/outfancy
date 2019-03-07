@@ -4,7 +4,7 @@
 
 <img src='examples/chart_auto.png'>
 
-##Demonstration
+## Demonstration
 - http://showterm.io/42f0bfa286232758acf18
 - http://showterm.io/5a31927cbfdc37e116f8d
 
