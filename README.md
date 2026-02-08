@@ -2,32 +2,31 @@
 
 *Table printing and Line plotting in Terminal*
 
-[![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 <img src='https://raw.githubusercontent.com/carlosplanchon/outfancy/refs/heads/master/examples/chart_auto.png'>
 
 ## What is it?
 
-Outfancy is a Python 3.11+ library for printing tables and charts in the terminal. It's a quick way to visualize data when you don't have a GUI, and it integrates easily into your programs. You can install it with pip and use it anywhere.
+Outfancy is a Python library for printing tables and charts in the terminal. It's a quick way to visualize data when you don't have a GUI, and it integrates easily into your programs. You can install it with uv or pip and use it anywhere.
 
-This was the first library I ever built—when I was 16 :). It's been modernized to support Python 3.11-3.14, fix bugs, add type hints, improve logging, and enhance performance, but the original style is still there: raw, exploratory teenage code.
+This was the first library I ever built when I was 16 :). It's been modernized to support Python 3.10+, fix bugs, add type hints, improve logging, and enhance performance, but the original style is still there: raw, exploratory teenage code.
+
+## Documentation
+
+- **[DeepWiki Docs](https://deepwiki.com/carlosplanchon/outfancy)** - Comprehensive documentation
+- **[LOGGING.md](LOGGING.md)** - Logging system configuration and usage
+- **[logging_example.py](logging_example.py)** - Practical logging examples
 
 ## Installation
+
+### Install with uv
+```bash
+pip install outfancy
+```
 
 ### Install with pip
 ```bash
 pip install outfancy
 ```
-
-### Development installation
-```bash
-git clone https://github.com/carlosplanchon/outfancy.git
-cd outfancy
-pip install -e ".[dev]"
-```
-
-This installs outfancy in editable mode with development dependencies (pytest, pytest-cov).
 
 ## Features
 
@@ -73,23 +72,22 @@ large_dataset = [(i, f'User {i}', f'user{i}@example.com') for i in range(100)]
 print(large_table.render(large_dataset))
 ```
 
-## Documentation
-
-- **[DeepWiki Docs](https://deepwiki.com/carlosplanchon/outfancy)** - Comprehensive documentation
-- **[LOGGING.md](LOGGING.md)** - Logging system configuration and usage
-- **[logging_example.py](logging_example.py)** - Practical logging examples
-
 ## Development
 
-### Setting up development environment
-
-1. Clone the repository
-2. Install with dev extras:
+### Development installation (pip)
 ```bash
-pip install -e ".[dev]"
+git clone https://github.com/carlosplanchon/outfancy.git
+cd outfancy
+pip install -e .
 ```
 
-This automatically installs all development dependencies including pytest and pytest-cov.
+### Development installation (uv)
+```bash
+git clone https://github.com/carlosplanchon/outfancy.git
+cd outfancy
+uv venv
+uv pip install -e ".[dev]"
+```
 
 ### Running tests
 
@@ -149,26 +147,6 @@ Contributions are welcome! Here's how you can help:
 - Include tests for new features
 - Update documentation as needed
 
-## Recent Improvements (v0.9.x)
-
-- ✅ Fixed multiple bugs in table rendering and data validation
-- ✅ Added comprehensive type hints throughout the codebase
-- ✅ Refactored logging system with configurable severity levels
-- ✅ Created extensive test suite with 79+ test functions
-- ✅ Improved data type auto-detection algorithms
-- ✅ Fixed edge cases with ANSI color codes in width calculations
-- ✅ Better handling of negative numbers and zero-padded dates
-- ✅ Proper library logger configuration (no more root logger pollution)
-
-## To Do (Collaboration is welcome)
-
-- [ ] Improve y_interpolation function in `outfancy.chart.LineChart`
-- [ ] Add more chart types (bar charts, scatter plots, etc.)
-- [ ] Enhanced width parameter checking system
-- [ ] Option to disable automatic width checking
-- [ ] Performance optimizations for very large datasets
-- [ ] Additional table styles and themes
-
 ## Examples & Demos
 
 - **[Funny demo with colors](https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3)** - Colorful table demonstration
@@ -179,9 +157,3 @@ Contributions are welcome! Here's how you can help:
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details
-
-## Author
-
-**Carlos A. Planchón**
-- GitHub: [@carlosplanchon](https://github.com/carlosplanchon)
-- Email: carlosandresplanchonprestes@gmail.com
