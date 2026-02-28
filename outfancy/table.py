@@ -60,6 +60,8 @@ class Table:
         # row_separator_before_table allow to deactivate
         # the row_separator before table.
         self.row_separator_before_table = True
+        # The string returned when the data provided is empty.
+        self.empty_string = '--- EMPTY ---'
 
         # ###################### #
         # -v- IN DEVELOPMENT -v- #
@@ -202,6 +204,12 @@ class Table:
         """
         self.row_separator_before_table = x
 
+    def set_empty_string(self, x='--- EMPTY ---'):
+        """
+        The string returned when the data provided is empty.
+        """
+        self.empty_string = x
+
     def show_check_data(self) -> bool:
         """Returns the value of check_data."""
         logger.debug(f"check_data = {self.check_data}")
@@ -305,7 +313,7 @@ class Table:
 
         # --- Handling for empty data. --- #
         if data == []:
-            return '--- EMPTY ---'
+            return self.empty_string
 
         """
         If specified in configuration,
@@ -1918,6 +1926,8 @@ class LargeTable:
 
         # Numbers of rows to process before the table printing.
         self.rows_to_analyze: int = 100
+        # The string returned when the data provided is empty.
+        self.empty_string = '--- EMPTY ---'
 
     def set_check_data(self, x=False):
         """
@@ -1967,6 +1977,12 @@ class LargeTable:
         the separator before the table.
         """
         self.table.row_separator_before_table = x
+
+    def set_empty_string(self, x='--- EMPTY ---'):
+        """
+        The string returned when the data provided is empty.
+        """
+        self.empty_string = x
 
     def show_check_data(self):
         """It shows the value of the variable check_data."""
@@ -2050,7 +2066,7 @@ class LargeTable:
 
         # --- Handling for empty data --- #
         if data == []:
-            return '--- EMPTY ---'
+            return self.empty_string
 
         # It create a table with data to analyze.
         if len(data) > self.rows_to_analyze:

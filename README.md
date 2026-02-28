@@ -72,6 +72,19 @@ large_dataset = [(i, f'User {i}', f'user{i}@example.com') for i in range(100)]
 print(large_table.render(large_dataset))
 ```
 
+### Empty State Customization
+```python
+from outfancy.table import Table, LargeTable
+
+t = Table()
+t.set_empty_string('No data available')
+
+lt = LargeTable()
+lt.set_empty_string('No data available')
+```
+
+This sets the string displayed when a table cell has no value.
+
 ## Development
 
 ### Development installation (pip)
