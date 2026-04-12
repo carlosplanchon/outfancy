@@ -85,6 +85,66 @@ lt.set_empty_string('No data available')
 
 This sets the string displayed when a table cell has no value.
 
+## CLI
+
+After installing outfancy, the `outfancy` command is available in your terminal.
+
+### Table
+
+Render tabular data from stdin or a file:
+
+```bash
+# CSV from stdin (first row used as headers)
+printf "id,name,value\n1,foo,100\n2,bar,200" | outfancy table
+
+# From a file
+outfancy table data.csv
+
+# TSV input
+cat data.tsv | outfancy table --tsv
+
+# JSON input (array of objects or array of arrays)
+cat data.json | outfancy table --json
+
+# Custom headers
+printf "1,foo,100\n2,bar,200" | outfancy table --labels "ID,Name,Value"
+
+# Hide headers
+cat data.csv | outfancy table --no-labels
+
+# Select and reorder columns
+cat data.csv | outfancy table --order 0,2,1
+
+# Custom column separator
+cat data.csv | outfancy table --separator " | "
+
+# Equal width for all columns
+cat data.csv | outfancy table --width-equal
+```
+
+### Chart
+
+Render x,y pairs as a line chart:
+
+```bash
+# From stdin (one x,y pair per line)
+printf "1,10\n2,25\n3,15\n4,30\n5,20" | outfancy chart
+
+# With title and colors
+printf "1,10\n2,25\n3,15\n4,30\n5,20" | outfancy chart --name "Sales" --color
+
+# From a file
+outfancy chart data.csv
+```
+
+### Demo
+
+Run the interactive demo:
+
+```bash
+outfancy-demo
+```
+
 ## Development
 
 ### Development installation (pip)
