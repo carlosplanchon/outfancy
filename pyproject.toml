@@ -32,6 +32,9 @@ dev = [
   "pytest-cov>=4.0.0"
 ]
 
+[project.scripts]
+outfancy-demo = "outfancy.demo:demo"
+
 [project.urls]
 Repository = "https://github.com/carlosplanchon/outfancy.git"
 

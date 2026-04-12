@@ -2,7 +2,7 @@
 
 *Table printing and Line plotting in Terminal*
 
-<img src='https://raw.githubusercontent.com/carlosplanchon/outfancy/refs/heads/master/examples/chart_auto.png'>
+<img src='https://raw.githubusercontent.com/carlosplanchon/outfancy/refs/heads/master/assets/chart_auto.png'>
 
 ## What is it?
 
@@ -14,7 +14,7 @@ This was the first library I ever built when I was 16 :). It's been modernized t
 
 - **[DeepWiki Docs](https://deepwiki.com/carlosplanchon/outfancy)** - Comprehensive documentation
 - **[LOGGING.md](LOGGING.md)** - Logging system configuration and usage
-- **[logging_example.py](logging_example.py)** - Practical logging examples
+- **[logging_example.py](examples/logging_example.py)** - Practical logging examples
 
 ## Installation
 
@@ -165,7 +165,7 @@ Contributions are welcome! Here's how you can help:
 - **[Funny demo with colors](https://gist.github.com/carlosplanchon/986c7c11a932a7206bb3)** - Colorful table demonstration
 
 ### Line Chart Example
-<img src='https://raw.githubusercontent.com/carlosplanchon/outfancy/refs/heads/master/examples/sin_little_2.png'>
+<img src='https://raw.githubusercontent.com/carlosplanchon/outfancy/refs/heads/master/assets/sin_little_2.png'>
 
 ## License
 
