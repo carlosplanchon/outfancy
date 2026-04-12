@@ -78,6 +78,7 @@ def is_date(text: str) -> bool:
     """
     This function check if the input is a valid date, format:
     "dd-mm-yyyy, dd-mm-yy, dd-mm-yyyy hh-mm-ss, dd-mm-yy hh-mm-ss"
+    "yyyy-mm-dd, yyyy-mm-dd hh-mm-ss"
     and: "d-m-yy, d-m-yyyy, h-m-s"
     """
     text = normalise_date(text)
@@ -85,7 +86,9 @@ def is_date(text: str) -> bool:
         "%d-%m-%Y",
         "%d-%m-%y",
         "%d-%m-%Y %H-%M-%S",
-        "%d-%m-%y %H-%M-%S"
+        "%d-%m-%y %H-%M-%S",
+        "%Y-%m-%d",
+        "%Y-%m-%d %H-%M-%S"
             ]:
         try:
             strptime(text, fmt)
