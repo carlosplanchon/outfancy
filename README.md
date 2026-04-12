@@ -85,7 +85,7 @@ lt.set_empty_string('No data available')
 
 This sets the string displayed when a table cell has no value.
 
-## CLI
+## CLI (Added in 2026)
 
 After installing outfancy, the `outfancy` command is available in your terminal.
 
