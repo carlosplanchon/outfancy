@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outfancy"
-version = "0.10.0"
+version = "0.10.1"
 authors = [
   { name = "Carlos A. Planchón", email = "carlosandresplanchonprestes@gmail.com" }
 ]
@@ -28,12 +28,6 @@ classifiers = [
 
 dependencies = [
   "typer>=0.9"
-]
-
-[project.optional-dependencies]
-dev = [
-  "pytest>=7.0.0",
-  "pytest-cov>=4.0.0"
 ]
 
 [project.scripts]
