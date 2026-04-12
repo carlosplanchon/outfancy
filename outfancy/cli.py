@@ -19,10 +19,14 @@ def _read_input(file: Optional[str]) -> str:
     return sys.stdin.read()
 
 
-def _parse_csv(text: str, delimiter: str = ",") -> tuple[list[str] | None, list[tuple]]:
+def _parse_csv(text: str, delimiter: str = ",", has_headers: bool = False) -> tuple[list[str] | None, list[tuple]]:
     lines = [l for l in text.splitlines() if l.strip()]
     if not lines:
         return None, []
+    if has_headers:
+        headers = [h.strip() for h in lines[0].split(delimiter)]
+        rows = [tuple(l.split(delimiter)) for l in lines[1:]]
+        return headers, rows
     rows = [tuple(l.split(delimiter)) for l in lines]
     return None, rows
 
@@ -49,6 +53,7 @@ def table(
     width_equal: bool = typer.Option(False, "--width-equal", help="Assign equal width to all columns"),
     tsv: bool = typer.Option(False, "--tsv", help="Parse input as TSV"),
     json_input: bool = typer.Option(False, "--json", help="Parse input as JSON"),
+    has_headers: bool = typer.Option(False, "--has-headers", help="Treat first row as column headers (CSV/TSV only)"),
 ):
     """Render tabular data as a formatted table."""
     text = _read_input(file)
@@ -56,9 +61,9 @@ def table(
     if json_input:
         detected_labels, rows = _parse_json(text)
     elif tsv:
-        detected_labels, rows = _parse_csv(text, delimiter="\t")
+        detected_labels, rows = _parse_csv(text, delimiter="\t", has_headers=has_headers)
     else:
-        detected_labels, rows = _parse_csv(text, delimiter=",")
+        detected_labels, rows = _parse_csv(text, delimiter=",", has_headers=has_headers)
 
     if not rows:
         typer.echo("No data to render.", err=True)

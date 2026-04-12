@@ -18,9 +18,14 @@ This was the first library I ever built when I was 16 :). It's been modernized t
 
 ## Installation
 
-### Install with uv
+### Install as a library (uv)
 ```bash
-pip install outfancy
+uv add outfancy
+```
+
+### Install as a CLI tool (uv)
+```bash
+uv tool install outfancy
 ```
 
 ### Install with pip
@@ -120,6 +125,9 @@ cat data.csv | outfancy table --separator " | "
 
 # Equal width for all columns
 cat data.csv | outfancy table --width-equal
+
+# Use first row as column headers (CSV/TSV)
+cat data.csv | outfancy table --has-headers
 ```
 
 ### Chart
