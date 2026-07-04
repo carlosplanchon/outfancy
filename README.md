@@ -153,6 +153,14 @@ Run the interactive demo:
 outfancy-demo
 ```
 
+### Version
+
+Print the installed version:
+
+```bash
+outfancy --version
+```
+
 ## Development
 
 ### Development installation (pip)
@@ -167,33 +175,8 @@ pip install -e .
 git clone https://github.com/carlosplanchon/outfancy.git
 cd outfancy
 uv venv
-uv pip install -e ".[dev]"
+uv pip install -e "."
 ```
-
-### Running tests
-
-The project includes a comprehensive test suite covering all major functionality:
-
-```bash
-# Run all tests
-pytest
-
-# Run with verbose output
-pytest -v
-
-# Run specific test file
-pytest tests/test_table.py
-
-# Run tests with coverage
-pytest --cov=outfancy
-```
-
-The test suite includes:
-- **79 test functions** covering Table, Oneline, and LargeTable classes
-- Unit tests for initialization, configuration, and rendering
-- Integration tests for complex workflows
-- Regression tests for documented bug fixes
-- Edge case validation for data integrity
 
 ### Logging Configuration
 

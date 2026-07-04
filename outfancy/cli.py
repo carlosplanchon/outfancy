@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.metadata
 import json
 import sys
 from typing import Optional
@@ -10,6 +11,30 @@ import outfancy.table
 from outfancy.chart import LineChart
 
 app = typer.Typer(help="Render tables and charts in the terminal.")
+
+
+def _version_callback(value: bool) -> None:
+    if value:
+        try:
+            ver = importlib.metadata.version("outfancy")
+        except importlib.metadata.PackageNotFoundError:
+            ver = "unknown"
+        typer.echo(f"outfancy {ver}")
+        raise typer.Exit()
+
+
+@app.callback()
+def _main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-V",
+        callback=_version_callback,
+        is_eager=True,
+        help="Show the outfancy version and exit.",
+    ),
+) -> None:
+    """Render tables and charts in the terminal."""
 
 
 def _read_input(file: Optional[str]) -> str:
