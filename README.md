@@ -178,6 +178,34 @@ uv venv
 uv pip install -e "."
 ```
 
+### Running tests
+
+Install the development dependencies (adds `pytest` and `pytest-cov`):
+
+```bash
+uv pip install -e ".[dev]"
+# or with pip:
+pip install -e ".[dev]"
+```
+
+Run the test suite:
+
+```bash
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run tests with coverage
+pytest --cov=outfancy --cov-report=term-missing
+```
+
+The tests live in `tests/` and characterize the current behavior of the library
+(the `Table`, `Oneline`, `LargeTable` and `LineChart` classes, the CLI, and the
+pure helpers in `widgets`/`window`/`colors`), so any change that alters the
+rendered output is caught early.
+
 ### Logging Configuration
 
 Outfancy uses a configurable logging system. By default, only WARNING and above messages are shown:

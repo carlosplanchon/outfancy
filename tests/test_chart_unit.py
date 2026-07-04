@@ -56,7 +56,8 @@ class TestGetCharSlope:
         assert LineChart().get_char_slope(-1, False, 33) == "\\"
 
     def test_flat_slope_is_dash(self):
-        assert LineChart().get_char_slope(0, False, 33) == "—"
+        # U+2014 is the glyph the library itself renders for a flat slope.
+        assert LineChart().get_char_slope(0, False, 33) == "\u2014"
 
     def test_color_wraps_character(self):
         assert (
