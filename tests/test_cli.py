@@ -18,7 +18,10 @@ class TestVersion:
     def test_version_flag(self):
         result = runner.invoke(app, ["--version"])
         assert result.exit_code == 0
-        assert re.fullmatch(r"outfancy \d+\.\d+\.\d+.*", result.output.strip())
+        # "outfancy <version>" for any version format (0.11, 0.10.1, 1.0rc1...).
+        match = re.fullmatch(r"outfancy (\S+)", result.output.strip())
+        assert match is not None
+        assert any(ch.isdigit() for ch in match.group(1))
 
 
 class TestTableCommand:
