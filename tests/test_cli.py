@@ -52,6 +52,12 @@ class TestTableCommand:
         assert result.exit_code == 1
         assert "No data" in result.output
 
+    def test_json_object_input_is_handled_gracefully(self):
+        # Regression: a top-level JSON object used to crash with KeyError.
+        result = runner.invoke(app, ["table", "--json"], input='{"a": 1}')
+        assert result.exit_code == 1
+        assert "No data" in result.output
+
 
 class TestChartCommand:
     def test_valid_pairs(self):
@@ -90,3 +96,21 @@ class TestParsers:
         labels, rows = _parse_json("[]")
         assert labels is None
         assert rows == []
+
+
+class TestParseJsonRobustness:
+    def test_top_level_object_returns_no_rows(self):
+        # A JSON object is not a supported table shape: handled, no crash.
+        labels, rows = _parse_json('{"a": 1}')
+        assert labels is None
+        assert rows == []
+
+    def test_top_level_scalar_returns_no_rows(self):
+        labels, rows = _parse_json("5")
+        assert labels is None
+        assert rows == []
+
+    def test_array_of_scalars_becomes_single_column(self):
+        labels, rows = _parse_json("[1, 2, 3]")
+        assert labels is None
+        assert rows == [("1",), ("2",), ("3",)]

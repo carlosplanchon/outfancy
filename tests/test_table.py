@@ -4,6 +4,8 @@
 them to get deterministic output without depending on the real terminal.
 """
 
+import pytest
+
 from outfancy.table import Table
 from outfancy.widgets import remove_colors
 
@@ -99,3 +101,24 @@ class TestColorDataset:
         # Every row is still present once colors are stripped.
         plain = remove_colors(out)
         assert "Feisbuk" in plain
+
+
+class TestCheckOrderOutOfRange:
+    def test_out_of_range_index_currently_raises(self):
+        # Characterization: check_order collects invalid *values* but then
+        # removes them with list.pop(value), treating the value as an index,
+        # so an out-of-range column index raises IndexError.
+        with pytest.raises(IndexError):
+            Table().check_order([(1, "a"), (2, "b")], order=[0, 5])
+
+    @pytest.mark.xfail(
+        reason="Known limitation of the original implementation: check_order "
+        "removes invalid entries via list.pop(value), using the value as an "
+        "index, so an out-of-range column index raises IndexError instead of "
+        "being dropped. Preserved as-is; recorded without failing the suite.",
+        strict=False,
+    )
+    def test_out_of_range_index_ideally_dropped(self):
+        # Ideal behaviour: an out-of-range column index is simply ignored.
+        order = Table().check_order([(1, "a"), (2, "b")], order=[0, 5])
+        assert order == [0]

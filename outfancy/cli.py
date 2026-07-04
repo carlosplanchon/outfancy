@@ -58,13 +58,22 @@ def _parse_csv(text: str, delimiter: str = ",", has_headers: bool = False) -> tu
 
 def _parse_json(text: str) -> tuple[list[str] | None, list[tuple]]:
     data = json.loads(text)
-    if not data:
+    # Only a non-empty JSON array is a supported table shape. Anything else
+    # (an object, a scalar, an empty array) yields no rows so the caller can
+    # report "No data to render" instead of crashing.
+    if not isinstance(data, list) or not data:
         return None, []
     if isinstance(data[0], dict):
         labels = list(data[0].keys())
         rows = [tuple(str(v) for v in row.values()) for row in data]
         return labels, rows
-    rows = [tuple(str(v) for v in row) for row in data]
+    rows = []
+    for row in data:
+        if isinstance(row, (list, tuple)):
+            rows.append(tuple(str(v) for v in row))
+        else:
+            # A scalar element becomes a single-cell row.
+            rows.append((str(row),))
     return None, rows
 
 
