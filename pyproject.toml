@@ -30,6 +30,12 @@ dependencies = [
   "typer>=0.9"
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "pytest-cov"
+]
+
 [project.scripts]
 outfancy-demo = "outfancy.demo:demo"
 outfancy = "outfancy.cli:main"
@@ -39,3 +45,6 @@ Repository = "https://github.com/carlosplanchon/outfancy.git"
 
 [tool.setuptools]
 packages = ["outfancy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
