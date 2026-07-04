@@ -2,6 +2,12 @@
 
 *Table printing and Line plotting in Terminal*
 
+[![CI](https://github.com/carlosplanchon/outfancy/actions/workflows/ci.yml/badge.svg)](https://github.com/carlosplanchon/outfancy/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/outfancy.svg)](https://pypi.org/project/outfancy/)
+[![Python versions](https://img.shields.io/pypi/pyversions/outfancy.svg)](https://pypi.org/project/outfancy/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/carlosplanchon/outfancy)
+
 <img src='https://raw.githubusercontent.com/carlosplanchon/outfancy/refs/heads/master/assets/chart_auto.png'>
 
 ## What is it?
