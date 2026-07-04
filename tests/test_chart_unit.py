@@ -40,6 +40,27 @@ class TestCheckDataIntegrity:
         assert integrity is True
         assert reason is None
 
+    def test_multirow_validation_is_lenient_characterized(self):
+        # Characterization of the current behaviour: in a multi-row dataset the
+        # check keeps only the verdict of the last element of the last pair, so
+        # an invalid value in an earlier pair is accepted. Behaviour of the
+        # original implementation, preserved as-is.
+        integrity, reason = LineChart().check_data_integrity([(1, "a"), (2, 3)])
+        assert integrity is True
+        assert reason is None
+
+    @pytest.mark.xfail(
+        reason="Known limitation of the original implementation: only the last "
+        "element of the last pair decides the verdict, so an invalid earlier "
+        "value is not rejected. Kept as-is; this xfail records the expectation "
+        "without failing the suite.",
+        strict=False,
+    )
+    def test_multirow_validation_ideally_rejects_any_invalid_value(self):
+        # Ideal behaviour: invalid data anywhere should be rejected.
+        integrity, _reason = LineChart().check_data_integrity([(1, "a"), (2, 3)])
+        assert integrity is False
+
 
 class TestGetCharSlope:
     def test_nan_returns_vertical_bar(self):

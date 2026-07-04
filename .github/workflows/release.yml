@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write   # OIDC authentication to PyPI (trusted publishing)
+      contents: write   # create the GitHub Release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches package version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg=$(python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          echo "tag=$tag pyproject=$pkg"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pyproject version $pkg"
+            exit 1
+          fi
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Run tests
+        run: |
+          uv venv
+          uv pip install -e ".[dev]"
+          uv run pytest -q
+
+      - name: Build distributions
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --generate-notes
