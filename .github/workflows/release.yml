@@ -14,7 +14,7 @@ jobs:
       contents: write   # create the GitHub Release
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check tag matches package version
         run: |
@@ -27,7 +27,8 @@ jobs:
           fi
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        # Full version: setup-uv has no major tags (like v10) since v8.
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
 
