@@ -63,18 +63,46 @@ def _parse_json(text: str) -> tuple[list[str] | None, list[tuple]]:
     # report "No data to render" instead of crashing.
     if not isinstance(data, list) or not data:
         return None, []
+    labels: list[str] | None = None
     if isinstance(data[0], dict):
-        labels = list(data[0].keys())
-        rows = [tuple(str(v) for v in row.values()) for row in data]
-        return labels, rows
+        # The columns are the keys, in order of first appearance, so each
+        # value lands under its own key even when a row lacks some of them.
+        labels = []
+        for row in data:
+            if isinstance(row, dict):
+                labels.extend(key for key in row if key not in labels)
     rows = []
     for row in data:
-        if isinstance(row, (list, tuple)):
+        if labels is not None and isinstance(row, dict):
+            rows.append(tuple(str(row.get(key, "")) for key in labels))
+        elif isinstance(row, (list, tuple)):
             rows.append(tuple(str(v) for v in row))
         else:
             # A scalar element becomes a single-cell row.
             rows.append((str(row),))
-    return None, rows
+    return labels, rows
+
+
+def _parse_order(text: str, columns: int) -> list[int]:
+    """Parse ``--order`` for a table that has ``columns`` columns.
+
+    Raises ValueError, with a message meant for the user, when an item is
+    not the index of an existing column.
+    """
+    order = []
+    for item in text.split(","):
+        try:
+            index = int(item)
+        except ValueError:
+            raise ValueError(f"{item.strip()!r} is not a column index.") from None
+        if not 0 <= index < columns:
+            valid = (
+                f"valid columns are 0 to {columns - 1}" if columns
+                else "the table has no columns"
+            )
+            raise ValueError(f"column {index} does not exist; {valid}.")
+        order.append(index)
+    return order
 
 
 @app.command()
@@ -103,6 +131,15 @@ def table(
         typer.echo("No data to render.", err=True)
         raise typer.Exit(1)
 
+    # Rows may differ in length (a CSV line without its last fields, a JSON
+    # array shorter than the others): the table is as wide as the widest row
+    # and the missing cells are left empty.
+    columns = max(len(row) for row in rows)
+    if detected_labels:
+        columns = max(columns, len(detected_labels))
+        detected_labels += [""] * (columns - len(detected_labels))
+    rows = [row + ("",) * (columns - len(row)) for row in rows]
+
     label_list: list[str] | bool | None
     if no_labels:
         label_list = False
@@ -113,7 +150,13 @@ def table(
     else:
         label_list = None
 
-    order_list = [int(i) for i in order.split(",")] if order else None
+    order_list = None
+    if order:
+        try:
+            order_list = _parse_order(order, columns)
+        except ValueError as error:
+            typer.echo(f"Invalid --order: {error}", err=True)
+            raise typer.Exit(1)
     width = False if width_equal else None
 
     t = outfancy.table.Table()

@@ -27,13 +27,6 @@ if not logger.handlers:
     logger.addHandler(handler)
 
 
-logging.basicConfig(
-    # filename='/tmp/outfancy/latest.log',
-    level=logging.CRITICAL,
-    format='%(asctime)s:%(levelname)s: %(message)s'
-    )
-
-
 class Table:
     """
     Table allow to render a table with nice format, the data input have to
